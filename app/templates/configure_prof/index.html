@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+  <link rel="icon" href="{{ url_for('static', filename='img/whiteBgColor.png') }}" type="image/png">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/login/main.css') }}">
+  <title>Création de compte</title>
+  <style>
+    .btn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease-in-out;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn::after {
+      content: "➜";
+      font-size: 18px;
+      position: absolute;
+      right: -25px;
+      opacity: 0;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .btn:hover {
+      background-color: #0056b3;
+      padding-right: 35px;
+    }
+
+    .btn:hover::after {
+      right: 10px;
+      opacity: 1;
+    }
+
+    .blue {
+      color: blue;
+    }
+
+    /* Style pour la notification fluide */
+    .notification {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #28a745;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 5px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+  .error-messages {
+    margin: 15px 0;
+    padding: 15px;
+    background-color: #f8d7da; /* Rouge clair */
+    color: #721c24; /* Rouge foncé */
+    border: 1px solid #f5c6cb; /* Bordure rouge clair */
+    border-radius: 5px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .error-messages .icon {
+    font-size: 18px;
+    color: #721c24;
+  }
+
+  .error-messages p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="nav">
+      <ul>
+        <li>
+          <div style="display: flex; align-items: center;">
+            <img class="logo" width="60px" height="60px" 
+                 src="{{ url_for('static', filename='img/logo_jp2.png') }}" 
+                 style="margin-right: 10px; filter: brightness(0) ;">
+            <h3 style="color: rgb(0, 0, 0);">Jean-Paul II</h3>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="hero">
+      <div class="form">
+        <div class="text">
+          <h1>Création de compte<span class="blue">.</span></h1>
+          <p class="gray">Veuillez renseigner les informations ci-dessous pour créer votre compte.</p>
+        </div>
+      
+        <!-- Conteneur pour les messages d'erreur -->
+        <div id="error-container"></div>
+      
+        <form id="register-form" class="centered-flex" action="/configure_prof" method="post">
+          <!-- Champs du formulaire -->
+          <div class="id" onclick="document.getElementById('nom').focus();">
+            <div class="input-icons">
+              <legend for="nom">Nom</legend>
+              <div class="icon-center">
+                <input class="input" type="text" id="nom" name="nom" placeholder="Nom" required>
+              </div>
+            </div>
+          </div>
+      
+          <div class="id" onclick="document.getElementById('prenom').focus();">
+            <div class="input-icons">
+              <legend for="prenom">Prénom</legend>
+              <div class="icon-center">
+                <input class="input" type="text" id="prenom" name="prenom" placeholder="Prénom" required>
+              </div>
+            </div>
+          </div>
+      
+          <div id="password-container">
+            <div class="input-icons">
+              <legend for="password">Mot de passe</legend>
+              <div class="icon-center">
+                <input class="input" type="password" id="password" name="password" placeholder="Mot de passe" required>
+              </div>
+            </div>
+          </div>
+      
+          <div id="confirm-password-container">
+            <div class="input-icons">
+              <legend for="confirm-password">Confirmer mot de passe</legend>
+              <div class="icon-center">
+                <input class="input" type="password" id="confirm_password" name="confirm_password"
+                  placeholder="Confirmer mot de passe" required>
+              </div>
+            </div>
+          </div>
+      
+          <div class="buttons">
+            <button type="submit" class="btn">Créer mon compte</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="footer">JP2</div>
+  </div>
+
+  <!-- Notification -->
+  <div id="notification" class="notification">Votre compte a bien été créé !</div>
+  <script>
+    document.getElementById('register-form').addEventListener('submit', async function (event) {
+    event.preventDefault(); // Empêche le rechargement de la page
+
+    const form = event.target;
+    const formData = new FormData(form);
+
+    try {
+      const response = await fetch(form.action, {
+        method: form.method,
+        body: formData
+      });
+
+      const result = await response.json();
+
+      // Supprime les anciens messages d'erreur
+      const errorContainer = document.getElementById('error-container');
+      if (errorContainer) {
+        errorContainer.innerHTML = ''; // Vide le conteneur
+      }
+
+      if (response.ok) {
+        // Redirection en cas de succès
+        if (result.redirect_url) {
+          window.location.href = result.redirect_url;
+        }
+      } else {
+        // Affiche les messages d'erreur
+        const errorMessage = document.createElement('div');
+        errorMessage.className = 'error-messages';
+
+        // Ajoute une icône d'erreur
+        const errorIcon = document.createElement('span');
+        errorIcon.className = 'icon';
+        errorIcon.textContent = '⚠️'; // Icône d'avertissement
+        errorMessage.appendChild(errorIcon);
+
+        // Ajoute le texte du message d'erreur
+        const errorText = document.createElement('p');
+        errorText.textContent = result.error;
+        errorMessage.appendChild(errorText);
+
+        // Insère le message d'erreur dans le conteneur
+        errorContainer.appendChild(errorMessage);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la soumission du formulaire:', error);
+    }
+  });
+  </script>
+</body>
+
+</html>

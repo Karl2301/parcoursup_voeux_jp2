@@ -1,0 +1,27 @@
+1. Vœux total par classe
+Description : Ce graphique affiche le nombre total de vœux effectués par les élèves pour chaque classe. Chaque barre (ou autre type de représentation graphique) correspond à une classe, et la hauteur (ou la valeur) indique le total des vœux soumis par les élèves de cette classe.
+Objectif : Permet de comparer la participation des différentes classes en termes de vœux soumis.
+2. Moyenne de vœux par élève
+Description : Ce graphique montre la moyenne de vœux effectués par élève pour chaque classe. Chaque point ou barre représente une classe, et la valeur indique combien de vœux, en moyenne, chaque élève de cette classe a soumis.
+Objectif : Identifier les classes où les élèves sont les plus actifs ou les moins actifs dans la soumission de leurs vœux.
+3. Vœux par type par classe
+Description : Ce graphique présente la répartition des types de formation (par exemple, BUT, BTS, Prépa, Licence) pour chaque classe. Chaque segment ou barre est associé à un type de formation, et sa taille indique le nombre de vœux pour ce type dans une classe donnée.
+Objectif : Comprendre les préférences des élèves par classe en termes de types de formation.
+4. Top 10 formations
+Description : Ce graphique affiche les 10 formations les plus demandées par les élèves, toutes classes confondues. Chaque barre ou point représente une formation, et la hauteur (ou la valeur) indique le nombre total de vœux pour cette formation.
+Objectif : Identifier les formations les plus populaires parmi les élèves.
+5. Répartition des vœux par ville
+Description : Ce graphique montre la répartition des vœux en fonction des villes où se trouvent les établissements demandés. Chaque segment ou barre représente une ville, et sa taille indique le nombre de vœux pour cette ville.
+Objectif : Identifier les villes les plus demandées par les élèves pour leurs études.
+6. Répartition des types de formation
+Description : Ce graphique présente la répartition des types de formation (par exemple, BUT, BTS, Prépa, Licence) parmi tous les vœux soumis. Chaque segment ou barre correspond à un type de formation, et sa taille indique le nombre total de vœux pour ce type.
+Objectif : Comprendre les préférences globales des élèves en termes de types de formation.
+7. Vœux par établissement
+Description : Ce graphique affiche le nombre de vœux soumis pour les établissements les plus demandés. Chaque barre ou point représente un établissement, et la hauteur (ou la valeur) indique le nombre total de vœux pour cet établissement.
+Objectif : Identifier les établissements les plus populaires parmi les élèves.
+8. Élèves par formation
+Description : Ce graphique montre le nombre d'élèves ayant soumis des vœux pour chaque formation. Chaque barre ou point représente une formation, et la hauteur (ou la valeur) indique le nombre d'élèves ayant choisi cette formation.
+Objectif : Identifier les formations qui attirent le plus d'élèves.
+9. Évolution des vœux par semaine
+Description : Ce graphique illustre le nombre de vœux validés par semaine. Chaque point ou barre représente une semaine, et la hauteur (ou la valeur) indique le nombre de vœux validés durant cette période.
+Objectif : Suivre l'évolution temporelle des vœux soumis et validés par les élèves.

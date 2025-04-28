@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voeux-JP2 Admin</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='img/whiteBgColor.png') }}" type="image/png">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/locales/fr.js"></script>
+    <!-- ======= Styles ====== -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/siteweb/style.css') }}">
+
+</head>
+
+<body>
+
+    <!-- =============== Navigation ================ -->
+    <div class="container">
+        {% include 'components/navbar.html' %}
+
+        <!-- ========================= Principal ==================== -->
+        <div class="main">
+            <div class="topbar">
+                <div class="toggle">
+                    <ion-icon name="menu-outline"></ion-icon>
+                </div>
+                
+                <div class="user">
+                    <span>{{ user_role }}</span>
+                </div>
+            </div>
+            <hr class="barre-separatrice" style="display: block;">
+
+            <!-- ======================= Cartes PROF ================== -->
+            <div class="cardBox" style="display: none; grid-template-columns: repeat(3, 1fr);">
+                <div class="card">
+                    <div>
+                        <div class="numbers" id="elevesConnectes">--</div>
+                        <div class="cardName">Élèves Connectés</div>
+                    </div>
+                    <div class="iconBx">
+                        <ion-icon name="people-outline"></ion-icon>
+                    </div>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="numbers" id="elevesValideVoeux">--</div>
+                        <div class="cardName">Élèves ayant validé leurs vœux</div>
+                    </div>
+                    <div class="iconBx">
+                        <ion-icon name="checkmark-done-outline"></ion-icon>
+                    </div>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="numbers" id="vosMessagesDemandes">--</div>
+                        <div class="cardName">Vos Messages / Demandes</div>
+                    </div>
+                    <div class="iconBx">
+                        <ion-icon name="chatbubbles-outline"></ion-icon>
+                    </div>
+                </div>
+            </div>
+
+            
+            <!-- ICI LA BAR NOIR SEPARATRICE -->
+             
+            <!-- ======================= Liste des Classes ================== -->
+
+            <div class="cardBox" style="grid-template-columns: 1fr; gap: 20px;">
+                <div class="card unified-card">
+                    <div class="iconBx">
+                        <ion-icon name="lock-closed-outline"></ion-icon>
+                    </div>
+                    <div class="cardName">Empêcher la connexion des élèves au site</div>
+                    <label class="switch">
+                        <input id="can_student_access" type="checkbox" onchange="toggleAction(this)">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="card unified-card">
+                    <div class="iconBx">
+                        <ion-icon name="lock-closed-outline"></ion-icon>
+                    </div>
+                    <div class="cardName">Empêcher la connexion des profs au site</div>
+                    <label class="switch">
+                        <input id="can_prof_access" type="checkbox" onchange="toggleAction(this)">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="card unified-card">
+                    <div class="iconBx">
+                        <ion-icon name="refresh-outline"></ion-icon>
+                    </div>
+                    <div class="cardName">Empêcher les profs de débloquer les vœux des élèves</div>
+                    <label class="switch">
+                        <input id="can_prof_reset_voeux" type="checkbox" onchange="toggleAction(this)">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="card unified-card">
+                    <div class="iconBx">
+                        <ion-icon name="checkmark-circle-outline"></ion-icon>
+                    </div>
+                    <div class="cardName">Empêcher les élèves de confirmer leurs vœux</div>
+                    <label class="switch">
+                        <input id="can_student_validate" type="checkbox" onchange="toggleAction(this)">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="card unified-card">
+                    <div class="iconBx">
+                        <ion-icon name="mail-outline"></ion-icon>
+                    </div>
+                    <div class="cardName">Notifier par email après validation de tous les élèves de toutes les classes</div>
+                    <label class="switch">
+                        <input id="want_email_switch" type="checkbox" onchange="showPopup('emailPopup', this.checked, this)">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="card unified-card">
+                    <div class="iconBx">
+                        <ion-icon name="document-attach-outline"></ion-icon>
+                    </div>
+                    <div class="cardName">Ajouter des élèves avec un fichier CSV dans la base de donnée</div>
+                    <button style="background-color: green; color: white;" class="btn" onclick="window.location.href='/upload_csv'">Téléverser un CSV</button>
+                </div>
+
+                <div class="card unified-card">
+                    <div class="iconBx">
+                        <ion-icon name="trash-outline"></ion-icon>
+                    </div>
+                    <div class="cardName" style="color: red">Supprimer tous les élèves de la base de donnée</div>
+                    <button style="background-color: rgb(245, 61, 61); color: white;" class="btn" onclick="showPopup('deletePopup', true)">Supprimer</button>
+                    <!-- <button style="background-color: red; color: white;" class="btn" onclick="showPopup('deletePopup', true)">Supprimer</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup de confirmation pour la suppression -->
+
+    <div id="deletePopup" class="popup" style="display: none;">
+        <div class="popup-content">
+            <h2>Veuillez contacter l’un des développeurs suivants. </h2><br
+            <p>- karl.rahuel@gmail.com<br>
+            - morgan.gui35000@gmail.com<br>
+            - giovani.legrand@gmail.com<br>
+            - esteban.poupin@outlook.com</p>
+            <!--<label for="confirmationInput">Tapez "Suppression" pour confirmer :</label>-->
+            <!--<input type="text" id="confirmationInput" placeholder="Suppression" oninput="checkConfirmationInput()">-->
+            <!--<button id="confirmDeleteBtn" class="btn" disabled onclick="deleteAllStudents()">Supprimer</button>-->
+            <button class="btn" onclick="closePopup('deletePopup')">OK</button>
+        </div>
+    </div>
+    <!--
+    <div id="deletePopup" class="popup" style="display: none;">
+        <div class="popup-content">
+            <h2>Confirmer la suppression</h2>
+            <p>Êtes-vous sûr de vouloir supprimer tous les élèves ?</p>
+            <label for="confirmationInput">Tapez "Suppression" pour confirmer :</label>
+            <input type="text" id="confirmationInput" placeholder="Suppression" oninput="checkConfirmationInput()">
+            <button id="confirmDeleteBtn" class="btn" disabled onclick="deleteAllStudents()">Supprimer</button>
+            <button class="btn" onclick="closePopup('deletePopup')">Annuler</button>
+        </div>
+    </div>
+    -->
+    <!-- Popup pour la saisie de l'adresse email -->
+    <div id="emailPopup" class="popup" style="display: none;">
+        <div class="popup-content">
+            <h2>Notifier par email</h2>
+            <p>Veuillez renseigner une adresse email pour recevoir la notification :</p>
+            <input type="email" id="emailInput" placeholder="exemple@domaine.com">
+            <button class="btn" onclick="sendEmail()">Enregistrer</button>
+            <button class="btn" onclick="closePopup('emailPopup')">Annuler</button>
+        </div>
+    </div>
+
+    <script>
+        const canStudentAccess = "{{can_student_access}}".toLowerCase();
+        const canProfAccess = "{{can_prof_access}}".toLowerCase();
+        const canProfResetVoeux = "{{can_prof_reset_voeux}}".toLowerCase();
+        const canStudentValidate = "{{can_student_validate}}".toLowerCase();   
+        const want_email = "{{want_email}}".toLowerCase();
+        const email = "{{email}}";
+    </script>
+
+    <!-- =========== Scripts =========  -->
+    <script src="{{ url_for('static', filename='js/siteweb/main_admin.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <!-- ====== ionicons ======= -->
+    <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.js"></script>
+    
+</body>
+
+</html>

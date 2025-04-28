@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voeux-JP2 Elève</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <link rel="icon" href="{{ url_for('static', filename='img/whiteBgColor.png') }}" type="image/png">
+
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+    <!-- ======= Styles ====== -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard/style.css') }}">
+</head>
+
+<body>
+
+    <!-- =============== Navigation ================ -->
+    <div class="container">
+        {% include 'components/navbar.html' %}
+
+        <!-- ========================= Principal ==================== -->
+        <div class="main">
+            <div class="topbar">
+                <div class="toggle">
+                    <ion-icon name="menu-outline"></ion-icon>
+                </div>
+
+                <div class="user">
+                    <span>{{ user_role }}</span>
+                </div>
+            </div>
+
+            <!-- ICI LA BAR NOIR SEPARATRICE -->
+            <hr class="barre-separatrice" style="display: block;">
+
+            <!-- ========== Notification Deadline ========= -->
+            <div class="deadline-notice" style="display: none;">
+                {% if deadline %}
+                    <p>La date limite pour valider votre pré-classement est fixée au <strong>{{ deadline.strftime('%d/%m/%Y à %H:%M') }}</strong>.</p>
+                {% else %}
+                    <p>Aucune date limite n'est actuellement définie.</p>
+                {% endif %}
+            </div>
+
+            <!-- ================ Valider les Vœux ================= -->
+            <div class="cardHeader" style="text-align: center; margin-bottom: 40px;">
+                <p id="confirmationMessage" style="display: none; color: green; text-align: center;">Vos vœux ont été validés avec succès !</p>
+                <a href="#" class="btn" id="validateBtn" style="font-size: 1.2em;">Valider mon Pré-classement</a>
+                <a href="#" class="btn" id="downloadXlsBtn" style="font-size: 1.2em; display: none;">Télécharger mes vœux (XLS)</a>
+                <a href="#" class="btn" id="downloadPdfBtn" style="font-size: 1.2em; display: none;">Télécharger mes vœux (PDF)</a>
+            </div>
+            <!-- ================ Liste des Vœux des Élèves ================= -->
+            <div class="details">
+                <div class="recentOrders" id="recentOrdersContainer">
+                    <div class="cardHeader">
+                        <h2>Le pré-classement de vos vœux</h2>
+                        <p id="editModeMessage" style="display: none; color: green;">Vous êtes en mode édition. Vous pouvez modifier l'ordre des vœux et déclasser certains voeux</p>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <a href="#" class="btn" id="modifyBtn">Modifier</a>
+                        </div>
+                        <div id="downloadMenu" style="display: none;">
+                            <button class="btn" id="downloadBtn">Télécharger mes vœux</button>
+                            <div id="dropdownMenu">
+                                <a href="#" class="dropdown-item" id="downloadXls">Télécharger en XLSX</a>
+                                <a href="#" class="dropdown-item" id="downloadPdf">Télécharger en PDF</a>
+                            </div>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>#</td>
+                                <td>Nom de l'établissement</td>
+                                <td>Ville</td>
+                                <td>Type de Voie</td>
+                                <td>Spécialité</td>
+                            </tr>
+                        </thead>
+                        <tbody id="sortable">
+                            <p id="noVoeuxMessage" style="display: none; color: orange;">Vous n'avez activé aucun vœu. Appuyer sur "Modifier" pour activer ceux de votre choix.</p>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="details" style="display: none;">
+                <div class="recentOrders" id="disabledOrdersContainer">
+                    <div class="cardHeader">
+                        <h2>Vos vœux non pris en compte dans le pré-classement</h2>
+                        <p id="editModeMessageUnclassed" style="display: none; color: green;">Vous êtes en mode édition. Vous pouvez reclasser certains voeux.</p>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                    </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <td id="sortByName">Nom de l'établissement <i class="ri-arrow-up-down-line"></i></td>
+                                <td id="sortByCity">Ville <i class="ri-arrow-up-down-line"></i></td>
+                                <td id="sortByType">Type de Voie <i class="ri-arrow-up-down-line"></i></td>
+                                <td id="sortBySpecialty">Spécialité <i class="ri-arrow-up-down-line"></i></td>
+                            </tr>
+                        </thead>
+                        <tbody id="disabledSortable">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+
+         
+            <!-- Popup de confirmation -->
+            <div id="popup" class="popup" style="display: none;">
+                <div class="popup-content">
+                    <p>Êtes-vous sûr de valider votre pré-classement ?</p>
+                    <p style="font-size: 0.9em; color: #555;">Vous ne pourrez plus Activer/Désactiver vos voeux.</p>
+                    <p style="font-size: 0.9em; color: #555;">Vous ne pourrez plus modifier l'ordre de classement de vos voeux</p>
+                    <p style="font-size: 0.9em; color: #555;">Cette action est irréversible et ne pourra être modifiée que par un professeur.</p>
+                    <button id="confirmBtn" class="btn">Oui</button>
+                    <button id="cancelBtn" class="btn">Non</button>
+                </div>
+            </div>
+            <div class="overlay" id="popup-overlay" style="display: none;"></div>
+            
+            <div class="overlay" id="popup-overlay"></div>
+            <div id="deadline-popup" class="deadline-popup">
+                <div class="deadline-popup-content">
+                    <h3>Attention !</h3>
+                    <p id="deadline-message"></p>
+                    <button class="understand-btn">J'ai compris</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tutorial-overlay" class="tutorial-overlay" style="display: none;">
+        <div class="tutorial-highlight"></div>
+        <div class="tutorial-description">
+            <p>Ce bouton vous permet de modifier l'ordre de vos vœux ou d'activer/désactiver certains vœux.</p>
+            <button id="tutorial-next-btn" class="btn tutorial-next-btn">Suivant</button>
+        </div>
+    </div>
+    
+    <!-- =========== Scripts =========  -->
+    <script defer src="{{ url_for('static', filename='js/dashboard/didacticiel.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='js/dashboard/main_eleve.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <!-- ====== ionicons ======= -->
+    <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.js"></script>
+    <script defer src="{{ url_for('static', filename='js/dashboard/deadline-popup.js') }}"></script>
+    <!-- Script pour trier par ville -->
+</body>
+</html>

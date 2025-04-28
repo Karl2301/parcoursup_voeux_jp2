@@ -1,0 +1,37 @@
+# Ignorer les dossiers __pycache__
+__pycache__/
+
+# Ignorer les dossiers routes/__pycache__
+routes/__pycache__/
+
+database.sqlite3
+
+# Ignorer les fichiers de configuration spécifiques à l'IDE
+.vscode/
+
+# Ignorer les fichiers de log
+*.log
+
+# Ignorer les fichiers de cache de Jupyter Notebook
+.ipynb_checkpoints/
+
+# Ignorer les environnements virtuels
+.venv/
+env/
+
+# Ignorer le dossier .history
+.history/
+
+# Ignorer les fichiers .DS_Store
+.DS_Store
+
+.env
+app/logs/app.log.1
+app/logs/app.log.2
+app/logs/app.log.3
+app/logs/app.log.4
+app/logs/app.log.5
+app/routes/maj.txt
+20250426_020001.sql
+mariadb.sql
+dump_local.sql

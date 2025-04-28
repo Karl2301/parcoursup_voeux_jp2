@@ -1,0 +1,33 @@
+.notification-card {
+    background: var(--white);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 7px 25px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, background 0.3s ease;
+    cursor: pointer;
+}
+
+.notification-card:hover {
+    transform: translateY(-5px);
+    background: #2a2185;
+    color: var(--white);
+}
+
+.notification-summary h3 {
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+.notification-summary p {
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.notification-details {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #ccc;
+    font-size: 1rem;
+    color: inherit;
+}

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voeux JP2</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <!-- ======= Styles ====== -->
+    <link rel="icon" href="{{ url_for('static', filename='img/whiteBgColor.png') }}" type="image/png">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/aide/aide.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/settings/style_dark.css') }}">
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- =============== Navigation ================ -->
+        {% include 'components/navbar.html' %}
+
+        <div class="main">
+            <div class="topbar">
+                <div class="toggle">
+                    <ion-icon name="menu-outline"></ion-icon>
+                </div>
+    
+                <div class="user">
+                    <span>{{ user_role }}</span>
+                </div>
+            </div>
+
+            <!-- ======================= PAGE ================== -->
+            <div class="main-content" style="padding: 2em; text-align: center;">
+                <h1>Besoin d'aide ?</h1>
+                <p>Remplissez le formulaire ci-dessous pour nous contacter.</p><br>
+                
+                <form action="/aide" method="POST" class="contact-form" style="max-width:800px; margin:0 auto;">
+                    <label for="titre">Titre du message :</label><br><br>
+                    <input type="text" id="titre" name="titre" required>
+
+                    <label for="messageEditable">Message :</label><br><br>
+                    <textarea id="message" name="message" rows="10" cols="50" maxlength="500" required></textarea>
+                                    
+                    <button type="submit">Envoyer</button>
+                </form>
+            </div>
+            <div id="notification" class="notification">✅ Votre formulaire a bien été envoyé ! Un professeur vous contactera bientôt.</div>
+        </div>
+    </div>
+
+    <!-- ======= Scripts ======= -->
+    <!-- Notification -->
+    <script>
+        document.querySelector('.contact-form').addEventListener("submit", function(event) {
+            event.preventDefault(); // Empêche l'envoi immédiat du formulaire
+
+            // Affiche la notification fluide
+            let notif = document.getElementById("notification");
+            notif.style.display = "block";
+
+            // Disparition automatique après 5 secondes
+            setTimeout(function() {
+                notif.style.display = "none";
+            }, 5000);
+
+            // Soumettre le formulaire après 1 seconde
+            setTimeout(() => {
+                event.target.submit();
+            }, 1000);
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+    const body = document.body;
+    const recentOrdersContainer = document.getElementById('recentOrdersContainer');
+    fetch('/get_theme', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        if (data.darkTheme === true) {
+            body.classList.add("dark");
+            localStorage.setItem("dark-theme", "enabled");
+            if (recentOrdersContainer) {
+                recentOrdersContainer.style.backgroundColor = "#333333";
+            }
+            body.style.color = "white"; // Set text color to white
+        } else {
+            body.classList.remove("dark");
+            localStorage.setItem("dark-theme", "disabled");
+            if (recentOrdersContainer) {
+                recentOrdersContainer.style.backgroundColor = "";
+            }
+            body.style.color = ""; // Reset text color
+        }
+    });
+});
+    </script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.js"></script>
+    <script src="{{ url_for('static', filename='js/aide/main.js') }}"></script>
+</body>
+</html>

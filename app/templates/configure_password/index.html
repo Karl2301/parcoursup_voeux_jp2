@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+  <link rel="icon" href="{{ url_for('static', filename='img/whiteBgColor.png') }}" type="image/png">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/login/main.css') }}">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo_projet.png') }}">
+  <title>VoeuxSup</title>
+</head>
+
+<body>
+  <div class="container">
+    <div class="nav">
+      <ul>
+        <li>
+          <div style="display: flex; align-items: center;">
+            <img class="logo" width="60px" height="60px" 
+                 src="{{ url_for('static', filename='img/logo_jp2.png') }}" 
+                 style="margin-right: 10px; filter: brightness(0) ;">
+            <h3 style="color: rgb(0, 0, 0);">Jean-Paul II</h3>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="hero">
+      <div class="form">
+        <div class="text">
+          <p class="gray">Site tiers, ne communiquant pas avec le site Parcoursup</p>
+          <h1>Définir un mot de passe<span class="blue">.</span></h1>
+        </div>
+      
+        <!-- Conteneur pour les messages d'erreur -->
+        <div id="error-container"></div>
+      
+        <form id="login-form" class="centered-flex" action="/configure_password" method="post">
+          <!-- Champs du formulaire -->
+          <div id="password-container">
+            <div class="input-icons">
+              <legend for="password">Mot de passe</legend>
+              <div class="icon-center">
+                <input class="input" type="password" id="password" name="password" placeholder="Mot de passe" required>
+              </div>
+            </div>
+          </div>
+      
+          <div id="confirm-password-container">
+            <div class="input-icons">
+              <legend for="confirm-password">Confirmer mot de passe</legend>
+              <div class="icon-center">
+                <input class="input" type="password" id="confirm_password" name="confirm_password" placeholder="Confirmer mot de passe" required>
+              </div>
+            </div>
+          </div>
+      
+          <div class="buttons">
+            <button type="submit" class="btn blue-btn">Configurer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="footer">
+      JP2
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('login-form').addEventListener('submit', async function (event) {
+      event.preventDefault(); // Empêche le rechargement de la page
+  
+      const form = event.target;
+      const formData = new FormData(form);
+  
+      try {
+        const response = await fetch(form.action, {
+          method: form.method,
+          body: formData
+        });
+  
+        const result = await response.json();
+  
+        // Supprime les anciens messages d'erreur
+        const errorContainer = document.getElementById('error-container');
+        if (errorContainer) {
+          errorContainer.innerHTML = ''; // Vide le conteneur
+        }
+  
+        if (response.ok) {
+          // Affiche une notification de succès
+              window.location.href = result.redirect_url;
+        } else {
+          // Affiche les messages d'erreur
+          const errorMessage = document.createElement('div');
+          errorMessage.className = 'error-messages';
+  
+          // Ajoute une icône d'erreur
+          const errorIcon = document.createElement('span');
+          errorIcon.className = 'icon';
+          errorIcon.textContent = '⚠️'; // Icône d'avertissement
+          errorMessage.appendChild(errorIcon);
+  
+          // Ajoute le texte du message d'erreur
+          const errorText = document.createElement('p');
+          errorText.textContent = result.error;
+          errorMessage.appendChild(errorText);
+  
+          // Insère le message d'erreur dans le conteneur
+          errorContainer.appendChild(errorMessage);
+        }
+      } catch (error) {
+        console.error('Erreur lors de la soumission du formulaire:', error);
+      }
+    });
+  </script>
+</html>

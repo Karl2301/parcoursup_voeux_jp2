@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login/main.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='img/whiteBgColor.png') }}" type="image/png">
+    <title>Identifiant Perdu</title>
+    <style>
+        .btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    
+        .btn::after {
+            content: "➜";
+            font-size: 18px;
+            position: absolute;
+            right: -25px;
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+        }
+    
+        .btn:hover {
+            background-color: #0056b3;
+            padding-right: 35px;
+        }
+    
+        .btn:hover::after {
+            right: 10px;
+            opacity: 1;
+        }
+
+        .blue {
+            color: blue;
+        }
+        /* Style pour la notification fluide */
+        .notification {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #28a745;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="nav">
+            <ul>
+                <li>
+                    <div style="display: flex; align-items: center;">
+                        <img width="60px" height="60px" src="{{ url_for('static', filename='img/logo_jp2.png') }}" style="margin-right: 10px;">
+                        <h3 style="color: black;">Jean-Paul II</h3>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="hero">
+            <div class="text">
+                <h1>Identifiant Perdu<font color="blue">.</font></h1>
+                    <p class="gray">Vous avez perdu votre <font color="blue">identifiant</font> ?</p>
+                    <p class="gray">Ne vous faîtes aucun <font color="blue">souci</font>, nous allons nous occuper de cela.</p>
+            </div>
+            <div class="form">
+                <form id="login-form" class="centered-flex" action="/lost_id" method="post">
+
+                    <div class="id" onclick="document.getElementById('nom').focus();">
+                        <div class="input-icons">
+                            <legend for="nom">Nom</legend>
+                            <div class="icon-center">
+                                <input class="input" type="text" id="nom" name="nom" placeholder="Nom" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="id" onclick="document.getElementById('prenom').focus();">
+                        <div class="input-icons">
+                            <legend for="prenom">Prénom</legend>
+                            <div class="icon-center">
+                                <input class="input" type="text" id="prenom" name="prenom" placeholder="Prénom" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="id">
+                        <div class="input-icons">
+                            <legend for="classe">Classe</legend>
+                            <div class="icon-center">
+                                <select class="input" id="classe" name="classe" required>
+                                    <option value="" disabled selected>Choisissez votre classe</option>
+                                    <option value="TA">TA</option>
+                                    <option value="TB">TB</option>
+                                    <option value="TC">TC</option>
+                                    <option value="TD">TD</option>
+                                    <option value="TE">TE</option>
+                                    <option value="TF">TF</option>
+                                    <option value="TG">TG</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="buttons">
+                        <button type="submit" class="btn">Envoyer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="footer">JP2</div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification" style="display: none;">
+        ✅ Votre demande a bien été envoyée ! Un professeur vous contactera bientôt.
+    </div>
+
+    <script>
+        document.getElementById("login-form").addEventListener("submit", function(event) {
+            event.preventDefault(); // Empêche l'envoi immédiat du formulaire
+    
+            // Affiche la notification fluide
+            let notif = document.getElementById("notification");
+            notif.style.display = "block";
+    
+            // Disparition automatique après 3 secondes puis soumission du formulaire
+            setTimeout(() => {
+                notif.style.display = "none";
+                event.target.submit();
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

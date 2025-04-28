@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="Site de pré-classement des vœux pour les élèves de Jean-Paul II.">
+  <meta name="author" content="Karl RAHUEL">
+  <meta name="keywords" content="Voeux, Parcoursup, Pré-classement, Jean-Paul II, Lycée">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/login/main.css') }}">
+  <link rel="icon" href="{{ url_for('static', filename='img/whiteBgColor.webp') }}">
+  <title>VoeuxSup</title>
+</head>
+
+<body>
+  <div class="container">
+    <div class="nav">
+      <ul>
+        <li>
+          <div style="display: flex; align-items: center;">
+            <img width="50px" height="50px" id="imagelogo" src="{{ url_for('static', filename='img/logo_login.webp') }}" alt="Image" style="margin-right: 10px;">
+            <h3 style="color: black;">Jean-Paul II</h3>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="hero">
+      <div class="text">
+        <p class="gray">Site tiers, ne communiquant pas avec le site Parcoursup</p>
+        <h1>Pré-classement des vœux<span class="blue">.</span></h1>
+        <p class="gray">
+          Identifiant oublié ? <a class="blue" href="/lost_id"><span class="blue">Faire une demande</span></a>
+        </p>
+      </div>
+      <div class="form">
+        <form id="login-form" class="centered-flex" action="/login" method="POST">
+          {{ turnstile }}
+          <!-- Zone du champ identifiant -->
+          <div id="identifiant-container" class="id">
+            <div class="input-icons" onclick="document.getElementById('identifiant').focus();">
+              <legend for="identifiant">Identifiant</legend>
+              <div class="icon-center">
+                <input class="input" type="text" id="identifiant" name="identifiant" placeholder="Identifiant" autocomplete="off" required>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="dark" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
+                  <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1h-4zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1h-2z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Champ Mot de passe -->
+          <div id="password-container"></div>
+            <div class="input-icons" onclick="document.getElementById('password').focus();">
+              <legend for="password">Mot de passe</legend>
+              <div class="icon-center">
+              <input class="input" type="password" id="password" name="password" placeholder="Mot de passe" autocomplete="off" required>
+              <!-- Nouvelle icône de clé -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" class="bi bi-key" viewBox="0 0 16 16">
+                <path d="M3 8a3 3 0 1 1 6 0 3 3 0 0 1-6 0z"/>
+                <path d="M8.7 5.3a.5.5 0 0 1 0 .7L7.707 7H11a1 1 0 0 1 1 1v.293l1 1V8a2 2 0 0 0-2-2H7.707l1.293-1.293a.5.5 0 0 1 .707 0z"/>
+              </svg>
+              </div>
+            </div>
+          </div>
+          <div class="text">
+            <p class="gray">
+              En vous connectant, vous acceptez la <a class="blue" href="/licence"><span class="blue">licence</span></a>.
+            </p>
+          </div>
+          <div class="buttons">
+            <button type="submit" class="btn blue-btn">Se Connecter</button>
+          </div>  
+        </form>
+      </div>
+    </div>
+    <div class="footer">
+      JP2
+    </div>
+  </div>
+</body>
+<script async src="https://openfpcdn.io/fingerprintjs/v3/fingerprint.js" onload="initFingerprint()"></script>
+<script>
+  function initFingerprint() {
+    FingerprintJS.load().then(fp => {
+      fp.get().then(result => {
+        const visitorId = result.visitorId;
+        console.log("Fingerprint:", visitorId);
+
+        // Envoie au serveur si tu veux
+        fetch("/log-fingerprint", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fingerprint: visitorId })
+        });
+      });
+    });
+  }
+</script>
+
+</html>

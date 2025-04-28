@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - Vœux JP2</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <link rel="icon" href="{{ url_for('static', filename='img/whiteBgColor.png') }}" type="image/png">
+    <link id="theme-link" rel="stylesheet" href="{{ url_for('static', filename='css/dashboard/style_dark.css') }}">
+</head>
+
+
+<body>
+    <script></script>
+    <div class="container">
+        <!-- =============== Navigation ================ -->
+        {% include 'components/navbar.html' %}
+
+        <div class="main">
+            <div class="topbar">
+                <div class="toggle">
+                    <ion-icon name="menu-outline"></ion-icon>
+                </div>
+
+                <div class="user">
+                    <span>Administrateur</span>
+                </div>
+            </div>
+
+            <!-- ======================= Cartes ADMIN ================== -->
+            <div class="cardBox" style="display: none;">
+            <div class="card">
+                <div>
+                    <div class="numbers" id="elevesConnectes">--</div>
+                    <div class="cardName">Élèves Connectés</div>
+                </div>
+                <div class="iconBx">
+                    <ion-icon name="people-outline"></ion-icon>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div>
+                    <div class="numbers" id="elevesValideVoeux">--</div>
+                    <div class="cardName">Élèves ayant validé leurs vœux</div>
+                </div>
+                <div class="iconBx">
+                    <ion-icon name="checkmark-done-outline"></ion-icon>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div>
+                    <div class="numbers" id="vosMessagesDemandes">--</div>
+                    <div class="cardName">Vos Messages / Demandes</div>
+                </div>
+                <div class="iconBx">
+                    <ion-icon name="chatbubbles-outline"></ion-icon>
+                </div>
+            </div>
+            
+            <div class="card" id="siteStatusCard">
+                <div>
+                    <div class="numbers" id="nombreClasses">-----</div>
+                    <div class="cardName">Nombre de classes</div>
+                    <div id="etatSite"></div>
+                </div>
+                <div class="iconBx">
+                    <!-- Vous pouvez ajouter une icône ici -->
+                </div>
+            </div>
+
+            <!-- ======================= Tables de Données ================== -->
+            <div class="details">
+                <div class="recentOrders">
+                    <div class="cardHeader">
+                        <h2>Actions Récentes</h2>
+                        <a href="#" class="btn">Voir Tout</a>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>Utilisateur</td>
+                                <td>Action</td>
+                                <td>Date</td>
+                                <td>Statut</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Les données seront insérées dynamiquement ici -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========== Scripts =========  -->
+    <script type="text/javascript">
+        var dashboardTheme = "{{ dashboard_theme }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/settings/settings.js') }}"></script>
+    
+    <!-- ====== ionicons ======= -->
+    <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

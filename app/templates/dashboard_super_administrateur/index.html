@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voeux-JP2 Admin</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='img/whiteBgColor.png') }}" type="image/png">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/locales/fr.js"></script>
+    <!-- ======= Styles ====== -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard/style.css') }}">
+
+</head>
+
+<body>
+
+    <!-- =============== Navigation ================ -->
+    <div class="container">
+        {% include 'components/navbar.html' %}
+
+        <!-- ========================= Principal ==================== -->
+        <div class="main">
+            <div class="topbar">
+                <div class="toggle">
+                    <ion-icon name="menu-outline"></ion-icon>
+                </div>
+                
+                <div class="user">
+                    <span>{{ user_role }}</span>
+                </div>
+            </div>
+            <hr class="barre-separatrice" style="display: block;">
+
+            <!-- ======================= Cartes PROF ================== -->
+            <div class="cardBox" style="display: none; grid-template-columns: repeat(3, 1fr);">
+                <div class="card">
+                    <div>
+                        <div class="numbers" id="elevesConnectes">--</div>
+                        <div class="cardName">Élèves Connectés</div>
+                    </div>
+                    <div class="iconBx">
+                        <ion-icon name="people-outline"></ion-icon>
+                    </div>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="numbers" id="elevesValideVoeux">--</div>
+                        <div class="cardName">Élèves ayant validé leurs vœux</div>
+                    </div>
+                    <div class="iconBx">
+                        <ion-icon name="checkmark-done-outline"></ion-icon>
+                    </div>
+                </div>
+                <div class="card">
+                    <div>
+                        <div class="numbers" id="vosMessagesDemandes">--</div>
+                        <div class="cardName">Vos Messages / Demandes</div>
+                    </div>
+                    <div class="iconBx">
+                        <ion-icon name="chatbubbles-outline"></ion-icon>
+                    </div>
+                </div>
+            </div>
+
+            
+            <!-- ICI LA BAR NOIR SEPARATRICE -->
+             
+            <!-- ======================= Liste des Classes ================== -->
+            <div class="liste_classe_class" id="listeclasses" style="max-width: 97%; grid-template-columns: repeat(7fr, 2fr); display: flex; justify-content: center;">
+                
+            </div>
+            <!-- ========== Section Deadline pour Super Admin ========= -->
+            <div class="details-container" style="display: flex; justify-content: space-between; gap: 20px; align-items: flex-start;">
+                <!-- Tableau des Professeurs -->
+                <div class="details" id="TableProf" style="flex: 1;">
+                    <div class="recentOrders" id="recentOrdersContainer">
+                        <div class="cardHeader">
+                            <h2>Tableau des Professeurs</h2>
+                            <a href="#" class="btn" id="NewProf">Ajouter</a>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <td>Identifiant</td>
+                                    <td>Prénom / Nom</td>
+                                    <td>Classe(s) affiliée(s)</td>
+                                    <td>Actions</td>
+                                </tr>
+                            </thead>
+                            <tbody id="ProfSortable">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tableau des Administrateurs -->
+                <div class="details" id="TableAdmin" style="flex: 1; display: none;">
+                    <div class="recentOrders" id="recentOrdersAdminContainer">
+                        <div class="cardHeader">
+                            <h2>Tableau des Administrateurs</h2>
+                            <a href="#" class="btn" id="NewAdmin">Ajouter</a>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <td>Identifiant</td>
+                                    <td>Prénom / Nom</td>
+                                    <td>Email</td>
+                                    <td>Actions</td>
+                                </tr>
+                            </thead>
+                            <tbody id="AdminSortable">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- ======================================================== -->
+            <!-- ======================= FIN Tableau des Professeurs ================== -->
+        </div>
+    </div>
+
+    <div id="profPopup" class="prof-popup">
+        <div class="prof-popup-content">
+            <div class="prof-popup-header">
+                <div class="unique-id">
+                    <label>Identifiant Unique:</label>
+                    <span id="identifiant_unique">--</span>
+                </div>
+                <div class="status">
+                    <div id="status_online" class="status-indicator"></div>
+                </div>
+            </div>
+            <form id="professeurForm">
+                <div class="form-group">
+                    <label for="prenom">Prénom:</label>
+                    <input type="text" id="prenom" name="prenom">
+                </div>
+                <div class="form-group">
+                    <label for="nom">Nom:</label>
+                    <input type="text" id="nom" name="nom">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email">
+                </div>
+                <div class="form-group">
+                    <label for="niveau_classe">Niveau Classe:</label>
+                    <div id="niveau_classe" class="checkbox-group">
+                        <!-- Les cases à cocher seront ajoutées dynamiquement -->
+                    </div>
+                </div>
+                <button type="submit" class="btn">Enregistrer</button>
+                <button type="button" class="btn" id="cancelBtn">Annuler</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="resetPasswordPopup" class="prof-popup">
+        <div class="prof-popup-content">
+            <h2>Confirmer la réinitialisation</h2>
+            <p>Êtes-vous sûr de vouloir réinitialiser le mot de passe de ce professeur ?</p>
+            <button id="confirmResetBtn" class="btn">Oui</button>
+            <button id="cancelResetBtn" class="btn">Non</button>
+        </div>
+    </div>
+
+    <div id="addProfPopup" class="prof-popup">
+        <div class="prof-popup-content">
+            <div class="prof-popup-header">
+                <h2>Ajouter un Professeur</h2>
+            </div>
+            <form id="addProfForm">
+                <div class="form-group">
+                    <label for="new_identifiant">Identifiant:</label>
+                    <input type="text" id="new_identifiant" name="identifiant" required>
+                </div>
+                <div class="form-group">
+                    <label for="new_prenom">Prénom:</label>
+                    <label style="font-size: smaller; color: grey;">(optionnel)</label>
+                    <input type="text" id="new_prenom" name="prenom">
+                </div>
+                <div class="form-group">
+                    <label for="new_nom">Nom:</label>
+                    <label style="font-size: smaller; color: grey;">(optionnel)</label>
+                    <input type="text" id="new_nom" name="nom">
+                </div>
+                <div class="form-group">
+                    <label for="new_email">Email:</label>
+                    <label style="font-size: smaller; color: grey;">(optionnel)</label>
+                    <input type="email" id="new_email" name="email">
+                </div>
+                <div class="form-group">
+                    <label for="new_niveau_classe">Classe(s) affiliée(s)</label>
+                    <div id="new_niveau_classe" class="checkbox-group">
+                        <!-- Les cases à cocher seront ajoutées dynamiquement -->
+                        <div>
+                            <input type="checkbox" id="new_classe_TA" value="TA">
+                            <label for="new_classe_TA">TA</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="new_classe_TB" value="TB">
+                            <label for="new_classe_TB">TB</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="new_classe_TC" value="TC">
+                            <label for="new_classe_TC">TC</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="new_classe_TD" value="TD">
+                            <label for="new_classe_TD">TD</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="new_classe_TE" value="TE">
+                            <label for="new_classe_TE">TE</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="new_classe_TF" value="TF">
+                            <label for="new_classe_TF">TF</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="new_classe_TG" value="TG">
+                            <label for="new_classe_TG">TG</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="new_classe_TH" value="TH">
+                            <label for="new_classe_TH">TH</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="new_classe_TI" value="TI">
+                            <label for="new_classe_TI">TI</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="new_classe_TJ" value="TJ">
+                            <label for="new_classe_TJ">TJ</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="new_classe_TK" value="TK">
+                            <label for="new_classe_TK">TK</label>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn">Enregistrer</button>
+                <button type="button" class="btn" id="cancelAddBtn">Annuler</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="deleteProfPopup" class="prof-popup">
+        <div class="prof-popup-content">
+            <h2>Confirmer la suppression</h2>
+            <p>Êtes-vous sûr de vouloir supprimer ce professeur ?</p>
+            <button id="confirmDeleteBtn" class="btn">Oui</button>
+            <button id="cancelDeleteBtn" class="btn">Non</button>
+        </div>
+    </div>
+
+    <!-- =========== Scripts =========  -->
+    <script src="{{ url_for('static', filename='js/dashboard/main_admin.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <!-- ====== ionicons ======= -->
+    <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.js"></script>
+    
+</body>
+
+</html>

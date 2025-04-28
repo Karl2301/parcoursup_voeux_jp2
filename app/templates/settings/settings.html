@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paramètres</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <link rel="icon" href="{{ url_for('static', filename='img/whiteBgColor.png') }}" type="image/png">
+    <link id="theme-link" rel="stylesheet" href="{{ url_for('static', filename='css/settings/style_dark.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/settings/popup.css') }}">
+
+
+    
+</head>
+
+<body>
+    <!-- =============== Navigation ================ -->
+    <div class="container">
+        {% include 'components/navbar.html' %}
+
+        <div class="main">
+            <div class="topbar">
+                <div class="toggle">
+                    <ion-icon name="menu-outline"></ion-icon>
+                </div>
+                <div class="user">
+                    <span>{{ user_role }}</span>
+                </div>
+            </div>
+
+            <!-- ======================= Cartes ================== -->
+            <div class="cardBox"> 
+                
+
+            <!-- ================ Div settings ================= -->
+                <div class="card_settings" style="display: flex; align-items: center;">
+                    <span style="font-size: 2rem; margin-right: 15px;">
+                        <ion-icon name="contrast" style="font-size: 3rem;"></ion-icon>
+                    </span>
+                    <span style="margin-bottom: 10px;">Mode Sombre</span>
+                    <div class="settingsItem" style="display: flex; flex-direction: column; align-items: center;">
+                        
+                        <div style="display: flex; align-items: center;">
+                            <input type="checkbox" class="checkbox" id="checkbox">
+                            <label for="checkbox" class="checkbox-label" style="display: flex; align-items: center;">
+                                <span class="ball"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card_settings" onclick="window.location.href='/change_password'" style="text-align: center; display: flex; justify-content: center; align-items: center;">
+                    <span style="font-size: 2rem; margin-right: 15px;">
+                        <ion-icon name="lock-closed" style="font-size: 3rem;"></ion-icon>
+                    </span>
+                    <div class="settingsItem" style="display: flex; justify-content: center; align-items: center;">
+                        <span>Changer le mot de passe</span>
+                    </div>
+                </div>
+
+                <div id="change_username" class="card_settings" onclick="window.location.href='/change_username'" style="display: none; text-align: center; justify-content: center; align-items: center;">
+                    <span style="font-size: 2rem; margin-right: 15px;">
+                        <ion-icon name="person-circle" style="font-size: 3rem;"></ion-icon>
+                    </span>
+                    <div class="settingsItem" style="display: flex; justify-content: center; align-items: center;">
+                        <span>Changer de nom d'utilisateur</span>
+                    </div>
+                </div>
+
+                <div id="card_email" class="card_settings" style="align-items: center; display : none;">
+                    <span style="font-size: 2rem; margin-right: 15px;">
+                        <ion-icon name="mail-outline" style="font-size: 3rem;"></ion-icon>
+                    </span>
+                    <span style="margin-bottom: 10px;">Notification par email</span>
+                    <div class="settingsItem" style="display: flex; flex-direction: column; align-items: center;">
+                        <div style="display: flex; align-items: center;">
+                            <input type="checkbox" class="checkbox" id="emailNotificationCheckbox" onclick="handleEmailNotificationToggle()">
+                            <label for="emailNotificationCheckbox" class="checkbox-label" style="display: flex; align-items: center;">
+                                <span class="ball"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="emailPopup" class="popup" style="display: none;">
+        <div class="popup-content">
+            <h2>Notifier par email</h2><br>
+            <p>Vous recevrez un email une fois les vœux validés par tous les élèves de vos classes affiliées.</p><br>
+            <p>Veuillez renseigner une adresse email pour recevoir la notification :</p>
+            <input type="email" id="emailInput" placeholder="votre.email@domaine.com">
+            <div class="popup-buttons">
+                <button class="btn" onclick="sendEmail()">Enregistrer</button>
+                <button class="btn" onclick="closePopup('emailPopup')">Annuler</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- =========== Scripts =========  -->
+    <script type="text/javascript">
+    // Définir la variable 'dashboard_theme' dans le HTML
+    var dashboardTheme = "{{ dashboard_theme }}";
+    </script>
+    <script defer src="{{ url_for('static', filename='js/settings/settings.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <!-- ====== ionicons ======= -->
+    <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.js"></script>
+    
+       
+</body>
+</html>

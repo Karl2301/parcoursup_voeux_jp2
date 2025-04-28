@@ -1,0 +1,68 @@
+body {
+    background-color: #fff;
+    font-family: Arial, sans-serif;
+    padding: 2rem;
+  }
+
+  .log {
+    display: flex;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    overflow: hidden;
+  }
+
+  .log-indicator {
+    width: 6px;
+  }
+
+  .log-content {
+    padding: 1rem;
+    flex-grow: 1;
+  }
+
+  .log-title {
+    font-weight: bold;
+    color: black;
+    margin-bottom: 0.5rem;
+  }
+
+  .log-description {
+    font-size: 0.95rem;
+    color: #535050;
+  }
+
+  /* Types de logs */
+  .info .log-indicator {
+    background-color: #0000FF; /* bleu */
+  }
+  
+  .msg .log-indicator {
+    background-color: #808080; /* gris */
+  }
+  
+  .bad .log-indicator {
+    background-color: #FFA500; /* orange */
+  }
+
+  .success .log-indicator {
+    background-color: #00FF00; /* vert */
+  }
+
+  .error .log-indicator {
+    background-color: #FF0000; /* rouge */
+  }
+
+  .warning .log-indicator {
+    background-color: #FFFF00; /* jaune */
+  }
+  
+  .log-time {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: #888;
+    align-self: flex-end;
+    margin-right: 10px;
+    margin-bottom: 5px;
+  }

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil Élève - {{ eleve.identifiant_unique }}</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+  <link rel="icon" href="{{ url_for('static', filename='img/whiteBgColor.png') }}" type="image/png">
+  <!-- ======= Styles ====== -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard/style.css') }}">
+</head>
+<body>
+  <div class="container">
+    {% include 'components/navbar.html' %}
+
+
+    <!-- ========================= Principal ==================== -->
+    <div class="main">
+      <!-- ================ Topbar ================ -->
+      <div class="topbar">
+        <div class="toggle">
+          <ion-icon name="menu-outline"></ion-icon>
+        </div>
+        <div class="user">
+          <span>{{ user_role }}</span>
+        </div>
+      </div>
+
+      <!-- ================ Contenu du Profil Élève ================= -->
+      <div class="profile-container">
+        <h2>Profil de l'élève</h2>
+        <div class="profile-cards">
+          <div class="card">
+            <h3>Identifiant</h3>
+            <p>{{ eleve.identifiant_unique }}</p>
+          </div>
+          <div class="card">
+            <h3>Classe</h3>
+            <p>{{ eleve.niveau_classe }}</p>
+          </div>
+          <div class="card">
+            <h3>Vœux</h3>
+            <p>
+              {% if eleve.choix_validees %}
+                <span class="status delivered">VALIDÉS</span>
+              {% else %}
+                <span class="status offline">NON VALIDÉS</span>
+              {% endif %}
+            </p>
+          </div>
+        </div>
+        <div class="details">
+          <div class="recentOrders" id="recentOrdersContainer">
+              <div class="cardHeader">
+                  <h2>Vœux de l'élève</h2>
+              </div>
+              <table>
+                  <thead>
+                      <tr>
+                          <td>#</td>
+                          <td>Nom de l'établissement</td>
+                          <td>Ville</td>
+                          <td>Type de Voie</td>
+                          <td>Spécialité</td>
+                      </tr>
+                  </thead>
+                  <tbody id="sortable">
+                    {% for voeu in voeux if voeu.enable %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ voeu.school }}</td>
+                        <td>{{ voeu.city }}</td>
+                        <td>{{ voeu.degree }}</td>
+                        <td>{{ voeu.specialization }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+              </table>
+          </div>
+      </div>
+
+      <div class="details">
+        <div class="recentOrders" id="recentOrdersContainer">
+            <div class="cardHeader">
+                <h2>Vœux non pris en compte de l'élève</h2>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <td>#</td>
+                        <td>Nom de l'établissement</td>
+                        <td>Ville</td>
+                        <td>Type de Voie</td>
+                        <td>Spécialité</td>
+                    </tr>
+                </thead>
+                <tbody id="sortable">
+                  {% for voeu in voeux if not voeu.enable %}
+                  <tr>
+                      <td>{{ loop.index }}</td>
+                      <td>{{ voeu.school }}</td>
+                      <td>{{ voeu.city }}</td>
+                      <td>{{ voeu.degree }}</td>
+                      <td>{{ voeu.specialization }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+        <div class="action-buttons" style="display: flex; gap: 1rem; justify-content: center; margin-top: 20px;">
+          <a href="{{ url_for('dashboard') }}" class="btn btn-violet">Retour au Tableau de Bord</a>
+          <a href="/classe/{{ eleve.niveau_classe }}" class="btn btn-violet">Revenir à la Classe {{ eleve.niveau_classe }}</a>
+          <button id="resetPasswordBtn" class="btn btn-red">Réinitialiser le mot de passe</button>
+            {% if eleve.choix_validees %}
+            <button id="resetValidateVoeux" class="btn btn-orange">Débloquer les voeux</button>
+            {% endif %}
+        </div>
+    </div>
+  </div>
+
+  <!-- Reset Password Popup -->
+  <div id="resetPasswordPopup" class="popup-eleve" style="display: none;">
+    <div class="popup-content-eleve">
+        <h2>Confirmation</h2><br>
+        <p>Êtes-vous sûr de vouloir réinitialiser le mot de passe de cet élève ?</p>
+        <div class="popup-buttons-eleve">
+            <button id="confirmResetBtn" class="btn btn-green">Confirmer</button>
+            <button id="cancelResetBtn" class="btn btn-red">Annuler</button>
+        </div>
+    </div>
+  </div>
+  <div id="popup-overlay-eleve" style="display: none;"></div>
+
+  <!-- Success Notification -->
+  <div id="successNotification" class="notification" style="display: none;">
+      ✅ Le mot de passe a bien été réinitialisé
+  </div>
+
+  <!-- =========== Scripts =========  -->
+  <script src="{{ url_for('static', filename='js/specific_student/main.js') }}"></script>
+  <!-- ====== ionicons ======= -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

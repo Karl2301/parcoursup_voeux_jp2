@@ -1,0 +1,88 @@
+/* Style des popups */
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centre la popup */
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fond grisé */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popup-content {
+    background-color: white;
+    padding: 20px; /* Réduit l'espace intérieur */
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 400px; /* Réduit la largeur */
+    height: auto; /* Ajuste automatiquement la hauteur */
+    max-width: 90%; /* S'adapte aux petits écrans */
+    max-height: 90%; /* S'adapte aux petits écrans */
+}
+
+body.dark .popup-content {
+    background-color: #333; /* Fond sombre */
+    color: white; /* Texte blanc */
+}
+
+
+/* Style des champs d'entrée */
+.popup-content input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin: 15px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+.popup-content input[type="email"]:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+/* Style des boutons dans les popups */
+.popup-buttons {
+    display: flex;
+    justify-content: space-between; /* Espacement entre les boutons */
+    margin-top: 20px; /* Ajoute un espace au-dessus des boutons */
+}
+
+/* Style des boutons dans les popups */
+.popup-content .btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    flex: 1; /* Les boutons prennent la même largeur */
+    margin: 0 10px; /* Espacement horizontal entre les boutons */
+    border: none; /* Supprime la bordure */
+}
+
+/* Bouton Enregistrer */
+.popup-content .btn:first-child {
+    background-color: #4CAF50; /* Vert */
+    color: white;
+}
+
+.popup-content .btn:first-child:hover {
+    background-color: #45a049; /* Vert foncé au survol */
+}
+
+/* Bouton Annuler */
+.popup-content .btn:last-child {
+    background-color: #f44336; /* Rouge */
+    color: white;
+}
+
+.popup-content .btn:last-child:hover {
+    background-color: #d32f2f; /* Rouge foncé au survol */
+}

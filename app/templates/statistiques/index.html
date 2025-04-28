@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voeux-JP2 Admin</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+  <!-- Ajout de Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css">
+  <link rel="icon" href="{{ url_for('static', filename='img/whiteBgColor.png') }}" type="image/png"> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/locales/fr.js"></script>
+  <!-- ======= Styles ====== -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/statistiques/main.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/statistiques/style.css') }}">
+</head>
+
+<body>
+
+  <!-- =============== Navigation ================ -->
+  <div class="container">
+    {% include 'components/navbar.html' %}
+
+    <!-- ========================= Principal ==================== -->
+    <div class="main">
+      <div class="topbar">
+        <div class="toggle">
+          <ion-icon name="menu-outline"></ion-icon>
+        </div>
+
+        <div class="user">
+          <span>Administrateur</span>
+        </div>
+      </div>
+      <hr class="barre-separatrice" style="display: block;">
+
+      <div style="margin: 20px 0; text-align: center;">
+        <label for="filterVoeux" style="font-weight: bold; margin-right: 10px;">Afficher :</label>
+        <select id="filterVoeux" style="padding: 5px; font-size: 16px;">
+          <option value="all" selected>Vœux Activés et Désactivés</option>
+          <option value="classed">Vœux Activés</option>
+          <option value="unclassed">Vœux Désactivés</option>
+        </select>
+      </div>
+      
+      <!-- CardBox 1 : Statistiques liées aux classes -->
+            <div class="cardBox" style="display: grid; grid-template-columns: repeat(2, 1fr); grid-auto-rows: 1fr; gap: 20px;">
+        <div class="card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative;">
+          <h3>Vœux total par classe</h3>
+          <canvas id="voeuxTotalParClasse"></canvas>
+          <button class="info-icon" data-title="Ce graphique affiche le nombre total de vœux effectués par les élèves pour chaque classe.">
+            <ion-icon name="information-circle-outline"></ion-icon>
+          </button>
+          <button class="btn-download" onclick="downloadChartData('voeuxTotalParClasse', 'VoeuxTotalParClasse.xlsx')">
+            <ion-icon name="download-outline" style="font-size: 20px;"></ion-icon>
+          </button>
+        </div>
+        <div class="card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative;">
+          <h3>Moyenne de vœux par élève</h3>
+          <canvas id="moyenneVoeuxParEleve"></canvas>
+          <button class="info-icon" data-title="Ce graphique montre la moyenne de vœux effectués par élève pour chaque classe.">
+            <ion-icon name="information-circle-outline"></ion-icon>
+          </button>
+          <button class="btn-download" onclick="downloadChartData('moyenneVoeuxParEleve', 'MoyenneVoeuxParEleve.xlsx')">
+            <ion-icon name="download-outline" style="font-size: 20px;"></ion-icon>
+          </button>
+        </div>
+      </div>
+      
+      <div class="cardBox" style="display: grid; grid-template-columns: repeat(2, 1fr); grid-auto-rows: 1fr; gap: 20px;">
+        <div class="card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative;">
+          <h3>Vœux par type par classe</h3>
+          <canvas id="voeuxParTypeParClasse"></canvas>
+          <button class="info-icon" data-title="Ce graphique présente la répartition des types de formation pour chaque classe.">
+            <ion-icon name="information-circle-outline"></ion-icon>
+          </button>
+          <button class="btn-download" onclick="downloadChartData('voeuxParTypeParClasse', 'VoeuxParTypeParClasse.xlsx')">
+            <ion-icon name="download-outline" style="font-size: 20px;"></ion-icon>
+          </button>
+        </div>
+        <div class="card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative;">
+          <h3>Top 10 formations les plus demandés</h3>
+          <canvas id="top10Formations"></canvas>
+          <button class="info-icon" data-title="Ce graphique affiche les 10 formations les plus demandées par les élèves.">
+            <ion-icon name="information-circle-outline"></ion-icon>
+          </button>
+          <button class="btn-download" onclick="downloadChartData('top10Formations', 'Top10Formations.xlsx')">
+            <ion-icon name="download-outline" style="font-size: 20px;"></ion-icon>
+          </button>
+        </div>
+      </div>
+      
+      <div class="cardBox" style="display: grid; grid-template-columns: repeat(2, 1fr); grid-auto-rows: 1fr; gap: 20px;">
+        <div class="card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative;">
+          <h3>Répartition des vœux par ville</h3>
+          <canvas id="repartitionVoeuxParVille"></canvas>
+          <button class="info-icon" data-title="Ce graphique montre la répartition des vœux en fonction des villes demandées.">
+            <ion-icon name="information-circle-outline"></ion-icon>
+          </button>
+          <button class="btn-download" onclick="downloadChartData('repartitionVoeuxParVille', 'RepartitionVoeuxParVille.xlsx')">
+            <ion-icon name="download-outline" style="font-size: 20px;"></ion-icon>
+          </button>
+        </div>
+        <div class="card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative;">
+          <h3>Répartition des types de formation</h3>
+          <canvas id="repartitionTypesFormation"></canvas>
+          <button class="info-icon" data-title="Ce graphique présente la répartition des types de formation parmi tous les vœux soumis.">
+            <ion-icon name="information-circle-outline"></ion-icon>
+          </button>
+          <button class="btn-download" onclick="downloadChartData('repartitionTypesFormation', 'RepartitionTypesFormation.xlsx')">
+            <ion-icon name="download-outline" style="font-size: 20px;"></ion-icon>
+          </button>
+        </div>
+      </div>
+      
+      <div class="cardBox" style="display: grid; grid-template-columns: repeat(2, 1fr); grid-auto-rows: 1fr; gap: 20px;">
+        <div class="card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative;">
+          <h3>Vœux par établissement</h3>
+          <canvas id="voeuxParEtablissement"></canvas>
+          <button class="info-icon" data-title="Ce graphique affiche le nombre de vœux soumis pour les établissements les plus demandés.">
+            <ion-icon name="information-circle-outline"></ion-icon>
+          </button>
+          <button class="btn-download" onclick="downloadChartData('voeuxParEtablissement', 'VoeuxParEtablissement.xlsx')">
+            <ion-icon name="download-outline" style="font-size: 20px;"></ion-icon>
+          </button>
+        </div>
+        <div class="card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative;">
+          <h3>Élèves par formation</h3>
+          <canvas id="elevesParFormation"></canvas>
+          <button class="info-icon" data-title="Ce graphique montre le nombre d'élèves ayant soumis des vœux pour chaque formation.">
+            <ion-icon name="information-circle-outline"></ion-icon>
+          </button>
+          <button class="btn-download" onclick="downloadChartData('elevesParFormation', 'ElevesParFormation.xlsx')">
+            <ion-icon name="download-outline" style="font-size: 20px;"></ion-icon>
+          </button>
+        </div>
+      </div>
+      <div class="cardBox" style="display: grid; grid-template-columns: repeat(1, 1fr); grid-auto-rows: 1fr; gap: 20px;">
+        <div class="card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; height: inherit;">
+          <h3>Évolution des vœux par semaine</h3>
+          <canvas id="voeuxParSemaine"></canvas>
+          <button class="info-icon" data-title="Ce graphique illustre le nombre de vœux validés par semaine.">
+            <ion-icon name="information-circle-outline"></ion-icon>
+          </button>
+          <button class="btn-download" onclick="downloadChartData('voeuxParSemaine', 'VoeuxParSemaine.xlsx')">
+            <ion-icon name="download-outline" style="font-size: 20px;"></ion-icon>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =========== Scripts =========  -->
+  <script src="{{ url_for('static', filename='js/statistiques/stats.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/statistiques/composants.js') }}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+  <!-- ====== ionicons ======= -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.js"></script>
+
+</body>
+
+</html>

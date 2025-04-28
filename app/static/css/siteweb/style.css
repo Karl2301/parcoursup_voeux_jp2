@@ -1,0 +1,176 @@
+/* Style de la boîte contenant les cartes */
+.cardBox {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+/* Style des cartes unifiées */
+.unified-card {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    align-items: center;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 10px 20px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.unified-card:hover {
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Style des icônes */
+.iconBx {
+    font-size: 40px;
+    color: #4CAF50;
+    text-align: center;
+}
+
+/* Style des descriptions */
+.cardName {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    text-align: left;
+    padding-left: 10px;
+}
+
+/* Style des boutons */
+.styled-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    justify-self: center;
+}
+
+.styled-btn:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+.styled-btn:active {
+    transform: scale(0.95);
+}
+
+/* Style pour l'état de la carte */
+.card-status {
+    font-size: 14px;
+    color: #555;
+    margin-top: 10px;
+    text-align: center;
+    display: block;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px; /* Increased width */
+    height: 28px; /* Increased height */
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 28px; /* Adjusted border-radius to match new height */
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 22px; /* Increased size */
+    width: 22px; /* Increased size */
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: green;
+}
+
+input:checked + .slider:before {
+    transform: translateX(22px); /* Adjusted translation to match new size */
+}
+
+/* Style des popups */
+/* Style des popups */
+.popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popup-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 400px; /* Augmente la largeur */
+    max-width: 90%; /* S'adapte aux petits écrans */
+}
+
+/* Style des champs d'entrée */
+.popup-content input[type="text"],
+.popup-content input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin: 15px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+.popup-content input[type="text"]:focus,
+.popup-content input[type="email"]:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+/* Style des boutons dans les popups */
+.popup-content .btn {
+    margin: 10px 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.popup-content .btn:hover {
+    transform: scale(1.05);
+}
+
+.popup-content .btn:active {
+    transform: scale(0.95);
+}

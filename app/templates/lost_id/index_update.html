@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login/main.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='img/whiteBgColor.png') }}" type="image/png">
+    <title>Identifiant Perdu</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="nav">
+            <ul>
+                <li>
+                    <div style="display: flex; align-items: center;">
+                        <img width="60px" height="60px" src="{{ url_for('static', filename='img/logo_jp2.png') }}" style="margin-right: 10px;">
+                        <h3 style="color: black;">Jean-Paul II</h3>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="hero">
+            <div class="text">
+                <h1>Identifiant Perdu<span style="color: rgb(0, 128, 255);">.</span></h1>
+                    <p class="gray">Vous avez perdu vos <span style="color: rgb(0, 128, 255);">identifiants</span> de connexion ?</p>
+                    <p class="gray">Merci de contacter votre professeur principal en lui fournissant votre <span style="color: rgb(0, 128, 255);">numéro de connexion</span>.</p>
+                    <p class="gray">Votre professeur peut initier la <span style="color: rgb(0, 128, 255);">procédure de réinitialisation</span> de votre mot de passe.</p>
+            </div>
+        </div>
+        <div class="footer">JP2</div>
+    </div>
+</body>
+</html>

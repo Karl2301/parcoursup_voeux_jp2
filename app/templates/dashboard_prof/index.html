@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voeux-JP2 Prof</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <!-- ======= Styles ====== -->
+    <link rel="icon" href="{{ url_for('static', filename='img/whiteBgColor.png') }}" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard/style.css') }}">
+</head>
+
+<body>
+    <!-- =============== Navigation ================ -->
+    <div class="container">
+        {% include 'components/navbar.html' %}
+
+        <!-- ========================= Principal ==================== -->
+        <div class="main">
+            <div class="topbar">
+                <div class="toggle">
+                    <ion-icon name="menu-outline"></ion-icon>
+                </div>
+                <div class="user">
+                    <span>{{ user_role }}</span>
+                </div>
+            </div>
+
+            <!-- Affichage de la date limite en haut -->
+            <div class="deadline-notice" style="display: none;">
+                {% if deadline %}
+                    <p>La date limite pour valider le pré-classement est fixée au <strong>{{ deadline.strftime('%d/%m/%Y à %H:%M') }}</strong>.</p>
+                {% else %}
+                    <p>Aucune date limite n'est actuellement définie.</p>
+                {% endif %}
+            </div>
+
+
+            <!-- Élément pour vérifier les vœux validés (caché par défaut) -->
+            <div id="confirmationMessage" style="display: none;">Vœux validés</div>
+
+            <!-- ======================= Cartes PROF ================== -->
+            <div class="cardBox" style="display: none;">
+                <div class="card">
+                    <div>
+                        <div class="numbers" id="elevesConnectes">--</div>
+                        <div class="cardName">Élèves Connectés</div>
+                    </div>
+                    <div class="iconBx">
+                        <ion-icon name="people-outline"></ion-icon>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div>
+                        <div class="numbers" id="elevesValideVoeux">--</div>
+                        <div class="cardName">Élèves ayant validé leurs vœux</div>
+                    </div>
+                    <div class="iconBx">
+                        <ion-icon name="checkmark-done-outline"></ion-icon>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div>
+                        <div class="numbers" id="vosMessagesDemandes">--</div>
+                        <div class="cardName">Vos Messages / Demandes</div>
+                    </div>
+                    <div class="iconBx">
+                        <ion-icon name="chatbubbles-outline"></ion-icon>
+                    </div>
+                </div>
+                
+                <div class="card" id="siteStatusCard">
+                    <div>
+                        <div class="numbers" id="nombreClasses">-----</div>
+                        <div class="cardName">Nombre de classes</div>
+                        <div id="etatSite"></div>
+                    </div>
+                    <div class="iconBx">
+                        <ion-icon name="school-outline"></ion-icon>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ICI LA BARRE NOIRE SÉPARATRICE -->
+            <hr class="barre-separatrice" style="display: block;">
+        </div>
+    </div>
+
+    <!-- =========== Scripts =========  -->
+    <script src="{{ url_for('static', filename='js/dashboard/main_prof.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <!-- ====== ionicons ======= -->
+    <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.js"></script>
+
+    <!-- Script pour le popup -->
+</body>
+
+</html>

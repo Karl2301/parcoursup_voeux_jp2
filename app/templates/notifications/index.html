@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notifications - Vœux Jean-Paul II</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+  <!-- ======= Styles ====== -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard/style.css') }}">
+  <link rel="icon" href="{{ url_for('static', filename='img/whiteBgColor.png') }}" type="image/png">
+</head>
+
+<body>
+
+  <!-- =============== Navigation ================ -->
+  <div class="container">
+    {% include 'components/navbar.html' %}
+
+
+    <!-- ========================= Principal ==================== -->
+    <div class="main">
+        <div class="topbar">
+            <div class="toggle">
+                <ion-icon name="menu-outline"></ion-icon>
+            </div>
+
+
+            <div class="user">
+                <span>{{ user_role }}</span>
+            </div>
+        </div>
+
+      <!-- ======================= Contenu Notifications ================== -->
+      <div class="content" style="padding: 20px;">
+        <h2>Notifications</h2>
+
+        <!-- Section Demandes d'Aide -->
+        <div class="details">
+          <div class="recentOrders" id="recentOrdersContainer">
+            <div class="cardHeader">
+              <h2>Demande d'aide</h2>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Identifiant Élève</th>
+                  <th>Classe</th>
+                  <th>Titre</th>
+                  <th>Message</th>
+                  <th>Date de Création</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="sortable">
+                {% for demande in demandes %}
+                  <tr data-id="{{ demande.id }}"> <!-- Ajout d'un attribut data-id pour identifier la ligne -->
+                  <td>
+                  <a href="/eleve/{{ demande.identifiant_eleve }}" 
+                     style="text-decoration: underline; color: inherit; font-weight: bold;">
+                    {{ demande.identifiant_eleve }}
+                  </a>
+                  </td>
+                  <td>{{ demande.classe }}</td>
+                  <td>{{ demande.titre }}</td>
+                  <td class="message-column" style="max-width: 300px; word-wrap: break-word; white-space: normal; overflow-wrap: break-word;">
+                  {{ demande.message }}
+                  </td>
+                  <td>{{ demande.created_at | formatdatetime }}</td>
+                  <td><button class="delete-btn" style="color: red;">🗑️</button></td> <!-- Bouton de suppression -->
+                  </tr>
+                  {% else %}
+                  <tr>
+                  <td colspan="6">Aucune demande d'aide</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Section Notifications Voeux -->
+        <div class="details" style="display: none;">
+            <div class="recentOrders" id="recentVoeuxContainer">
+              <div class="cardHeader">
+                <h2>Voeux</h2>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Identifiant Élève</th>
+                    <th>Statut</th>
+                    <th>Date de Création</th>
+                  </tr>
+                </thead>
+                <tbody id="sortable">
+                    {% for voeu in voeux %}
+                    <tr>
+                      <td>{{ voeu.identifiant_eleve }}</td>
+                      <td>{{ voeu.message }}</td>
+                      <td>{{ voeu.created_at | formatdatetime }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                      <td colspan="3">Aucune notification</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+  <!-- =========== Scripts =========  -->
+  <script src="{{ url_for('static', filename='js/notifications/main.js') }}"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,52 @@
+/* Style pour le bouton avec tooltip */
+.info-icon {
+  position: absolute; /* Position absolue par rapport à la carte */
+  top: 10px; /* Positionné à 10px du haut de la carte */
+  right: 10px; /* Positionné à 10px du bord droit de la carte */
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #555;
+}
+
+.info-icon:hover {
+  color: #000;
+}
+
+/* Style pour le tooltip */
+.info-icon::after {
+  content: attr(data-title); /* Utilise l'attribut data-title pour afficher le texte */
+  position: absolute;
+  top: 0; /* Aligné avec le haut du bouton */
+  transform: none; /* Supprime le centrage vertical */
+  right: calc(100% + 10px); /* Positionné à gauche du bouton avec un espace de 10px */
+  background-color: #fff;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px 10px; /* Ajuste l'espace intérieur */
+  font-size: 0.8rem; /* Taille du texte */
+  white-space: nowrap; /* Empêche le texte de passer à la ligne */
+  max-width: none; /* Supprime la limite de largeur */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  opacity: 0; /* Masqué par défaut */
+  pointer-events: none; /* Empêche l'interaction avec le tooltip */
+  transition: opacity 0s; /* Pas de délai pour l'affichage */
+  z-index: 1000;
+}
+
+.info-icon:hover::after {
+  opacity: 1; /* Affiche le tooltip immédiatement */
+}
+
+.btn-download {
+  position: absolute; /* Position absolue par rapport à la carte */
+  top: 10px; /* Positionné à 10px du haut de la carte */
+  left: 10px; /* Positionné à 10px du bord droit de la carte */
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.5rem;
+  color: #555;
+}

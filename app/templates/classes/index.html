@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voeux JP2 - Classe {{ class_name }}</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+  <link rel="icon" href="{{ url_for('static', filename='img/whiteBgColor.png') }}" type="image/png">
+
+  <!-- ======= Styles ====== -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard/style.css') }}">
+  <style>
+    /* Style pour la section de notification */
+    .notification-panel {
+      margin: 20px auto;
+      padding: 15px 20px;
+      background: #f8f9fa; /* fond neutre */
+      border: 1px solid #dae0e5;
+      border-radius: 5px;
+      text-align: center;
+      max-width: 600px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .notification-panel p {
+      margin: 0 0 10px;
+      font-size: 1.1em;
+      color: #212529;
+    }
+    .notification-panel .btn {
+      padding: 10px 20px;
+      background-color: #007bff; /* bouton en bleu pour harmoniser avec le thème */
+      border: none;
+      border-radius: 4px;
+      color: #ffffff;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1em;
+    }
+    .notification-panel .btn:hover {
+      background-color: #0069d9;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- =============== Navigation ================ -->
+  <div class="container">
+    {% include 'components/navbar.html' %}
+    <!-- ========================= Principal ==================== -->
+    <div class="main">
+      <div class="topbar">
+        <div class="toggle">
+          <ion-icon name="menu-outline"></ion-icon>
+        </div>
+        <div class="user">
+          <span>{{ user_role }}</span>
+        </div>
+      </div>
+
+      <!-- Barre de séparation -->
+      <hr class="barre-separatrice" style="display: block;">
+
+      <!-- Section Notification élégante avec AJAX -->
+      <div class="notification-panel" id="notificationPanel" style="display: none;">
+        {% if nb_non_valide is defined and nb_non_valide > 0 %}
+          <p>
+            <strong>{{ nb_non_valide }}</strong> élève{% if nb_non_valide > 1 %}s n'ont{% else %} n'a{% endif %} pas validé {% if nb_non_valide > 1 %}leurs{% else %}son{% endif %} pré-sélection des vœux.
+          </p>
+          <form id="notifyForm" method="post" action="{{ url_for('notif_voeux_invalide', class_name=class_name) }}">
+            <button type="submit" class="btn">Notifier les élèves non validés</button>
+          </form>
+        {% else %}
+          <p>Tous les élèves ont validé leurs vœux.</p>
+        {% endif %}
+      </div>
+
+      <!-- Statistiques des classes -->
+      <div class="cardBox" style=" grid-template-columns: repeat(3, 1fr);">
+        <div class="card">
+          <div>
+            <div class="numbers" id="elevesConnectes">{{ eleve_online_count }}</div>
+            <div class="cardName">Élèves Connectés</div>
+          </div>
+          <div class="iconBx">
+            <ion-icon name="people-outline"></ion-icon>
+          </div>
+        </div>
+
+        <div class="card">
+          <div>
+            <div class="numbers">{{ eleve_choix_validees_count }}</div>
+            <div class="cardName">Élèves ayant validé leurs vœux</div>
+          </div>
+          <div class="iconBx">
+            <ion-icon name="checkmark-done-outline"></ion-icon>
+          </div>
+        </div>
+
+        <div class="card" id="siteStatusCard">
+          <div>
+            <div class="numbers" id="studentCount">{{ total_student_count }}</div>
+            <div class="cardName">Nombre d'élèves</div>
+          </div>
+          <div class="iconBx">
+            <!-- Icône facultative -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Liste des Vœux des Élèves -->
+      <div class="details">
+        <div class="recentOrders" id="recentOrdersContainer">
+          <div class="cardHeader">
+            <h2>Vœux de la classe {{ class_name }}</h2>
+            <div id="downloadMenu">
+              <button class="btn" style="display: none;" id="downloadBtn">Télécharger les vœux</button>
+              <div id="dropdownMenu" style="display: none;">
+                <a href="#" class="dropdown-item" id="downloadXls">Télécharger en XLSX</a>
+                <a href="#" class="dropdown-item" id="downloadPdf">Télécharger en PDF</a>
+              </div>
+            </div>
+          </div>
+          <p id="editModeMessage" style="display: none; color: red;">Vous êtes en mode édition. Vous pouvez modifier l'ordre des vœux.</p>
+          <table>
+            <thead>
+              <tr>
+                <td><input type="checkbox" id="selectAll" class="custom-checkbox"><label for="selectAll"></label></td>
+                <td>ID</td>
+                <td>Status</td>
+                <td>Vœux</td>
+                <td>Actions</td>
+              </tr>
+            </thead>
+            <tbody>
+              {% for eleve in eleves %}
+              <tr>
+                <td><input type="checkbox" class="selectRow custom-checkbox" id="checkbox{{ loop.index }}"><label for="checkbox{{ loop.index }}"></label></td>
+                <td>{{ eleve.identifiant_unique }}</td>
+                <td>
+                  {% if eleve.online %}
+                    <span class="status delivered">EN LIGNE</span>
+                  {% else %}
+                    <span class="status offline">HORS LIGNE</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if eleve.choix_validees %}
+                    <span class="status delivered">VALIDÉS</span>
+                  {% else %}
+                    <span class="status offline">NON VALIDÉS</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <a href="/eleve/{{ eleve.identifiant_unique }}" class="btn">Voir</a>
+                </td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="5" style="text-align: center;">Aucun élève trouvé dans cette classe.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========== Scripts =========  -->
+  <script src="{{ url_for('static', filename='js/classe_prof/main.js') }}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Met à jour le compteur d'élèves
+      let studentCount = document.querySelector("tbody").rows.length;
+      document.getElementById("studentCount").textContent = studentCount;
+
+      // Gérer la soumission AJAX du formulaire de notification
+      const notifyForm = document.getElementById("notifyForm");
+      if (notifyForm) {
+        notifyForm.addEventListener("submit", function (event) {
+          event.preventDefault(); // Empêche le rechargement de la page
+          const url = this.getAttribute("action");
+          fetch(url, {
+            method: "POST",
+            credentials: "include" // Pour inclure les cookies
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              // Afficher un message de succès en utilisant le message du serveur
+              alert(data.message);
+              // Mettre à jour le panneau avec le message retourné sans écraser à tort les infos
+              document.getElementById("notificationPanel").innerHTML = "<p>" + data.message + "</p>";
+            } else {
+              alert("Erreur: " + data.error);
+            }
+          })
+          .catch(error => {
+            console.error("Erreur lors de la notification:", error);
+            alert("Une erreur est survenue.");
+          });
+        });
+      }
+    });
+  </script>
+  <!-- ====== ionicons ======= -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.js"></script>
+</body>
+
+</html>
