@@ -1,0 +1,7 @@
+docker build -t ghcr.io/karl2301/parcoursup_voeux_jp2/web:latest .
+
+docker push ghcr.io/karl2301/parcoursup_voeux_jp2/web:latest
+
+echo "CLé CLIENT UNIQUEMENT POUR DOWNLOAD" | docker login ghcr.io -u karl2301 --password-stdin
+ -----
+echo "CLé DEV UNIQUEMENT POUR PUSH" | docker login ghcr.io -u karl2301 --password-stdin
