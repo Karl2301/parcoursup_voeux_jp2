@@ -1,5 +1,5 @@
 # Parcoursup Voeux JP2
-sudo cat /home/quasardev/parcoursup_voeux_jp2/20250426_020001.sql | sudo docker exec -i db mariadb -u nsidb -p'123nsi!bd' jp2_voeux_parcoursup
+
 ## Description
 
 Parcoursup Voeux JP2 est une application de gestion des élèves et des professeurs dans un lycée, facilitant la modification des choix Parcoursup des élèves tout en permettant aux professeurs de gérer les informations des élèves. L'application offre une interface utilisateur intuitive pour les élèves, les professeurs et les administrateurs.
