@@ -10,6 +10,9 @@ on:
 jobs:
   docker-build:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
