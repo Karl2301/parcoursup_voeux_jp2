@@ -2,7 +2,9 @@
 
 ## Description
 
-Parcoursup Voeux JP2 est une application de gestion des élèves et des professeurs dans un lycée, facilitant la modification des choix Parcoursup des élèves tout en permettant aux professeurs de gérer les informations des élèves. L'application offre une interface utilisateur intuitive pour les élèves, les professeurs et les administrateurs.
+Parcoursup Voeux JP2 est une application de gestion des élèves et des professeurs dans un lycée, permettant de classer les voeux ParcourSup des élèves tout en permettant aux professeurs de gérer les informations des élèves. L'application offre une interface utilisateur intuitive pour les élèves, les professeurs et les administrateurs.u
+
+### Cette application ne communique pas avec le site ParcourSup
 
 ## Table des matières
 
