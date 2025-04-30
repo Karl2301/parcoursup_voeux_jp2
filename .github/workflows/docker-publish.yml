@@ -8,26 +8,20 @@ on:
       - 'v*'  # Déclenche sur les tags comme v1.0.0, v1.1.0...
 
 jobs:
-  build-and-push:
+  docker-build:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-    - name: Log in to GitHub Container Registry
-      uses: docker/login-action@v2
-      with:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}  # Utilise le token GitHub pour l'authentification
+      - name: Log in to GitHub Container Registry
+        run: |
+          echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-    - name: Build Docker image for web service
-      run: |
-        docker build -t ghcr.io/${{ github.repository }}/parcoursup_voeux_jp2-web:latest .
-
-    - name: Push Docker image to GHCR
-      run: |
-        docker push ghcr.io/${{ github.repository }}/parcoursup_voeux_jp2-web:latest
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ghcr.io/${{ github.repository }}/my-image:latest .
+          docker push ghcr.io/${{ github.repository }}/my-image:latest
