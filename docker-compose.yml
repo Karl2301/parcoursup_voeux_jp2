@@ -10,7 +10,7 @@ services:
     networks:
       - app_network
     volumes:
-      - db_data:/var/lib/mysql
+      - ./db_data:/var/lib/mysql
 
   web:
     image: ghcr.io/karl2301/parcoursup_voeux_jp2/web:latest
@@ -38,6 +38,3 @@ services:
 networks:
   app_network:
     driver: bridge
-
-volumes:
-  db_data:
