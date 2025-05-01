@@ -83,14 +83,7 @@ def main():
     app_port = int(APP_PORT)
     app.logger.info(f"App port: {app_port}")
     app.logger.info(f"type: {type(app_port)}")
-    try:
-        app.run(app, host="0.0.0.0", port=app_port)
-    except Exception as e:
-        app.logger.error(f"Erreur lors du démarrage de l'application : {e}")
-
-    app.logger.info(f"Application running on port {APP_PORT}")
-    app.logger.info("Application started successfully.")
-    app.logger.info("Waiting for requests...")
+    socketio.run(app, host="0.0.0.0", port=app_port, debug=True)
 
 if __name__ == '__main__':
     main()
