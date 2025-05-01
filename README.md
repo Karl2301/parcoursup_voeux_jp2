@@ -120,6 +120,11 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
 ## Configuration
 
 Modifiez le fichier `.env` pour configurer les paramètres de votre base de données et d'autres variables d'environnement nécessaires.
+Mettre les données dans la base de donnée:
+
+    ```
+    sudo cat chemin_vers_le_dump | sudo docker exec -i db mariadb -u utilisateur -p'mot_de_passe' nom_de_la_base
+    ```
 
 ## Utilisation
 
