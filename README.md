@@ -114,7 +114,7 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
 6. Initialisez l'application :
 
     ```
-    docker compose up --build -d
+    docker compose --env-file .env up --build -d
     ```
 
 ## Configuration
@@ -128,7 +128,7 @@ Modifiez le fichier `.env` pour configurer les paramètres de votre base de donn
 1. Lancez l'application (se placer dans le dossier docker-compose.yml) :
 
     ```
-    docker compose up --build -d
+    docker compose --env-file .env up --build -d
     ```
 
 2. Stopper l'application (se placer dans le dossier docker-compose.yml) :
@@ -157,7 +157,7 @@ Se placer dans le dossier de l'application (où se trouve le fichier docker-comp
 2. Puis ensuite:
 
     ```
-    docker compose up --build -d
+    docker compose --env-file .env up --build -d --force-recreate
     ```
 
 ## Logs
