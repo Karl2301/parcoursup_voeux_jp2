@@ -84,7 +84,7 @@ def main():
     app.logger.info(f"App port: {app_port}")
     app.logger.info(f"type: {type(app_port)}")
     try:
-        socketio.run(app, host="0.0.0.0", port=app_port)
+        app.run(app, host="0.0.0.0", port=app_port)
     except Exception as e:
         app.logger.error(f"Erreur lors du démarrage de l'application : {e}")
 
