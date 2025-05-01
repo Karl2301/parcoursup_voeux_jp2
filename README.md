@@ -12,6 +12,8 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Utilisation](#utilisation)
+- [Mettre à jour les applications manuellement](#maj)
+- [Logs] (#logs)
 - [Structure du projet](#structure-du-projet)
 - [API](#api)
 - [Contributions](#contributions)
@@ -130,6 +132,19 @@ Modifiez le fichier `.env` pour configurer les paramètres de votre base de donn
     ```
 
 4. Accédez à l'application via `http://ip_machine:5000`.
+
+### Mettre à jour les applications manuellement
+
+Pour mettre à jour l'application:
+    Se placer dans le dossier de l'application (où se trouve le fichier docker-compose.yml)
+    ```sh
+    docker compose pull
+    ```
+    puis:
+
+    ```sh
+    docker compose up --build -d
+    ```
 
 ### Logs
 
