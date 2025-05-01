@@ -39,7 +39,12 @@ CORS(app)
 DATABASE_USER = os.getenv('MYSQL_USER')
 DATABASE_PASSWORD = os.getenv('MYSQL_PASSWORD')
 MARIADB_PORT = os.getenv('MARIADB_PORT')
-DATABASE_URL = f"mysql+pymysql://{DATABASE_USER}:{DATABASE_PASSWORD}@db:{MARIADB_PORT}/jp2_voeux_parcoursup"
+MYSQL_DATABASE = os.getenv('MYSQL_DATABASE')
+
+if not DATABASE_USER or not DATABASE_PASSWORD or not MARIADB_PORT:
+    raise ValueError("Les variables d'environnement MYSQL_USER, MYSQL_PASSWORD et MARIADB_PORT doivent être définies.")
+
+DATABASE_URL = f"mysql+pymysql://{DATABASE_USER}:{DATABASE_PASSWORD}@db:{MARIADB_PORT}/{MYSQL_DATABASE}"
 app.logger.info(DATABASE_URL)
 # DATABASE_URL = "mysql+pymysql://nsidb:123nsi!bd@localhost/jp2_voeux_parcoursup"
 # DATABASE_URL = "sqlite:///database.sqlite3"
