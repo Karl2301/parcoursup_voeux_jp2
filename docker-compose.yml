@@ -1,40 +1,43 @@
-  services:
-    db:
-      image: mariadb:10.7
-      container_name: db
-      restart: unless-stopped
-      env_file:
-        - .env
-      ports:
-        - "3306:3306"  # Expose le port 3306 de l'hôte vers 3306 du conteneur
-      networks:
-        - app_network
-      volumes:
-        - ./db_data:/var/lib/mysql
+services:
+  db:
+    image: mariadb:10.7
+    container_name: db
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "3306:3306"  # Expose le port 3306 de l'hôte vers 3306 du conteneur
+    networks:
+      - app_network
+    volumes:
+      - db_data:/var/lib/mysql
 
-    web:
-      image: ghcr.io/karl2301/parcoursup_voeux_jp2/web:latest
-      container_name: parcoursup_voeux_jp2-web
-      restart: unless-stopped
-      depends_on:
-        - db
-      env_file:
-        - .env
-      ports:
-        - "5000:5000"
-      networks:
-        - app_network
-
-    watchtower:
-      image: containrrr/watchtower
-      container_name: watchtower
-      volumes:
-        - /var/run/docker.sock:/var/run/docker.sock
-      command: ["--interval", "86400", "--cleanup"]
-      restart: unless-stopped
-      networks:
+  web:
+    image: ghcr.io/karl2301/parcoursup_voeux_jp2/web:latest
+    container_name: parcoursup_voeux_jp2-web
+    restart: unless-stopped
+    depends_on:
+      - db
+    env_file:
+      - .env
+    ports:
+      - "5000:5000"
+    networks:
       - app_network
 
-  networks:
-    app_network:
-      driver: bridge
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: ["--interval", "86400", "--cleanup"]
+    restart: unless-stopped
+    networks:
+    - app_network
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  db_data:
