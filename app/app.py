@@ -80,9 +80,8 @@ def add_cache_headers(response: Response):
 def main():
     app.logger.info("Starting application...")
     app.logger.info(APP_PORT)
-    app.logger.info(type(APP_PORT))
-    socketio.run(app, host="0.0.0.0", port=4000)
-    app.logger.info(f"Application running on port 4000")
+    socketio.run(app, host="0.0.0.0", port=int(APP_PORT))
+    app.logger.info(f"Application running on port {APP_PORT}")
     app.logger.info("Application started successfully.")
     app.logger.info("Waiting for requests...")
 
