@@ -98,7 +98,6 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
 6. Collez et remplissez les informations suivantes dans le fichier `.env`:
 
     ```
-    DATABASE_URL=mysql+pymysql://nsidb:123nsi!bd@db:3306/jp2_voeux_parcoursup
     SMTP_API_KEY=clef-brevo-smtp-api (facultatif)
     TURNSTILE_SITE_KEY=clef-TURNSTILE-site
     TURNSTILE_SECRET_KEY=clef-TURNSTILE-secret

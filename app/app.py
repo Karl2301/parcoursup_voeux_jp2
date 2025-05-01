@@ -78,7 +78,8 @@ def add_cache_headers(response: Response):
     
 
 def main():
-    socketio.run(app, host="0.0.0.0", port=5000)
+    app_port = os.environ.get("APP_PORT")
+    socketio.run(app, host="0.0.0.0", port=app_port)
 
 if __name__ == '__main__':
     main()
