@@ -35,3 +35,6 @@ app/routes/maj.txt
 20250426_020001.sql
 mariadb.sql
 dump_local.sql
+
+.db_data/
+
