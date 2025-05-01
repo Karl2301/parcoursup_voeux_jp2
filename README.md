@@ -73,21 +73,21 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
     ```
 
 3. Vérifier l'installation de docker-compose :
-    ```sh
+    ```
     docker compose version
     ```
 
 4. Cloner le docker-compose :
-    ```sh
+    ```
     curl -O https://raw.githubusercontent.com/Karl2301/parcoursup_voeux_jp2/refs/heads/main/docker-compose.yml
     ```
 
 5. Configurez les variables d'environnement dans le meme dossier que le docker-compose.yml :
-    ```sh
+    ```
     nano .env
     ```
     ou
-    ```sh
+    ```
     vi .env
     ```
 
@@ -136,15 +136,15 @@ Modifiez le fichier `.env` pour configurer les paramètres de votre base de donn
 ## Mettre à jour les applications manuellement
 
 Pour mettre à jour l'application:
-    Se placer dans le dossier de l'application (où se trouve le fichier docker-compose.yml)
+Se placer dans le dossier de l'application (où se trouve le fichier docker-compose.yml)
 
-    ```sh
+    ```
     docker compose pull
     ```
 
     puis:
 
-    ```sh
+    ```
     docker compose up --build -d
     ```
 
@@ -152,13 +152,13 @@ Pour mettre à jour l'application:
 
 Pour voir les logs des conteneur:
 
-    ```sh
+    ```
     docker ps
     ```
-    
+
     puis:
 
-    ```sh
+    ```
     docker compose logs -f {nom ou id du conteneur}
     ```
 
