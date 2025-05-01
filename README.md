@@ -44,41 +44,67 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
 ### Prérequis
 
 - Python 3.8 ou supérieur
-- Node.js et npm
-- MySQL
 
 ### Étapes d'installation
 
-1. Clonez le dépôt :
+1. Installer Docker Engine :
     ```sh
-    git clone https://github.com/votre-utilisateur/parcoursup_voeux_jp2.git
-    cd parcoursup_voeux_jp2
+    # Add Docker's official GPG key:
+    sudo apt-get update
+    sudo apt-get install ca-certificates curl
+    sudo install -m 0755 -d /etc/apt/keyrings
+    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+    sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+    # Add the repository to Apt sources:
+    echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+    $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
+    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    sudo apt-get update
     ```
 
-2. Installez les dépendances Python :
+2. Installer Docker-Compose :
     ```sh
-    pip install -r requirements.txt
+    sudo apt-get update
+    sudo apt-get install docker-compose-plugin
     ```
 
-3. Installez les dépendances JavaScript :
+3. Vérifier l'installation de docker-compose :
     ```sh
-    npm install
+    docker compose version
     ```
 
-4. Configurez la base de données MySQL :
+4. Cloner le docker-compose :
     ```sh
-    mysql -u root -p
-    CREATE DATABASE jp2_voeux_parcoursup;
+    curl -O https://raw.githubusercontent.com/Karl2301/parcoursup_voeux_jp2/refs/heads/main/docker-compose.yml
     ```
 
-5. Configurez les variables d'environnement :
+5. Configurez les variables d'environnement dans le meme dossier que le docker-compose.yml :
     ```sh
-    cp .env.example .env
+    nano .env
+    ```
+    ou
+    ```sh
+    vi .env
     ```
 
-6. Initialisez la base de données :
+    Collez et remplissez les informations suivantes dans le fichier `.env`:
+    ```
+    DATABASE_URL=mysql+pymysql://nsidb:123nsi!bd@db:3306/jp2_voeux_parcoursup
+    SMTP_API_KEY=clef-brevo-smtp-api (facultatif)
+    TURNSTILE_SITE_KEY=clef-TURNSTILE-site
+    TURNSTILE_SECRET_KEY=clef-TURNSTILE-secret
+
+    MYSQL_ROOT_PASSWORD=mot-de-passe-root-mariadb
+    MYSQL_DATABASE=jp2_voeux_parcoursup
+    MYSQL_USER=identifiant-mariadb
+    MYSQL_PASSWORD=mot-de-passe-mariadb
+    ```
+
+6. Initialisez l'application :
     ```sh
-    python create_classes.py
+    docker compose up --build -d
     ```
 
 ## Configuration
@@ -89,18 +115,32 @@ Modifiez le fichier `.env` pour configurer les paramètres de votre base de donn
 
 ### Démarrer l'application
 
-1. Lancez le serveur Flask :
-    ```
-    gunicorn --bind 0.0.0.0:5000 --forwarded-allow-ips="*" --worker-class eventlet -w 1 app:app
-    ```
-
-2. Accédez à l'application via `http://ip_machine:5000`.
-
-### Tests
-
-Pour exécuter les tests, utilisez la commande suivante :
+1. Lancez l'application (se placer dans le dossier docker-compose.yml) :
     ```sh
-    pytest
+    docker compose up --build -d
+    ```
+2. Stopper l'application (se placer dans le dossier docker-compose.yml) :
+    ```sh
+    docker compose stop
+    ```
+
+3. Supprimer l'application (se placer dans le dossier docker-compose.yml) :
+    ```sh
+    docker compose down
+    ```
+
+4. Accédez à l'application via `http://ip_machine:5000`.
+
+### Logs
+
+Pour voir les logs des conteneur:
+    ```sh
+    docker ps
+    ```
+    puis:
+
+    ```sh
+    docker compose logs -f {nom ou id du conteneur}
     ```
 
 ## Structure du projet
@@ -148,9 +188,8 @@ Pour exécuter les tests, utilisez la commande suivante :
         - `POST /save_prof_data` : Sauvegarde les données d'un professeur.
         - `POST /validate_voeux` : Valide les vœux d'un élève.
 
-ezffzefzefzefzefzef
 
-    ### Contributions
+### Contributions
         - Les contributions sont les bienvenues ! Veuillez contacter les propriétaires via mail situé sur la page de licence.
 
 ## Licence

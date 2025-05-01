@@ -38,7 +38,6 @@ CORS(app)
 # Configuration de la base de données MariaDB
 DATABASE_URL = os.getenv("DATABASE_URL")
 # DATABASE_URL = "mysql+pymysql://nsidb:123nsi!bd@localhost/jp2_voeux_parcoursup"
-CLOUDFLARE_SECRET_KEY = os.getenv("CLOUDFLARE_SECRET_KEY")
 # DATABASE_URL = "sqlite:///database.sqlite3"
 
 def create_engine_with_retries(database_url, retries=15, delay=5):
