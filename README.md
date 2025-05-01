@@ -133,25 +133,29 @@ Modifiez le fichier `.env` pour configurer les paramètres de votre base de donn
 
 4. Accédez à l'application via `http://ip_machine:5000`.
 
-### Mettre à jour les applications manuellement
+## Mettre à jour les applications manuellement
 
 Pour mettre à jour l'application:
     Se placer dans le dossier de l'application (où se trouve le fichier docker-compose.yml)
+
     ```sh
     docker compose pull
     ```
+
     puis:
 
     ```sh
     docker compose up --build -d
     ```
 
-### Logs
+## Logs
 
 Pour voir les logs des conteneur:
+
     ```sh
     docker ps
     ```
+    
     puis:
 
     ```sh
