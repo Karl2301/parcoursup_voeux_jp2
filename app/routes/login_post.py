@@ -61,17 +61,17 @@ def login_post():
                
             if user.professeur == True and user.deja_connecte == False: # Si l'utilisateur est un professeur et n'a pas encore configuré son mot de passe
                 response = make_response(redirect(url_for('configure_prof_get')))
-                response.set_cookie('session_cookie', new_session_cookie, samesite='Lax', secure=True)
+                response.set_cookie('session_cookie', new_session_cookie, samesite='Lax')
             elif user.professeur == False and user.deja_connecte == False: # Si l'utilisateur est un élève et n'a pas encore configuré son mot de passe
                 response = make_response(redirect(url_for('configure_password_get')))
-                response.set_cookie('session_cookie', new_session_cookie, samesite='Lax', secure=True)
+                response.set_cookie('session_cookie', new_session_cookie, samesite='Lax')
             #elif user.admin == True: # Si l'utilisateur est un administrateur
                 #response = make_response(redirect(url_for('dashboard_admin')))
             else:
                 app.logger.info("User logged in successfully: %s", user.identifiant_unique)
                 send_discord_message("login_success", user.identifiant_unique, get_url_from_request(request))
                 response = make_response(redirect(url_for('dashboard')))
-                response.set_cookie('session_cookie', new_session_cookie, samesite='Lax', secure=True)
+                response.set_cookie('session_cookie', new_session_cookie, samesite='Lax')
             return response
         else:
             error_message = "Nom d'utilisateur ou mot de passe incorrect."
