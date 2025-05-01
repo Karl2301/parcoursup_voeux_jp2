@@ -67,22 +67,26 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
     ```
 
 2. Installer Docker-Compose :
-    ```sh
+
+    ```
     sudo apt-get update
     sudo apt-get install docker-compose-plugin
     ```
 
 3. Vérifier l'installation de docker-compose :
+
     ```
     docker compose version
     ```
 
 4. Cloner le docker-compose :
+
     ```
     curl -O https://raw.githubusercontent.com/Karl2301/parcoursup_voeux_jp2/refs/heads/main/docker-compose.yml
     ```
 
 5. Configurez les variables d'environnement dans le meme dossier que le docker-compose.yml :
+
     ```
     nano .env
     ```
@@ -91,7 +95,8 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
     vi .env
     ```
 
-    Collez et remplissez les informations suivantes dans le fichier `.env`:
+6. Collez et remplissez les informations suivantes dans le fichier `.env`:
+
     ```
     DATABASE_URL=mysql+pymysql://nsidb:123nsi!bd@db:3306/jp2_voeux_parcoursup
     SMTP_API_KEY=clef-brevo-smtp-api (facultatif)
@@ -102,10 +107,14 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
     MYSQL_DATABASE=jp2_voeux_parcoursup
     MYSQL_USER=identifiant-mariadb
     MYSQL_PASSWORD=mot-de-passe-mariadb
+
+    APP_PORT=5000
+    MARIADB_PORT=3306
     ```
 
 6. Initialisez l'application :
-    ```sh
+
+    ```
     docker compose up --build -d
     ```
 
@@ -118,16 +127,20 @@ Modifiez le fichier `.env` pour configurer les paramètres de votre base de donn
 ### Démarrer l'application
 
 1. Lancez l'application (se placer dans le dossier docker-compose.yml) :
-    ```sh
+
+    ```
     docker compose up --build -d
     ```
+
 2. Stopper l'application (se placer dans le dossier docker-compose.yml) :
-    ```sh
+
+    ```
     docker compose stop
     ```
 
 3. Supprimer l'application (se placer dans le dossier docker-compose.yml) :
-    ```sh
+
+    ```
     docker compose down
     ```
 
@@ -135,14 +148,14 @@ Modifiez le fichier `.env` pour configurer les paramètres de votre base de donn
 
 ## Mettre à jour les applications manuellement
 
-Pour mettre à jour l'application:
+1. Pour mettre à jour l'application:
 Se placer dans le dossier de l'application (où se trouve le fichier docker-compose.yml)
 
     ```
     docker compose pull
     ```
 
-    puis:
+2. Puis ensuite:
 
     ```
     docker compose up --build -d
@@ -150,20 +163,20 @@ Se placer dans le dossier de l'application (où se trouve le fichier docker-comp
 
 ## Logs
 
-Pour voir les logs des conteneur:
+1. Pour voir les logs des conteneur:
 
     ```
     docker ps
     ```
 
-    puis:
+2. Puis ensuite tapez :
 
     ```
     docker compose logs -f {nom ou id du conteneur}
     ```
 
 ## Structure du projet
-    ```
+```
     parcoursup_voeux_jp2/
     ├── .gitignore
     ├── [`admin.py`](admin.py )
@@ -194,18 +207,18 @@ Pour voir les logs des conteneur:
     │   ├── login/
     │   ├── notifications/
     │   └── ...
-    ```
+```
 
 ## API
 
-    ### Endpoints principaux
-        - `GET /login` : Affiche la page de connexion.
-        - `POST /login` : Authentifie l'utilisateur.
-        - `GET /dashboard` : Affiche le tableau de bord de l'utilisateur.
-        - `POST /configure_password` : Configure le mot de passe de l'utilisateur.
-        - `POST /upload_csv` : Permet de télécharger un fichier CSV.
-        - `POST /save_prof_data` : Sauvegarde les données d'un professeur.
-        - `POST /validate_voeux` : Valide les vœux d'un élève.
+### Endpoints principaux
+    - `GET /login` : Affiche la page de connexion.
+    - `POST /login` : Authentifie l'utilisateur.
+    - `GET /dashboard` : Affiche le tableau de bord de l'utilisateur.
+    - `POST /configure_password` : Configure le mot de passe de l'utilisateur.
+    - `POST /upload_csv` : Permet de télécharger un fichier CSV.
+    - `POST /save_prof_data` : Sauvegarde les données d'un professeur.
+    - `POST /validate_voeux` : Valide les vœux d'un élève.
 
 
 ### Contributions

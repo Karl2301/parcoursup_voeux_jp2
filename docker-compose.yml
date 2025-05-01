@@ -6,7 +6,7 @@ services:
     env_file:
       - .env
     ports:
-      - "3306:3306"  # Expose le port 3306 de l'hôte vers 3306 du conteneur
+      - "${MARIADB_PORT}:${MARIADB_PORT}"
     networks:
       - app_network
     volumes:
@@ -21,7 +21,7 @@ services:
     env_file:
       - .env
     ports:
-      - "5000:5000"
+      - "${APP_PORT}:${APP_PORT}"
     networks:
       - app_network
 
@@ -33,7 +33,7 @@ services:
     command: ["--interval", "86400", "--cleanup"]
     restart: unless-stopped
     networks:
-    - app_network
+      - app_network
 
 networks:
   app_network:

@@ -35,8 +35,10 @@ turnstile = Turnstile(app=app)
 socketio = SocketIO(app, async_mode="eventlet") 
 
 CORS(app)
-# Configuration de la base de données MariaDB
-DATABASE_URL = os.getenv("DATABASE_URL")
+# Configuration de la base de données MariaDBDA
+DATABASE_USER = os.getenv('MYSQL_USER')
+DATABASE_PASSWORD = os.getenv('MYSQL_PASSWORD')
+DATABASE_URL = "mysql+pymysql://{}:{}@localhost/jp2_voeux_parcoursup".format(DATABASE_USER, DATABASE_PASSWORD)
 # DATABASE_URL = "mysql+pymysql://nsidb:123nsi!bd@localhost/jp2_voeux_parcoursup"
 # DATABASE_URL = "sqlite:///database.sqlite3"
 
