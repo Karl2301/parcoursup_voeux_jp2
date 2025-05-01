@@ -50,7 +50,7 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
 ### Étapes d'installation
 
 1. Installer Docker Engine :
-    ```sh
+    ```
     # Add Docker's official GPG key:
     sudo apt-get update
     sudo apt-get install ca-certificates curl
@@ -85,7 +85,7 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
     curl -O https://raw.githubusercontent.com/Karl2301/parcoursup_voeux_jp2/refs/heads/main/docker-compose.yml
     ```
 
-5. Configurez les variables d'environnement dans le meme dossier que le docker-compose.yml :
+5. Configurez les variables d'environnement dans le meme dossier que le `docker-compose.yml` :
 
     ```
     nano .env
@@ -114,7 +114,10 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
 6. Initialisez l'application :
 
     ```
-    docker compose --env-file .env up --build -d
+    set -o allexport; source .env; set +o allexport && \
+    docker compose pull && \
+    docker compose up -d && \
+    docker compose logs -f web db watchtower
     ```
 
 ## Configuration
@@ -123,46 +126,42 @@ Modifiez le fichier `.env` pour configurer les paramètres de votre base de donn
 Mettre les données dans la base de donnée:
 
     ```
-    sudo cat chemin_vers_le_dump | sudo docker exec -i db mariadb -u utilisateur -p'mot_de_passe' nom_de_la_base
+    sudo cat {chemin_vers_le_dump} | sudo docker exec -i db mariadb -u {utilisateur_de_la_base} -p'{mot_de_passe}' {nom_de_la_base}
     ```
 
 ## Utilisation
 
 ### Démarrer l'application
 
-1. Lancez l'application (se placer dans le dossier docker-compose.yml) :
+1. Lancez l'application (se placer dans le dossier `docker-compose.yml`) :
 
     ```
-    docker compose --env-file .env up --build -d
+    docker compose start
     ```
 
-2. Stopper l'application (se placer dans le dossier docker-compose.yml) :
+2. Stopper l'application (se placer dans le dossier `docker-compose.yml`) :
 
     ```
     docker compose stop
     ```
 
-3. Supprimer l'application (se placer dans le dossier docker-compose.yml) :
+3. Supprimer l'application (se placer dans le dossier `docker-compose.yml`) :
 
     ```
     docker compose down
     ```
 
-4. Accédez à l'application via `http://ip_machine:5000`.
+4. Accédez à l'application via `http://ip_machine:{APP_PORT}`.
 
 ## Mettre à jour les applications manuellement
 
-1. Pour mettre à jour l'application:
-Se placer dans le dossier de l'application (où se trouve le fichier docker-compose.yml)
+1. Pour mettre à jour l'application, se placer dans le dossier de l'application (où se trouve le fichier `docker-compose.yml` et le `.env`)
 
     ```
-    docker compose pull
-    ```
-
-2. Puis ensuite:
-
-    ```
-    docker compose --env-file .env up --build -d --force-recreate
+    set -o allexport; source .env; set +o allexport && \
+    docker compose pull && \
+    docker compose up -d && \
+    docker compose logs -f web db watchtower
     ```
 
 ## Logs
@@ -179,7 +178,10 @@ Se placer dans le dossier de l'application (où se trouve le fichier docker-comp
     docker compose logs -f {nom ou id du conteneur}
     ```
 
+    les nom de conteneurs : `web` ; `db` ; `watchtower`
+
 ## Structure du projet
+
 ```
     parcoursup_voeux_jp2/
     ├── .gitignore
@@ -226,7 +228,7 @@ Se placer dans le dossier de l'application (où se trouve le fichier docker-comp
 
 
 ### Contributions
-        - Les contributions sont les bienvenues ! Veuillez contacter les propriétaires via mail situé sur la page de licence.
+    - Les contributions sont les bienvenues ! Veuillez contacter les propriétaires via mail situé sur la page de licence.
 
 ## Licence
     Ce projet est sous licence. Voir le fichier LICENCE pour plus de détails.
