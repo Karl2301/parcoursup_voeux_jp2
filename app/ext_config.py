@@ -40,6 +40,9 @@ DATABASE_USER = os.getenv('MYSQL_USER')
 DATABASE_PASSWORD = os.getenv('MYSQL_PASSWORD')
 MARIADB_PORT = os.getenv('MARIADB_PORT')
 MYSQL_DATABASE = os.getenv('MYSQL_DATABASE')
+APP_PORT = os.getenv('APP_PORT')
+if not APP_PORT:
+    raise ValueError("La variable d'environnement APP_PORT doit être définie.")
 
 if not DATABASE_USER or not DATABASE_PASSWORD or not MARIADB_PORT:
     raise ValueError("Les variables d'environnement MYSQL_USER, MYSQL_PASSWORD et MARIADB_PORT doivent être définies.")
