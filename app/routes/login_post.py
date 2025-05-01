@@ -58,54 +58,7 @@ def login_post():
             
             sessionuser.add(user)
             sessionuser.commit()
-
-            with Session(engine) as session:
-
-                ip_record = session.exec(select(AdresseIP).where(AdresseIP.ip == ip_address)).first()
-                ip_record_name = session.exec(select(AdresseIP).where(AdresseIP.username == identifiant)).first()
-                if ip_record and ip_record_name:
-                    app.logger.warning("IP address %s is listed.", ip_address)
-                else: 
-                    api_url = f"https://api.ipregistry.co/{ip_address}?key=ira_BIvtarKLy6yDc3Tw26YJ1QZR4SXfT14MSDgV"
-                    response = requests.get(api_url)
-                    if response.status_code == 200:
-                        ip_data = response.json()
-                        security_flags = [
-                            "is_abuser",
-                            "is_attacker",
-                            "is_bogon",
-                            "is_threat",
-                            "is_tor_exit"
-                        ]
-
-                        # Vérifier si l'adresse IP est dans la liste noire
-                        
-                        for flag in security_flags:
-                            if ip_data.get("security", {}).get(flag, False):
-                                app.logger.warning("Security flag triggered: %s", flag)
-                                return render_template("login/index.html", error="Connexion refusée pour des raisons de sécurité.")
-                        # Enregistrer les données IP dans la base de données
-                        ip_record = AdresseIP(
-                            ip=ip_address,
-                            username=user.identifiant_unique,
-                            classe=user.niveau_classe,
-                            country=ip_data.get("location", {}).get("country", "").get("name", ""),
-                            region=ip_data.get("location", {}).get("region", "").get("name", ""),
-                            city=ip_data.get("location", {}).get("city", ""),
-                            latitude=ip_data.get("location", {}).get("latitude", 0),
-                            longitude=ip_data.get("location", {}).get("longitude", 0),
-                            data=json.dumps(ip_data, ensure_ascii=False),  # Serialize ip_data to JSON string
-                            created_at=datetime.now(ZoneInfo("Europe/Paris")).strftime("%Y-%m-%d %H:%M:%S")  # Ajouter la date de création en UTC
-                        )
-                        session.add(ip_record)
-                        session.commit()
-
-                    else:
-                        app.logger.warning("Failed to retrieve IP data. Status code: %s", response.status_code) 
-
-            
-            
-            
+               
             if user.professeur == True and user.deja_connecte == False: # Si l'utilisateur est un professeur et n'a pas encore configuré son mot de passe
                 response = make_response(redirect(url_for('configure_prof_get')))
                 response.set_cookie('session_cookie', new_session_cookie, samesite='Lax', secure=True)
