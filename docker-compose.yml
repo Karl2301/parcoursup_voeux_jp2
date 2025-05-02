@@ -30,10 +30,51 @@ services:
     container_name: watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    command: ["--interval", "86400", "--cleanup"]
+      - ~/.docker/config.json:/config.json
+    command: ["--schedule", "0 4 * * *", "--cleanup"]
     restart: unless-stopped
     networks:
     - app_network
+
+
+  db-backup:
+    image: mariadb:10.7
+    container_name: db-backup
+    depends_on:
+      - db
+    env_file:
+      - .env
+    entrypoint: ["/bin/sh", "-c"]
+    command: >
+      "mkdir -p /backup &&
+      mysqldump -h db -u$${MYSQL_USER} -p$${MYSQL_PASSWORD} $${MYSQL_DATABASE} > /backup/backup_$(date +%Y%m%d_%H%M%S).sql &&
+      ls -tp /backup | grep -v '/$' | tail -n +11 | xargs -I {} rm -- /backup/{}"
+    volumes:
+      - ./db_backups:/backup
+    networks:
+      - app_network
+    restart: "no"
+
+
+  db-cron-backup:
+    image: alpine
+    container_name: db-cron-backup
+    depends_on:
+      - db
+    volumes:
+      - ./db_backups:/backup
+      - /var/run/docker.sock:/var/run/docker.sock
+      - .:/app  # pour accéder au script si besoin
+    command: >
+      /bin/sh -c "echo '0 3 * * * docker compose run --rm db-backup >> /proc/1/fd/1 2>&1' > /etc/crontabs/root &&
+                  crond -f -L /proc/1/fd/1"
+    restart: unless-stopped
+    working_dir: /app
+    networks:
+      - app_network
+
+
+
 
 networks:
   app_network:
