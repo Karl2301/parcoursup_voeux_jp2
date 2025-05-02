@@ -98,7 +98,7 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
 6. Collez et remplissez les informations suivantes dans le fichier `.env`:
 
     ```
-    SMTP_API_KEY=clef-brevo-smtp-api (facultatif)
+    SMTP_API_KEY=clef-brevo-smtp-api (facultatif mais utile)
     TURNSTILE_SITE_KEY=clef-TURNSTILE-site
     TURNSTILE_SECRET_KEY=clef-TURNSTILE-secret
 
@@ -107,6 +107,8 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
     MYSQL_USER=identifiant-mariadb
     MYSQL_PASSWORD=mot-de-passe-mariadb
 
+    GITHUB_CLIENT_PAT=clef_de_récupération_du_projet
+    
     APP_PORT=5000
     MARIADB_PORT=3306
     ```
@@ -115,7 +117,7 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
 
     ```
     set -o allexport; source .env; set +o allexport && \
-    echo "$GITHUB_CLIENT_PAT" | docker login --username "Karl2301" --password-stdin\
+    echo "$GITHUB_CLIENT_PAT" | docker login ghcr.io -u karl2301 --password-stdin && \
     docker compose pull && \
     docker compose up -d && \
     docker compose logs -f web db watchtower
@@ -160,7 +162,7 @@ Pour mettre à jour l'application, se placer dans le dossier de l'application (o
 
 ```
 set -o allexport; source .env; set +o allexport && \
-echo "$GITHUB_CLIENT_PAT" | docker login --username "Karl2301" --password-stdin\
+echo "$GITHUB_CLIENT_PAT" | docker login ghcr.io -u karl2301 --password-stdin && \
 docker compose pull && \
 docker compose up -d && \
 docker compose logs -f web db watchtower
