@@ -2,7 +2,7 @@
 
 ## Description
 
-Parcoursup Voeux JP2 est une application de gestion des élèves et des professeurs dans un lycée, permettant de classer les voeux ParcourSup des élèves tout en permettant aux professeurs de gérer les informations des élèves. L'application offre une interface utilisateur intuitive pour les élèves, les professeurs et les administrateurs.u
+Parcoursup Voeux JP2 est une application de gestion des élèves et des professeurs dans un lycée, permettant de classer les voeux ParcourSup des élèves tout en permettant aux professeurs de gérer les informations des élèves. L'application offre une interface utilisateur intuitive pour les élèves, les professeurs et les administrateurs.
 
 ### Cette application ne communique pas avec le site ParcourSup
 
@@ -50,21 +50,21 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
 ### Étapes d'installation
 
 1. Installer Docker Engine :
-    ```
-    # Add Docker's official GPG key:
-    sudo apt-get update
-    sudo apt-get install ca-certificates curl
-    sudo install -m 0755 -d /etc/apt/keyrings
-    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-    sudo chmod a+r /etc/apt/keyrings/docker.asc
-
-    # Add the repository to Apt sources:
-    echo \
-    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-    $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
-    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-    sudo apt-get update
-    ```
+  ```
+  # Add Docker's official GPG key:
+  sudo apt-get update
+  sudo apt-get install ca-certificates curl
+  sudo install -m 0755 -d /etc/apt/keyrings
+  sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+  sudo chmod a+r /etc/apt/keyrings/docker.asc
+  
+  # Add the repository to Apt sources:
+  echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  sudo apt-get update
+  ```
 
 2. Installer Docker-Compose :
 
@@ -111,7 +111,7 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
     MARIADB_PORT=3306
     ```
 
-6. Initialisez l'application :
+7. Initialisez l'application :
 
     ```
     set -o allexport; source .env; set +o allexport && \
@@ -125,9 +125,9 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
 Modifiez le fichier `.env` pour configurer les paramètres de votre base de données et d'autres variables d'environnement nécessaires.
 Mettre les données dans la base de donnée:
 
-    ```
-    sudo cat {chemin_vers_le_dump} | sudo docker exec -i db mariadb -u {utilisateur_de_la_base} -p'{mot_de_passe}' {nom_de_la_base}
-    ```
+```
+sudo cat {chemin_vers_le_dump} | sudo docker exec -i db mariadb -u {utilisateur_de_la_base} -p'{mot_de_passe}' {nom_de_la_base}
+```
 
 ## Utilisation
 
@@ -155,80 +155,80 @@ Mettre les données dans la base de donnée:
 
 ## Mettre à jour les applications manuellement
 
-1. Pour mettre à jour l'application, se placer dans le dossier de l'application (où se trouve le fichier `docker-compose.yml` et le `.env`)
+Pour mettre à jour l'application, se placer dans le dossier de l'application (où se trouve le fichier `docker-compose.yml` et le `.env`)
 
-    ```
-    set -o allexport; source .env; set +o allexport && \
-    docker compose pull && \
-    docker compose up -d && \
-    docker compose logs -f web db watchtower
-    ```
+```
+set -o allexport; source .env; set +o allexport && \
+docker compose pull && \
+docker compose up -d && \
+docker compose logs -f web db watchtower
+```
 
 ## Logs
 
-1. Pour voir les logs des conteneur:
+Pour voir les logs des conteneur:
 
-    ```
-    docker ps
-    ```
+```
+docker ps
+```
 
-2. Puis ensuite tapez :
+Puis ensuite tapez :
 
-    ```
-    docker compose logs -f {nom ou id du conteneur}
-    ```
+```
+docker compose logs -f {nom ou id du conteneur}
+```
 
-    les nom de conteneurs : `web` ; `db` ; `watchtower`
+Les nom de conteneurs : `web` ; `db` ; `watchtower`
 
 ## Structure du projet
 
 ```
-    parcoursup_voeux_jp2/
-    ├── .gitignore
-    ├── [`admin.py`](admin.py )
-    ├── [`app.py`](app.py )
-    ├── [`create_classes.py`](create_classes.py )
-    ├── [`ext_config.py`](ext_config.py )
-    ├── [`fonctions.py`](fonctions.py )
-    ├── LICENCE
-    ├── [`README.md`](README.md )
-    ├── [`SQLClassSQL.py`](SQLClassSQL.py )
-    ├── [`todo.md`](todo.md )
-    ├── __pycache__/
-    ├── .vscode/
-    ├── routes/
-    │   ├── [`routes/__init__.py`](routes/__init__.py )
-    │   ├── admin_dashboard.py
-    │   ├── [`routes/aide.py`](routes/aide.py )
-    │   └── ...
-    ├── static/
-    │   ├── css/
-    │   ├── js/
-    │   └── ...
-    ├── templates/
-    │   ├── dashboard_super_administrateur/
-    │   ├── classes/
-    │   ├── configure_password/
-    │   ├── dashboard_prof/
-    │   ├── login/
-    │   ├── notifications/
-    │   └── ...
+parcoursup_voeux_jp2/
+├── .gitignore
+├── [admin.py](admin.py )
+├── [app.py](app.py )
+├── [create_classes.py](create_classes.py )
+├── [ext_config.py](ext_config.py )
+├── [fonctions.py](fonctions.py )
+├── LICENCE
+├── [README.md](README.md )
+├── [SQLClassSQL.py](SQLClassSQL.py )
+├── [todo.md](todo.md )
+├── __pycache__/
+├── .vscode/
+├── routes/
+│   ├── [routes/__init__.py](routes/__init__.py )
+│   ├── admin_dashboard.py
+│   ├── [routes/aide.py](routes/aide.py )
+│   └── ...
+├── static/
+│   ├── css/
+│   ├── js/
+│   └── ...
+├── templates/
+│   ├── dashboard_super_administrateur/
+│   ├── classes/
+│   ├── configure_password/
+│   ├── dashboard_prof/
+│   ├── login/
+│   ├── notifications/
+│   └── ...
 ```
 
 ## API
 
 ### Endpoints principaux
-    - `GET /login` : Affiche la page de connexion.
-    - `POST /login` : Authentifie l'utilisateur.
-    - `GET /dashboard` : Affiche le tableau de bord de l'utilisateur.
-    - `POST /configure_password` : Configure le mot de passe de l'utilisateur.
-    - `POST /upload_csv` : Permet de télécharger un fichier CSV.
-    - `POST /save_prof_data` : Sauvegarde les données d'un professeur.
-    - `POST /validate_voeux` : Valide les vœux d'un élève.
+- `GET /login` : Affiche la page de connexion.
+- `POST /login` : Authentifie l'utilisateur.
+- `GET /dashboard` : Affiche le tableau de bord de l'utilisateur.
+- `POST /configure_password` : Configure le mot de passe de l'utilisateur.
+- `POST /upload_csv` : Permet de télécharger un fichier CSV.
+- `POST /save_prof_data` : Sauvegarde les données d'un professeur.
+- `POST /validate_voeux` : Valide les vœux d'un élève.
 
 
 ### Contributions
-    - Les contributions sont les bienvenues ! Veuillez contacter les propriétaires via mail situé sur la page de licence.
+- Les contributions sont les bienvenues ! Veuillez contacter les propriétaires via mail situé sur la page de licence.
 
 ## Licence
-    Ce projet est sous licence. Voir le fichier LICENCE pour plus de détails.
+Ce projet est sous licence. Voir le fichier LICENCE pour plus de détails.
