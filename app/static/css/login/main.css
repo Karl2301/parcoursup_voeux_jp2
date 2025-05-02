@@ -271,3 +271,27 @@ legend {
   font-size: 1rem;
   text-align: center;
 }
+
+.error-messages {
+  display: flex;
+  align-items: center;
+  background-color: #ffdddd; /* Fond rouge clair */
+  color: #d8000c; /* Texte rouge foncé */
+  padding: 1em;
+  border: 1px solid #d8000c;
+  border-radius: 5px;
+  margin: 1em 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-size: 1rem;
+}
+
+.error-messages .icon {
+  margin-right: 0.5em;
+  font-size: 1.5rem; /* Taille de l'icône */
+}
+
+.error-messages p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: bold;
+}

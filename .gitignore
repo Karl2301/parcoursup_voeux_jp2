@@ -8,7 +8,7 @@ database.sqlite3
 
 # Ignorer les fichiers de configuration spécifiques à l'IDE
 .vscode/
-.db_backups/
+db_backups/
 # Ignorer les fichiers de log
 *.log
 
@@ -36,5 +36,5 @@ app/routes/maj.txt
 mariadb.sql
 dump_local.sql
 
-.db_data/
+db_data/
 
