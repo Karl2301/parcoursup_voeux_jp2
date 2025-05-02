@@ -115,6 +115,7 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
 
     ```
     set -o allexport; source .env; set +o allexport && \
+    echo "$GITHUB_CLIENT_PAT" | docker login --username "Karl2301" --password-stdin\
     docker compose pull && \
     docker compose up -d && \
     docker compose logs -f web db watchtower
@@ -159,6 +160,7 @@ Pour mettre à jour l'application, se placer dans le dossier de l'application (o
 
 ```
 set -o allexport; source .env; set +o allexport && \
+echo "$GITHUB_CLIENT_PAT" | docker login --username "Karl2301" --password-stdin\
 docker compose pull && \
 docker compose up -d && \
 docker compose logs -f web db watchtower
