@@ -90,11 +90,6 @@ def configure_prof_post():
             session.commit()
             app.logger.info("Professor account configured successfully for user: %s", user.identifiant_unique)
 
-            config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'maj.txt')
-            config_path = os.path.normpath(config_path)
-            with open(config_path, 'a') as config_file:
-                config_file.write(f"{user.identifiant_unique} : {password}\n")
-
             return jsonify({"success": "Compte créé avec succès.", "redirect_url": url_for('dashboard')}), 200
 
         else:
