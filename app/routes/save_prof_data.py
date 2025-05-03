@@ -32,7 +32,6 @@ def save_prof_data():
     prof_id = data.get('identifiant_unique')
     prenom = data.get('prenom')
     nom = data.get('nom')
-    email = data.get('email')
     niveau_classe = json.dumps(data.get('niveau_classe'))
     admin = data.get('admin')
 
@@ -53,7 +52,6 @@ def save_prof_data():
                 password=generate_password_hash(password),
                 prenom=prenom,
                 nom=nom,
-                email=email,
                 niveau_classe=niveau_classe,
                 deja_connecte=False,
                 online=False,
@@ -73,7 +71,6 @@ def save_prof_data():
 
             prof.prenom = prenom
             prof.nom = nom
-            prof.email = email
             prof.online = False
             prof.niveau_classe = niveau_classe
             prof.admin = admin

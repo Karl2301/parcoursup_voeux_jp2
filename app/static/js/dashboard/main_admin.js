@@ -73,7 +73,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             document.getElementById('new_identifiant').value = '';
             document.getElementById('new_prenom').value = '';
             document.getElementById('new_nom').value = '';
-            document.getElementById('new_email').value = '';
 
             const niveauClasseDiv = document.getElementById('new_niveau_classe');
             niveauClasseDiv.innerHTML = ''; // Clear existing checkboxes
@@ -105,7 +104,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         document.getElementById('identifiant_unique').textContent = profData.identifiant_unique;
         document.getElementById('prenom').value = profData.prenom || '';
         document.getElementById('nom').value = profData.nom || '';
-        document.getElementById('email').value = profData.email || '';
         editClassesAffiliation = document.getElementById('editClassesAffiliation')
         
         const niveauClasseDiv = document.getElementById('niveau_classe');
@@ -139,7 +137,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         const profId = document.getElementById('identifiant_unique').textContent;
         const prenom = document.getElementById('prenom').value;
         const nom = document.getElementById('nom').value;
-        const email = document.getElementById('email').value;
         const admin = document.getElementById('is_admin').checked; // Checkbox for admin
         const niveau_classe = Array.from(document.querySelectorAll('#niveau_classe input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
 
@@ -147,7 +144,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             identifiant_unique: profId,
             prenom,
             nom,
-            email,
             admin,
             niveau_classe
         };
@@ -178,7 +174,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         const identifiant = document.getElementById('new_identifiant').value;
         const prenom = document.getElementById('new_prenom').value;
         const nom = document.getElementById('new_nom').value;
-        const email = document.getElementById('new_email').value;
         const admin = document.getElementById('new_is_admin').checked; // Checkbox for admin
         const deja_connecte = false; // Nouveau professeur n'est pas déjà connecté
         const niveau_classe = Array.from(document.querySelectorAll('#new_niveau_classe input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
@@ -187,7 +182,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             identifiant_unique: identifiant,
             prenom,
             nom,
-            email,
             deja_connecte,
             niveau_classe,
             admin
