@@ -81,17 +81,3 @@ class Config(SQLModel, table=True):
     __tablename__ = "config"
     id: Optional[int] = Field(default=None, primary_key=True)
     deadline: Optional[datetime] = Field(default=None)
-
-class AdresseIP(SQLModel, table=True):
-    __tablename__ = "adresses_ip"
-    id: Optional[int] = Field(default=None, primary_key=True)
-    username: Optional[str] = Field(default=None)
-    classe: Optional[str] = Field(default=None)
-    ip: Optional[str] = Field(default=None)
-    country: Optional[str] = Field(default=None)
-    region: Optional[str] = Field(default=None)
-    city: Optional[str] = Field(default=None)
-    latitude: Optional[float] = Field(default=None)
-    longitude: Optional[float] = Field(default=None)
-    data: Optional[str] = Field(default=None, sa_column=Column(TEXT))
-    created_at: Optional[datetime] = Field(default=None)

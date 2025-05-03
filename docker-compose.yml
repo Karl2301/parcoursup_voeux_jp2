@@ -47,7 +47,7 @@ services:
     entrypoint: ["/bin/sh", "-c"]
     command: >
       "mkdir -p /backup &&
-      mysqldump -h db -u$${MYSQL_USER} -p$${MYSQL_PASSWORD} $${MYSQL_DATABASE} > /backup/backup_$(date +%Y%m%d_%H%M%S).sql &&
+      mysqldump -h db -uroot -p$${MYSQL_ROOT_PASSWORD} $${MYSQL_DATABASE} > /backup/backup_$(date +%Y%m%d_%H%M%S).sql &&
       ls -tp /backup | grep -v '/$' | tail -n +11 | xargs -I {} rm -- /backup/{}"
     volumes:
       - ./db_backups:/backup
