@@ -21,6 +21,7 @@ from ext_config import *
 import json
 import logging
 from ds import send_discord_message
+from create_classes import create_all_classes
 
 def save_prof_data():
     session_cookie = request.cookies.get('session_cookie')
@@ -32,37 +33,53 @@ def save_prof_data():
     prenom = data.get('prenom')
     nom = data.get('nom')
     email = data.get('email')
-    deja_connecte = data.get('deja_connecte')
     niveau_classe = json.dumps(data.get('niveau_classe'))
-    mot_de_passe = 'ProfMDP'  # Mot de passe par défaut
+    admin = data.get('admin')
+
+
 
     with Session(engine) as session:
         prof = session.exec(select(Superieurs).where(Superieurs.identifiant_unique == prof_id)).first()
         if not prof:
             # Ajouter un nouveau professeur
+            password = ""
+            if not admin:
+                password="ProfMDP"
+            else:
+                password="AdminMDP"
+
             new_prof = Superieurs(
                 identifiant_unique=prof_id,
-                password=generate_password_hash("ProfMDP"),
+                password=generate_password_hash(password),
                 prenom=prenom,
                 nom=nom,
                 email=email,
                 niveau_classe=niveau_classe,
-                mot_de_passe=mot_de_passe,
                 deja_connecte=False,
                 online=False,
+                admin=admin,
+
             )
+
             send_discord_message("creation_compte_prof", prof_id, get_url_from_request(request), get_client_ip())
             session.add(new_prof)
         else:
-            # Mettre à jour un professeur existant
+            if prof.deja_connecte == False and (check_password_hash(prof.password, "ProfMDP") or check_password_hash(prof.password, "AdminMDP")):
+                if not admin:
+                    password="ProfMDP"
+                else:
+                    password="AdminMDP"
+                prof.password = generate_password_hash(password)
+
             prof.prenom = prenom
             prof.nom = nom
             prof.email = email
             prof.online = False
             prof.niveau_classe = niveau_classe
+            prof.admin = admin
 
             session.add(prof)
 
         session.commit()
-
+        create_all_classes()
         return jsonify({'success': 'Professor data updated successfully'})

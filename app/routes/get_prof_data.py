@@ -55,6 +55,7 @@ def get_prof_data():
                 'dashboard_theme': prof.dashboard_theme,
                 'nom': prof.nom,
                 'prenom': prof.prenom,
+                'admin': prof.admin,
                 'email': prof.email
             }
 

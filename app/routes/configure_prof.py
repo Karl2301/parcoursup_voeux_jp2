@@ -39,6 +39,9 @@ def configure_prof_get():
             if user.deja_connecte == True:
                 flash("Vous avez déjà configuré votre compte.", "error")
                 return redirect(url_for('dashboard'))
+        else:
+            flash("Utilisateur non trouvé.", "error")
+            return redirect(url_for('login_get'))
 
     return render_template('configure_prof/index.html') 
 

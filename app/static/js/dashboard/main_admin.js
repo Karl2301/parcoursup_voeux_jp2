@@ -50,31 +50,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     }
 
-    function populateProfTable(profList) {
-        profList.forEach(prof => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${prof.identifiant_unique}</td>
-                <td>${prof.prenom || ''} ${prof.nom || ''}</td>
-                <td>${prof.classes.join(', ')}</td>
-                <td>
-                    <button class="btn btn-modifier" data-id="${prof.identifiant_unique}">Modifier</button>
-                    <button class="btn btn-supprimer">Supprimer</button>
-                </td>
-            `;
-            profSortable.appendChild(row);
-        });
-
-        // Ajouter des gestionnaires d'événements pour les boutons "Modifier"
-        const modifierButtons = document.querySelectorAll('.btn-modifier');
-        modifierButtons.forEach(button => {
-            button.addEventListener('click', async (event) => {
-                const profId = event.target.getAttribute('data-id');
-                await showPopup(profId);
-            });
-        });
-    }
-
     async function showPopup(profId = null) {
         // Fermer l'autre popup si elle est ouverte
         document.getElementById('addProfPopup').style.display = 'none';
@@ -127,12 +102,12 @@ document.addEventListener("DOMContentLoaded", async function () {
     function fillPopup(profData) {
         // Fermer l'autre popup si elle est ouverte
         document.getElementById('addProfPopup').style.display = 'none';
-
         document.getElementById('identifiant_unique').textContent = profData.identifiant_unique;
         document.getElementById('prenom').value = profData.prenom || '';
         document.getElementById('nom').value = profData.nom || '';
         document.getElementById('email').value = profData.email || '';
-
+        editClassesAffiliation = document.getElementById('editClassesAffiliation')
+        
         const niveauClasseDiv = document.getElementById('niveau_classe');
         niveauClasseDiv.innerHTML = ''; // Clear existing checkboxes
         profData.classe_available.forEach(classe => {
@@ -152,7 +127,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             niveauClasseDiv.appendChild(div);
         });
-
+        if (profData.admin) {
+            editClassesAffiliation.style.display = 'none'; // Hide the classes affiliation for admin
+        }
+        document.getElementById('is_admin').checked = profData.admin || false; // Checkbox for admin
         document.getElementById('profPopup').style.display = 'flex';
     }
 
@@ -162,6 +140,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         const prenom = document.getElementById('prenom').value;
         const nom = document.getElementById('nom').value;
         const email = document.getElementById('email').value;
+        const admin = document.getElementById('is_admin').checked; // Checkbox for admin
         const niveau_classe = Array.from(document.querySelectorAll('#niveau_classe input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
 
         const profData = {
@@ -169,6 +148,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             prenom,
             nom,
             email,
+            admin,
             niveau_classe
         };
 
@@ -199,6 +179,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         const prenom = document.getElementById('new_prenom').value;
         const nom = document.getElementById('new_nom').value;
         const email = document.getElementById('new_email').value;
+        const admin = document.getElementById('new_is_admin').checked; // Checkbox for admin
         const deja_connecte = false; // Nouveau professeur n'est pas déjà connecté
         const niveau_classe = Array.from(document.querySelectorAll('#new_niveau_classe input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
 
@@ -209,7 +190,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             email,
             deja_connecte,
             niveau_classe,
-            mot_de_passe: 'ProfMDP' // Mot de passe par défaut
+            admin
         };
 
         try {
@@ -313,17 +294,24 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     function populateProfTable(profList) {
-        profList.forEach(prof => {
+        // Trier les professeurs : les administrateurs en premier
+        const sortedProfList = profList.sort((a, b) => b.admin - a.admin);
+
+        sortedProfList.forEach(prof => {
             const row = document.createElement('tr');
+            console.log("Prof : ", prof.admin);
             row.innerHTML = `
-                <td>${prof.identifiant_unique}</td>
-                <td>${prof.prenom || ''} ${prof.nom || ''}</td>
-                <td>${prof.classes.join(', ')}</td>
-                <td>
-                    <button class="btn btn-modifier" data-id="${prof.identifiant_unique}">Modifier</button>
-                    <button class="btn btn-reset" data-id="${prof.identifiant_unique}">Réinitialiser</button>
-                    <button class="btn btn-supprimer" data-id="${prof.identifiant_unique}">Supprimer</button>
-                </td>
+            <td>${prof.identifiant_unique}</td>
+            <td>${prof.prenom || ''} ${prof.nom || ''}</td>
+            <td>${prof.classes.join(', ')}</td>
+            <td>
+                ${prof.admin ? '<span class="status pending">Administrateur</span>' : '<span class="status inProgress">Professeur</span>'}
+            </td>
+            <td>
+                <button class="btn btn-modifier" data-id="${prof.identifiant_unique}">Modifier</button>
+                <button class="btn btn-reset" data-id="${prof.identifiant_unique}">Réinitialiser</button>
+                <button class="btn btn-supprimer" data-id="${prof.identifiant_unique}">Supprimer</button>
+            </td>
             `;
             profSortable.appendChild(row);
         });
@@ -442,17 +430,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     document.getElementById('cancelAddBtn').addEventListener('click', () => {
         document.getElementById('addProfPopup').style.display = 'none';
-    });
-
-    document.addEventListener('click', (event) => {
-        const popup = document.getElementById('profPopup');
-        if (event.target === popup) {
-            popup.style.display = 'none';
-        }
-        const addPopup = document.getElementById('addProfPopup');
-        if (event.target === addPopup) {
-            addPopup.style.display = 'none';
-        }
     });
 });
 

@@ -33,7 +33,7 @@ def admin_reset_password_post():
     
     if not username:
         flash("Veuillez entrer un nom d'utilisateur.", "error")
-        return jsonify({"ok": False, "message": "Utilisateur non trouvé."})
+        return jsonify({"error": "Utilisateur non trouvé."})
     
     with Session(engine) as session:
         # Vérifier si l'utilisateur existe
@@ -42,17 +42,21 @@ def admin_reset_password_post():
         
         if not user:
             flash("Utilisateur non trouvé.", "error")
-            return jsonify({"ok": False, "message": "Utilisateur non trouvé."})
+            return jsonify({"error": "Utilisateur non trouvé."})
         
         if user.professeur == False:
             flash("L'utilisateur est un élève, pas un professeur.", "error")
-            return jsonify({"ok": False, "message": "L'utilisateur est un élève, pas un professeur."})
-        if user.admin == True:
-            flash("L'utilisateur est un administrateur.", "error")
-            return jsonify({"ok": False, "message": "L'utilisateur est pas administrateur."})
-    
+            return jsonify({"error": "L'utilisateur est un élève, pas un professeur."})
+
+
+        password = ""
+        if user.admin:
+            password = "AdminMDP"
+        else:
+            password = "ProfMDP"
         # Générer un nouveau mot de passe aléatoire
-        new_password = "ProfMDP"
+        new_password = password
+
         user.password = generate_password_hash(new_password)
         user.deja_connecte = False
         user.online = False

@@ -58,8 +58,8 @@ def get_data():
         eleve_online_count = session.exec(select(Users).where(Users.online == True, Users.niveau_classe.in_(niveau_classe))).all()
         eleve_choix_validees_count = session.exec(select(Users).where(Users.choix_validees == True, Users.niveau_classe.in_(niveau_classe))).all()
         demande_aide_count = session.exec(select(DemandeAide).where(DemandeAide.classe.in_(niveau_classe))).all()
-        liste_prof = session.exec(select(Superieurs).where((Superieurs.professeur == True) & (Superieurs.admin == False))).all()
-        liste_prof_json = [{'identifiant_unique': prof.identifiant_unique, 'nom': prof.nom, 'prenom': prof.prenom, 'classes': json.loads(prof.niveau_classe)} for prof in liste_prof]
+        liste_prof = session.exec(select(Superieurs).where(Superieurs.professeur == True)).all()
+        liste_prof_json = [{'identifiant_unique': prof.identifiant_unique, 'nom': prof.nom, 'prenom': prof.prenom, 'classes': json.loads(prof.niveau_classe), 'admin': prof.admin} for prof in liste_prof]
 
         niveau_classe_list = niveau_classe
 
