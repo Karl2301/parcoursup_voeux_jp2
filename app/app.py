@@ -82,7 +82,7 @@ def main():
     app.logger.info(APP_PORT)
     app_port = int(APP_PORT)
     app.logger.info(f"App port: {app_port}")
-    app.logger.info(f"type: {type(app_port)}")
+    app.logger.info(f"version: {VERSION}")
     socketio.run(app, host="0.0.0.0", port=app_port)
 
 if __name__ == '__main__':
