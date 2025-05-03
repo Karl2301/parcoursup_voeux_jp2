@@ -127,6 +127,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
         if (profData.admin) {
             editClassesAffiliation.style.display = 'none'; // Hide the classes affiliation for admin
+        } else {
+            editClassesAffiliation.style.display = 'block'; // Show the classes affiliation for non-admin
         }
         document.getElementById('is_admin').checked = profData.admin || false; // Checkbox for admin
         document.getElementById('profPopup').style.display = 'flex';
