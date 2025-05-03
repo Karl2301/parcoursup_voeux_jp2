@@ -18,7 +18,7 @@ import json
 from flask_turnstile import Turnstile
 import time
 
-VERSION = "2.9.0"
+VERSION = "3.0.5"
 
 def update_application_on_server():
     """
