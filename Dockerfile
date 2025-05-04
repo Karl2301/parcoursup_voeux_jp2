@@ -13,8 +13,3 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copier tout le reste du code
 COPY app/ /app
 
-# Exposer le port si nécessaire
-
-# Commande pour lancer ton app
-CMD ["python", "app.py"]
-
