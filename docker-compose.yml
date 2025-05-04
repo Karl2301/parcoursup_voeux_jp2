@@ -24,7 +24,7 @@ services:
       - "${APP_PORT}:${APP_PORT}"   # Expose le port de l'hôte et du conteneur
     networks:
       - app_network
-    command: gunicorn --bind 0.0.0.0:${APP_PORT} --forwarded-allow-ips="*" --worker-class eventlet -w 1 --preload --timeout 120 --keep-alive 5 app:app
+    command: gunicorn -w 1 -k eventlet -b 0.0.0.0:${APP_PORT} app:app
 
 
   watchtower:

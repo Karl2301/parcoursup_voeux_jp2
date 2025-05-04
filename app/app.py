@@ -4,7 +4,7 @@ eventlet.monkey_patch()
 from flask import Flask, render_template, Response
 import sqlmodel
 from routes import *
-from ext_config import *
+from ext_config import app, socketio
 from create_classes import create_all_classes
 import requests
 from flask import request, jsonify
