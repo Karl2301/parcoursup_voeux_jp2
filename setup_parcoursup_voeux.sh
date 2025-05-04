@@ -28,19 +28,19 @@ if ! docker compose version >/dev/null 2>&1; then
   exit 1
 fi
 
-# URLs des fichiers à télécharger
-docker_compose_url="https://raw.githubusercontent.com/Karl2301/parcoursup_voeux_jp2/refs/heads/main/docker-compose.yml"
-readme_url="https://raw.githubusercontent.com/Karl2301/parcoursup_voeux_jp2/refs/heads/main/README.md"
-backup_sql_url="https://raw.githubusercontent.com/Karl2301/parcoursup_voeux_jp2/refs/heads/main/backup_20250504_090243.sql"
-commands_url="https://raw.githubusercontent.com/Karl2301/parcoursup_voeux_jp2/refs/heads/main/commandes.txt"
+# URLs des fichiers à télécharger (branch "main")
+docker_compose_url="https://raw.githubusercontent.com/Karl2301/parcoursup_voeux_jp2/main/docker-compose.yml"
+readme_url="https://raw.githubusercontent.com/Karl2301/parcoursup_voeux_jp2/main/README.md"
+backup_sql_url="https://raw.githubusercontent.com/Karl2301/parcoursup_voeux_jp2/main/backup_20250504_090243.sql"
+commands_url="https://raw.githubusercontent.com/Karl2301/parcoursup_voeux_jp2/main/commandes.txt"
 
 # Première exécution : initialisation
 if [ ! -f .env ]; then
   echo "Première exécution : téléchargement des fichiers nécessaires..."
-  curl -sSL -o docker-compose.yml "$docker_compose_url"
-  curl -sSL -o README.md "$readme_url"
-  curl -sSL -o backup_20250504_090243.sql "$backup_sql_url"
-  curl -sSL -o commandes.txt "$commands_url"
+  curl -fsSL -o docker-compose.yml "$docker_compose_url"
+  curl -fsSL -o README.md "$readme_url"
+  curl -fsSL -o backup_20250504_090243.sql "$backup_sql_url"
+  curl -fsSL -o commandes.txt "$commands_url"
 
   cat > .env <<EOF
 SMTP_API_KEY=clef-brevo-smtp-api # facultatif mais utile
@@ -64,8 +64,30 @@ fi
 
 # Deuxième exécution (ou suivante) : lancement de l'installation
 echo "Démarrage de l'installation avec la configuration existante..."
-set -o allexport; source .env; set +o allexport && \
-  echo "$GITHUB_CLIENT_PAT" | docker login ghcr.io -u karl2301 --password-stdin && \
-  docker compose pull && \
-  docker compose up -d && \
-  docker compose logs -f web db watchtower
+
+# Charger les variables d'environnement
+set -o allexport; source .env; set +o allexport
+
+echo "$GITHUB_CLIENT_PAT" | docker login ghcr.io -u karl2301 --password-stdin
+
+# Pull et démarrage des conteneurs
+
+docker compose pull
+
+docker compose up -d
+
+# Affichage des logs et détection de "Starting application"
+
+docker compose logs -f web db watchtower | while IFS= read -r line; do
+  echo "$line"
+  if [[ "$line" == *"Starting application"* ]]; then
+    echo "Chaîne 'Starting application' détectée, import de la base de données en parallèle..."
+    (
+      set -o allexport; source .env; set +o allexport
+      sudo cat backup_20250504_090243.sql \
+        | sudo docker exec -i db mariadb -uroot -p"${MYSQL_ROOT_PASSWORD}" "${MYSQL_DATABASE}"
+    ) &
+    # Pour ne lancer qu'une seule fois, on peut quitter la boucle après
+    # break
+  fi
+done
