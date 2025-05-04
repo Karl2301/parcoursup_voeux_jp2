@@ -85,5 +85,7 @@ def main():
     app.logger.info(f"version: {VERSION}")
     socketio.run(app, host="0.0.0.0", port=app_port)
 
+app = socketio
+
 if __name__ == '__main__':
     main()
