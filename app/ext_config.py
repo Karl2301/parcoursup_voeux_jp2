@@ -93,9 +93,6 @@ app.logger.setLevel(logging.INFO)
 app.logger.info('Application startup')
 app.logger.info('Database connection established')
 app.logger.info('Logging system initialized')
-app.logger.info("Starting application...")
-app.logger.info(f"App port: {int(APP_PORT)}")
-app.logger.info(f"version: {VERSION}")
 update_application_on_server()
 
 

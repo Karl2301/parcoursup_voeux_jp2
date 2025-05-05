@@ -21,11 +21,9 @@ services:
     env_file:
       - .env
     ports:
-      - "${APP_PORT}:${APP_PORT}"   # Expose le port de l'hôte et du conteneur
+      - "${APP_PORT}:${APP_PORT}"
     networks:
       - app_network
-    command: gunicorn -w 1 -k eventlet -b 0.0.0.0:${APP_PORT} app:app
-
 
   watchtower:
     image: containrrr/watchtower
