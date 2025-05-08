@@ -51,7 +51,7 @@ if not APP_PORT:
 if not DATABASE_USER or not DATABASE_PASSWORD or not MARIADB_PORT:
     raise ValueError("Les variables d'environnement MYSQL_USER, MYSQL_PASSWORD et MARIADB_PORT doivent être définies.")
 
-DATABASE_URL = f"mysql+pymysql://{DATABASE_USER}:{DATABASE_PASSWORD}@db:{MARIADB_PORT}/{MYSQL_DATABASE}"
+DATABASE_URL = f"mysql+pymysql://{DATABASE_USER}:{DATABASE_PASSWORD}@localhost:{MARIADB_PORT}/{MYSQL_DATABASE}"
 # DATABASE_URL = "mysql+pymysql://nsidb:123nsi!bd@localhost/jp2_voeux_parcoursup"
 # DATABASE_URL = "sqlite:///database.sqlite3"
 
