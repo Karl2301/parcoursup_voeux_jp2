@@ -4,6 +4,29 @@
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$PROJECT_DIR" || exit 1
 
+# === Dump de la base de données ===
+DB_NAME="jp2_voeux_parcoursup"
+DB_USER="root"
+DB_PASS="root"  # à adapter selon votre environnement
+BACKUP_DIR="$PROJECT_DIR/backup"
+TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
+DUMP_FILE="$BACKUP_DIR/${DB_NAME}_${TIMESTAMP}.sql"
+
+mkdir -p "$BACKUP_DIR"
+
+echo "[INFO] $(date): Sauvegarde de la base de données..."
+mysqldump -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" > "$DUMP_FILE"
+if [ $? -ne 0 ]; then
+    echo "[ERROR] $(date): Échec du dump MySQL."
+    exit 1
+fi
+
+# Ne garder que les 30 derniers dumps
+cd "$BACKUP_DIR"
+ls -1tr | head -n -30 | xargs -d '\n' rm -f --
+
+cd "$PROJECT_DIR"
+
 # === Vérification de python et installation de python-is-python3 si manquant ===
 if ! command -v python >/dev/null 2>&1; then
     echo "[INFO] $(date): 'python' non trouvé. Installation de python-is-python3..."
@@ -31,7 +54,6 @@ if [ -d .git ]; then
     if [ "$LOCAL" != "$REMOTE" ]; then
         echo "[INFO] $(date): Mise à jour disponible. Pull..."
         git pull origin main
-        # Si la mise à jour a eu lieu, on garde une trace pour redémarrer le service
         UPDATED=true
     else
         echo "[INFO] $(date): Dépôt déjà à jour."
@@ -48,8 +70,6 @@ if [ ! -d ".venv" ] || [ ! -x ".venv/bin/python3" ]; then
     echo "[INFO] $(date): (Re)création de l'environnement virtuel..."
     rm -rf .venv
     python3 -m venv .venv
-
-    # Forcer installation de pip si nécessaire
     if [ ! -x ".venv/bin/pip" ]; then
         echo "[WARN] $(date): pip manquant dans .venv, tentative de récupération..."
         source .venv/bin/activate
@@ -72,7 +92,6 @@ SERVICE_NAME="voeuxjpdeux.service"
 if ! systemctl is-active --quiet $SERVICE_NAME; then
     echo "[INFO] $(date): Le service $SERVICE_NAME n'existe pas. Création et démarrage..."
 
-    # Création du fichier de service systemd avec chemin dynamique
     sudo bash -c "cat > /etc/systemd/system/$SERVICE_NAME <<EOF
 [Unit]
 Description=Voeux JP2 Service
@@ -91,10 +110,7 @@ Group=voeux
 WantedBy=multi-user.target
 EOF"
 
-    # Recharger systemd pour prendre en compte le nouveau service
     sudo systemctl daemon-reload
-
-    # Démarrer et activer le service pour qu'il démarre au démarrage
     sudo systemctl start $SERVICE_NAME
     sudo systemctl enable $SERVICE_NAME
     echo "[INFO] $(date): Service $SERVICE_NAME créé et démarré."
