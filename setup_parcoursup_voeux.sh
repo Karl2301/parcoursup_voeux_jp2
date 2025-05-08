@@ -1,93 +1,59 @@
-#!/usr/bin/env bash
-set -e
+#!/bin/bash
 
-# Vérifier que Python 3 est installé
-if ! command -v python3 >/dev/null 2>&1; then
-  echo "Python 3 n'est pas installé. Veuillez l'installer avant de continuer."
-  exit 1
+# Demander le nom d'utilisateur et le mot de passe pour MariaDB
+echo "[INFO] CREATION: Veuillez entrer le nom de l'utilisateur MariaDB:"
+read -r db_user
+echo "[INFO] CREATION: Veuillez entrer le mot de passe pour l'utilisateur MariaDB:"
+read -sr db_password  # -s pour masquer la saisie du mot de passe
+
+# Installer MariaDB
+echo "[INFO] Installation de MariaDB..."
+sudo apt update
+sudo apt install -y mariadb-server
+
+# Démarrer MariaDB et l'activer au démarrage
+echo "[INFO] Démarrage et activation de MariaDB..."
+sudo systemctl start mariadb
+sudo systemctl enable mariadb
+sudo systemctl status mariadb
+
+# Créer l'utilisateur et les privilèges dans MariaDB
+echo "[INFO] Configuration de l'utilisateur MariaDB..."
+sudo mariadb -e "CREATE USER '${db_user}'@'localhost' IDENTIFIED BY '${db_password}';"
+sudo mariadb -e "GRANT ALL PRIVILEGES ON *.* TO '${db_user}'@'localhost' WITH GRANT OPTION;"
+sudo mariadb -e "FLUSH PRIVILEGES;"
+sudo mariadb -e "SELECT user, host FROM mysql.user;"
+
+# Importer la base de données depuis un fichier SQL
+echo "[INFO] Importation de la base de données..."
+sudo mariadb jp2_voeux_parcoursup < backup_20250504_090243.sql
+sudo mariadb -e "SHOW TABLES IN jp2_voeux_parcoursup;"
+
+# Cloner le dépôt Git
+echo "[INFO] Clonage du dépôt Git..."
+git clone https://github.com/Karl2301/parcoursup_voeux_jp2.git temp_clone
+cp -r temp_clone/* temp_clone/.* .   # Copie tout (y compris les fichiers cachés)
+rm -rf temp_clone   # Supprimer le dossier temporaire
+
+# Installer python3.12-venv
+echo "[INFO] Installation de python3.12-venv..."
+sudo apt install -y python3.12-venv
+
+# Créer un environnement virtuel
+echo "[INFO] Création de l'environnement virtuel..."
+python3.12 -m venv .venv
+
+# Installer les dépendances à partir de requirements.txt si le fichier existe
+if [ -f "requirements.txt" ]; then
+    echo "[INFO] Installation des dépendances Python..."
+    ./.venv/bin/pip install -r requirements.txt
+else
+    echo "[INFO] Aucun fichier requirements.txt trouvé."
 fi
 
-# Vérifier que pip est installé, sinon l'installer
-if ! python3 -m pip --version >/dev/null 2>&1; then
-  echo "pip n'est pas trouvé. Installation de pip..."
-  python3 -m ensurepip --upgrade || {
-    echo "Échec de l'installation de pip. Veuillez installer pip manuellement.";
-    exit 1;
-  }
-fi
+# Ajouter un cron pour exécuter le script get_update.sh tous les jours à 4h du matin
+echo "[INFO] Ajout de la tâche cron..."
+(crontab -l 2>/dev/null; echo "0 4 * * * /bin/bash $(pwd)/get_update.sh >> $(pwd)/cron.log 2>&1") | crontab -
 
-# Vérifier que Docker est installé
-if ! command -v docker >/dev/null 2>&1; then
-  echo "Docker n'est pas installé. Veuillez installer Docker avant de continuer."
-  exit 1
-fi
-
-# Vérifier que Docker Compose est installé
-if ! docker compose version >/dev/null 2>&1; then
-  echo "Docker Compose n'est pas installé. Veuillez installer Docker Compose avant de continuer."
-  exit 1
-fi
-
-# URLs des fichiers à télécharger (branch "main")
-docker_compose_url="https://raw.githubusercontent.com/Karl2301/parcoursup_voeux_jp2/main/docker-compose.yml"
-readme_url="https://raw.githubusercontent.com/Karl2301/parcoursup_voeux_jp2/main/README.md"
-backup_sql_url="https://raw.githubusercontent.com/Karl2301/parcoursup_voeux_jp2/main/backup_20250504_090243.sql"
-commands_url="https://raw.githubusercontent.com/Karl2301/parcoursup_voeux_jp2/main/commandes.txt"
-
-# Première exécution : initialisation
-if [ ! -f .env ]; then
-  echo "Première exécution : téléchargement des fichiers nécessaires..."
-  curl -fsSL -o docker-compose.yml "$docker_compose_url"
-  curl -fsSL -o README.md "$readme_url"
-  curl -fsSL -o backup_20250504_090243.sql "$backup_sql_url"
-  curl -fsSL -o commandes.txt "$commands_url"
-
-  cat > .env <<EOF
-SMTP_API_KEY=clef-brevo-smtp-api # facultatif mais utile
-TURNSTILE_SITE_KEY=clef-TURNSTILE-site
-TURNSTILE_SECRET_KEY=clef-TURNSTILE-secret
-
-MYSQL_ROOT_PASSWORD=mot-de-passe-root-mariadb
-MYSQL_DATABASE=jp2_voeux_parcoursup
-MYSQL_USER=identifiant-mariadb
-MYSQL_PASSWORD=mot-de-passe-mariadb
-
-GITHUB_CLIENT_PAT=clef_de_récupération_du_projet
-
-APP_PORT=5000
-MARIADB_PORT=3306
-EOF
-
-  echo "Fichier .env généré. Veuillez le modifier selon vos besoins, puis relancez ce script."
-  exit 0
-fi
-
-# Deuxième exécution (ou suivante) : lancement de l'installation
-echo "Démarrage de l'installation avec la configuration existante..."
-
-# Charger les variables d'environnement
-set -o allexport; source .env; set +o allexport
-
-echo "$GITHUB_CLIENT_PAT" | docker login ghcr.io -u karl2301 --password-stdin
-
-# Pull et démarrage des conteneurs
-
-docker compose pull
-
-docker compose up -d
-
-# Affichage des logs et détection de "Starting application"
-
-docker compose logs -f web db watchtower | while IFS= read -r line; do
-  echo "$line"
-  if [[ "$line" == *"Starting application"* ]]; then
-    echo "Chaîne 'Starting application' détectée, import de la base de données en parallèle..."
-    (
-      set -o allexport; source .env; set +o allexport
-      sudo cat backup_20250504_090243.sql \
-        | sudo docker exec -i db mariadb -uroot -p"${MYSQL_ROOT_PASSWORD}" "${MYSQL_DATABASE}"
-    ) &
-    # Pour ne lancer qu'une seule fois, on peut quitter la boucle après
-    # break
-  fi
-done
+# Terminer
+echo "[INFO] Configuration terminée avec succès."
