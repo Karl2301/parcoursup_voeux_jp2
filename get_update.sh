@@ -21,6 +21,7 @@ fi
 # === GIT : Cloner ou mettre à jour ===
 if [ -d .git ]; then
     echo "[INFO] $(date): Dépôt Git détecté."
+    git reset --hard origin/main
     git checkout main
     git fetch origin
 
