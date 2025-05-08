@@ -23,6 +23,7 @@ sudo mariadb -e "CREATE USER '${db_user}'@'localhost' IDENTIFIED BY '${db_passwo
 sudo mariadb -e "GRANT ALL PRIVILEGES ON *.* TO '${db_user}'@'localhost' WITH GRANT OPTION;"
 sudo mariadb -e "FLUSH PRIVILEGES;"
 sudo mariadb -e "SELECT user, host FROM mysql.user;"
+sudo mariadb -e "CREATE DATABASE IF NOT EXISTS jp2_voeux_parcoursup;"
 
 # Importer la base de données depuis un fichier SQL
 echo "[INFO] Importation de la base de données..."
