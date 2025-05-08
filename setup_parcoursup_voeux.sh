@@ -52,3 +52,5 @@ echo "[INFO] Ajout de la tâche cron..."
 
 # Terminer
 echo "[INFO] Configuration terminée avec succès."
+echo "[INFO] Lancement de l'application..."
+sudo ./get_update.sh
