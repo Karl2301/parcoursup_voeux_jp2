@@ -17,8 +17,10 @@ import asyncio
 import json
 from flask_turnstile import Turnstile
 import time
+from dotenv import load_dotenv
 
 VERSION = "3.0.5"
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 def update_application_on_server():
     """
