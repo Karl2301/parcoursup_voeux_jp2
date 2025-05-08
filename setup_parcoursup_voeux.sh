@@ -29,12 +29,6 @@ echo "[INFO] Importation de la base de données..."
 sudo mariadb jp2_voeux_parcoursup < backup_20250504_090243.sql
 sudo mariadb -e "SHOW TABLES IN jp2_voeux_parcoursup;"
 
-# Cloner le dépôt Git
-echo "[INFO] Clonage du dépôt Git..."
-git clone https://github.com/Karl2301/parcoursup_voeux_jp2.git temp_clone
-cp -r temp_clone/* temp_clone/.* .   # Copie tout (y compris les fichiers cachés)
-rm -rf temp_clone   # Supprimer le dossier temporaire
-
 # Installer python3.12-venv
 echo "[INFO] Installation de python3.12-venv..."
 sudo apt install -y python3.12-venv
