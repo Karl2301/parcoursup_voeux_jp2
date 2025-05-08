@@ -48,7 +48,7 @@ fi
 
 # Ajouter un cron pour exécuter le script get_update.sh tous les jours à 4h du matin
 echo "[INFO] Ajout de la tâche cron..."
-(crontab -l 2>/dev/null; echo "0 4 * * * /bin/bash $(pwd)/get_update.sh >> $(pwd)/cron.log 2>&1") | crontab -
+(crontab -l 2>/dev/null; echo "0 4 * * * /bin/bash $(pwd)/get_update.sh > $(pwd)/cron.log 2>&1") | crontab -
 
 # Terminer
 echo "[INFO] Configuration terminée avec succès."
