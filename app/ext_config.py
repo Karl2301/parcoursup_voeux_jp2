@@ -15,7 +15,6 @@ import logging
 from logging.handlers import RotatingFileHandler
 import asyncio
 import json
-from flask_turnstile import Turnstile
 import time
 from dotenv import load_dotenv
 
@@ -30,12 +29,8 @@ def update_application_on_server():
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24) 
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # 30 jours en secondes
-app.config['TURNSTILE_SITE_KEY'] = os.getenv('TURNSTILE_SITE_KEY')
-app.config['TURNSTILE_SECRET_KEY'] = os.getenv('TURNSTILE_SECRET_KEY')
-app.config['TURNSTILE_ENABLED'] = True  # Optionnel, True par défaut
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # 30 jours en 
 
-turnstile = Turnstile(app=app)
 socketio = SocketIO(app, async_mode="eventlet") 
 
 CORS(app)
