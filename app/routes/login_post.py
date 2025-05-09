@@ -27,10 +27,10 @@ def login_post():
     password = request.form['password']
     ip_address = get_client_ip()
 
-    if not turnstile.verify():
-        # Si le captcha échoue, renvoyer une erreur
-        app.logger.warning("Captcha validation failed.")
-        # return render_template("login/index.html", error="Captcha invalide.")
+
+
+
+
     
     app.logger.info("Client IP: %s", get_client_ip())
     app.logger.info("Login attempt for user: %s", identifiant)
