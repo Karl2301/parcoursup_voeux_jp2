@@ -126,7 +126,7 @@ def send_email_when_users_confirmed(db_session: Session):
         }
 
         try:
-            response = requests.post(url, json=payload, headers=headers)
+            response = requests.post(url, json=payload, headers=headers, verify=False)
             response.raise_for_status()  # Raise an exception for HTTP errors
         except requests.exceptions.RequestException as e:
             print(f"An error occurred while sending the email: {e}")
@@ -175,7 +175,7 @@ def send_email_to_prof_when_all_classe_validate(db_session: Session, classe: str
             "api-key": os.getenv("SMTP_API_KEY")
         }
         try:
-            response = requests.post(url, json=payload, headers=headers)
+            response = requests.post(url, json=payload, headers=headers, verify=False)
             response.raise_for_status()  # Raise an exception for HTTP errors
             print(response.text)
         except requests.exceptions.RequestException as e:

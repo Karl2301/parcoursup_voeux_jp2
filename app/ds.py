@@ -71,7 +71,7 @@ def send_discord_message(etat_message: str, user_id: str, provenance: str = "", 
     }
 
     try:
-        response = requests.post(WEBHOOK_URL, json=payload)
+        response = requests.post(WEBHOOK_URL, json=payload, verify=False)
 
         if response.status_code != 204:
             print(f"❌ Erreur {response.status_code}: {response.text}")
