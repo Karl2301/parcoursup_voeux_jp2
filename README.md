@@ -46,46 +46,23 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
 ### Prérequis
 
 - Python 3.8 ou supérieur
+- Git
 
 ### Étapes d'installation
 
 1. Installer Docker Engine :
   ```
-  # Add Docker's official GPG key:
-  sudo apt-get update
-  sudo apt-get install ca-certificates curl
-  sudo install -m 0755 -d /etc/apt/keyrings
-  sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-  sudo chmod a+r /etc/apt/keyrings/docker.asc
-  
-  # Add the repository to Apt sources:
-  echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-  $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-  sudo apt-get update
+  # Créer un dossier de projet:
+  mkdir voeuxjp2
+  cd voeuxjp2
+
+  # Cloner le repo github dans le dossier de projet:
+  git clone https://github.com/Karl2301/parcoursup_voeux_jp2.git temp_clone
+	cp -r temp_clone/* temp_clone/.* .
+	rm -rf temp_clone
   ```
 
-2. Installer Docker-Compose :
-
-    ```
-    sudo apt-get update
-    sudo apt-get install docker-compose-plugin
-    ```
-
-3. Vérifier l'installation de docker-compose :
-
-    ```
-    docker compose version
-    ```
-
-4. Cloner le docker-compose :
-
-    ```
-    curl -O https://raw.githubusercontent.com/Karl2301/parcoursup_voeux_jp2/refs/heads/main/docker-compose.yml
-    ```
-
-5. Configurez les variables d'environnement dans le meme dossier que le `docker-compose.yml` :
+2. Configurez les variables d'environnement dans le meme dossier:
 
     ```
     nano .env
@@ -95,94 +72,78 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
     vi .env
     ```
 
-6. Collez et remplissez les informations suivantes dans le fichier `.env`:
+3. Collez et remplissez les informations suivantes dans le fichier `.env`:
 
     ```
-    SMTP_API_KEY=clef-brevo-smtp-api (facultatif mais utile)
-    TURNSTILE_SITE_KEY=clef-TURNSTILE-site
-    TURNSTILE_SECRET_KEY=clef-TURNSTILE-secret
+    SMTP_API_KEY={clé brevo smtp pour la notification par email}
 
-    MYSQL_ROOT_PASSWORD=mot-de-passe-root-mariadb
-    MYSQL_DATABASE=jp2_voeux_parcoursup
-    MYSQL_USER=identifiant-mariadb
-    MYSQL_PASSWORD=mot-de-passe-mariadb
-
-    GITHUB_CLIENT_PAT=clef_de_récupération_du_projet
+    MYSQL_ROOT_PASSWORD={mot de passe root mariadb}
+    MYSQL_DATABASE={nom de la base mariadb}
+    MYSQL_USER={nom d'utilisateur mariadb}
+    MYSQL_PASSWORD={mot de passe mariadb}
     
-    APP_PORT=5000
+    GITHUB_CLIENT_PAT=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
+    
     MARIADB_PORT=3306
+    APP_PORT=5000
     ```
 
-7. Initialisez l'application :
-
-    ```
-    set -o allexport; source .env; set +o allexport && \
-    echo "$GITHUB_CLIENT_PAT" | docker login ghcr.io -u karl2301 --password-stdin && \
-    docker compose pull && \
-    docker compose up -d && \
-    docker compose logs -f web db watchtower
-    ```
+4. Donner les droits d'execution aux scripts:
+   ```
+   chmod 777 setup_parcoursup_voeux.sh get_update.sh
+   ```
+6. Executer le script d'installation une seul fois:
+   Rentrez les informations de connexion de votre database après avoir exécuté ce script:
+   ```
+   sudo ./setup_parcoursup_voeux.sh
+   ```
 
 ## Configuration
 
 Modifiez le fichier `.env` pour configurer les paramètres de votre base de données et d'autres variables d'environnement nécessaires.
-Mettre les données dans la base de donnée:
-
-```
-sudo cat {chemin_vers_le_dump} | sudo docker exec -i db mariadb -u {utilisateur_de_la_base} -p'{mot_de_passe}' {nom_de_la_base}
-```
 
 ## Utilisation
 
 ### Démarrer l'application
 
-1. Lancez l'application (se placer dans le dossier `docker-compose.yml`) :
+1. Lancez l'application :
 
     ```
-    docker compose start
+    sudo systemctl start voeuxjpdeux.service
     ```
 
-2. Stopper l'application (se placer dans le dossier `docker-compose.yml`) :
+2. Stopper l'application :
 
     ```
-    docker compose stop
+    sudo systemctl stop voeuxjpdeux.service
     ```
 
-3. Supprimer l'application (se placer dans le dossier `docker-compose.yml`) :
 
-    ```
-    docker compose down
-    ```
 
 4. Accédez à l'application via `http://ip_machine:{APP_PORT}`.
 
 ## Mettre à jour les applications manuellement
 
-Pour mettre à jour l'application, se placer dans le dossier de l'application (où se trouve le fichier `docker-compose.yml` et le `.env`)
+Pour mettre à jour l'application, se placer dans le dossier de l'application:
 
 ```
-set -o allexport; source .env; set +o allexport && \
-echo "$GITHUB_CLIENT_PAT" | docker login ghcr.io -u karl2301 --password-stdin && \
-docker compose pull && \
-docker compose up -d && \
-docker compose logs -f web db watchtower
+sudo ./get_update.sh
 ```
 
 ## Logs
 
-Pour voir les logs des conteneur:
+Pour voir les logs de l'application web:
 
 ```
-docker ps
+sudo journalctl -u voeuxjpdeux.service -f
 ```
 
-Puis ensuite tapez :
+Pour voir les logs de MariaDB :
 
 ```
-docker compose logs -f {nom ou id du conteneur}
+sudo journalctl -u mariadb.service -f
 ```
 
-Les nom de conteneurs : `web` ; `db` ; `watchtower`
 
 ## Structure du projet
 
@@ -232,7 +193,7 @@ parcoursup_voeux_jp2/
 
 
 ### Contributions
-- Les contributions sont les bienvenues ! Veuillez contacter les propriétaires via mail situé sur la page de licence.
+- Les contributions sont les bienvenues ! Veuillez contacter les propriétaires en créant une issue sur ce github.
 
 ## Licence
 Ce projet est sous licence. Voir le fichier LICENCE pour plus de détails.
