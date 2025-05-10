@@ -51,52 +51,52 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
 ### Étapes d'installation
 
 1. Installer Docker Engine :
-  ```
-  # Créer un dossier de projet:
-  mkdir voeuxjp2
-  cd voeuxjp2
-
-  # Cloner le repo github dans le dossier de projet:
-  git clone https://github.com/Karl2301/parcoursup_voeux_jp2.git temp_clone
+	```
+	# Créer un dossier de projet:
+	mkdir voeuxjp2
+	cd voeuxjp2
+	
+	# Cloner le repo github dans le dossier de projet:
+	git clone https://github.com/Karl2301/parcoursup_voeux_jp2.git temp_clone
 	cp -r temp_clone/* temp_clone/.* .
 	rm -rf temp_clone
-  ```
+	```
 
 2. Configurez les variables d'environnement dans le meme dossier:
 
-    ```
-    nano .env
-    ```
-    ou
-    ```
-    vi .env
-    ```
+	```
+	nano .env
+	```
+	ou
+	```
+	vi .env
+	```
 
 3. Collez et remplissez les informations suivantes dans le fichier `.env`:
 
-    ```
-    SMTP_API_KEY={clé brevo smtp pour la notification par email}
-
-    MYSQL_ROOT_PASSWORD={mot de passe root mariadb}
-    MYSQL_DATABASE={nom de la base mariadb}
-    MYSQL_USER={nom d'utilisateur mariadb}
-    MYSQL_PASSWORD={mot de passe mariadb}
-    
-    GITHUB_CLIENT_PAT=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
-    
-    MARIADB_PORT=3306
-    APP_PORT=5000
-    ```
+	```
+	SMTP_API_KEY={clé brevo smtp pour la notification par email}
+	
+	MYSQL_ROOT_PASSWORD={mot de passe root mariadb}
+	MYSQL_DATABASE={nom de la base mariadb}
+	MYSQL_USER={nom d'utilisateur mariadb}
+	MYSQL_PASSWORD={mot de passe mariadb}
+	
+	GITHUB_CLIENT_PAT=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
+	
+	MARIADB_PORT=3306
+	APP_PORT=5000
+	```
 
 4. Donner les droits d'execution aux scripts:
-   ```
-   chmod 777 setup_parcoursup_voeux.sh get_update.sh
-   ```
+	```
+	chmod 777 setup_parcoursup_voeux.sh get_update.sh
+	```
 6. Executer le script d'installation une seul fois:
    Rentrez les informations de connexion de votre database après avoir exécuté ce script:
-   ```
-   sudo ./setup_parcoursup_voeux.sh
-   ```
+	```
+	sudo ./setup_parcoursup_voeux.sh
+	```
 
 ## Configuration
 
@@ -108,15 +108,15 @@ Modifiez le fichier `.env` pour configurer les paramètres de votre base de donn
 
 1. Lancez l'application :
 
-    ```
-    sudo systemctl start voeuxjpdeux.service
-    ```
+	```
+	sudo systemctl start voeuxjpdeux.service
+	```
 
 2. Stopper l'application :
 
-    ```
-    sudo systemctl stop voeuxjpdeux.service
-    ```
+	```
+	sudo systemctl stop voeuxjpdeux.service
+	```
 
 
 
@@ -126,23 +126,23 @@ Modifiez le fichier `.env` pour configurer les paramètres de votre base de donn
 
 Pour mettre à jour l'application, se placer dans le dossier de l'application:
 
-```
-sudo ./get_update.sh
-```
+	```
+	sudo ./get_update.sh
+	```
 
 ## Logs
 
 Pour voir les logs de l'application web:
 
-```
-sudo journalctl -u voeuxjpdeux.service -f
-```
+	```
+	sudo journalctl -u voeuxjpdeux.service -f
+	```
 
 Pour voir les logs de MariaDB :
 
-```
-sudo journalctl -u mariadb.service -f
-```
+	```
+	sudo journalctl -u mariadb.service -f
+	```
 
 
 ## Structure du projet
