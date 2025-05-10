@@ -92,6 +92,9 @@ SERVICE_NAME="voeuxjpdeux.service"
 if ! systemctl is-active --quiet $SERVICE_NAME; then
     echo "[INFO] $(date): Le service $SERVICE_NAME n'existe pas. Création et démarrage..."
 
+    EXEC_USER=$(logname)
+    EXEC_GROUP=$(id -gn "$EXEC_USER")
+    
     sudo bash -c "cat > /etc/systemd/system/$SERVICE_NAME <<EOF
 [Unit]
 Description=Voeux JP2 Service
@@ -103,12 +106,13 @@ WorkingDirectory=$PROJECT_DIR
 Environment=PATH=$PROJECT_DIR/.venv/bin:/usr/bin:/bin
 Environment=VIRTUAL_ENV=$PROJECT_DIR/.venv
 Restart=always
-User=voeux
-Group=voeux
+User=$EXEC_USER
+Group=$EXEC_GROUP
 
 [Install]
 WantedBy=multi-user.target
 EOF"
+
 
     sudo systemctl daemon-reload
     sudo systemctl start $SERVICE_NAME
