@@ -90,7 +90,7 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
 
 4. Donner les droits d'execution aux scripts:
 	```
-	chmod 777 setup_parcoursup_voeux.sh get_update.sh
+	sudo chmod 777 setup_parcoursup_voeux.sh get_update.sh
 	```
 6. Executer le script d'installation une seul fois:
    Rentrez les informations de connexion de votre database après avoir exécuté ce script:
