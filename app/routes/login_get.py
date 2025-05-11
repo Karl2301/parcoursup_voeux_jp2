@@ -36,4 +36,4 @@ def login_get():
                     return redirect(url_for('dashboard'))
 
         
-    return render_template('login/index.html')
+    return render_template('login/index.html', version=VERSION)

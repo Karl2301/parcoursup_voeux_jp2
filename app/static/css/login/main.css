@@ -168,6 +168,15 @@ legend {
   cursor: pointer;
 }
 
+.version {
+  position: absolute;
+  left: 1%;
+  bottom: 1%;
+  font-size: 0.8em;
+  cursor: pointer;
+  color: black;
+}
+
 .btn {
   padding: 0.7em 2em;
   color: white;
