@@ -44,7 +44,6 @@ fi
 # === GIT : Cloner ou mettre à jour ===
 if [ -d .git ]; then
     echo "[INFO] $(date): Dépôt Git détecté."
-    git reset --hard origin/main
     git checkout main
     git fetch origin
 
@@ -127,6 +126,23 @@ if [ "$UPDATED" = true ]; then
     echo "[INFO] $(date): Nouveau commit détecté. Redémarrage du service..."
     sudo systemctl restart $SERVICE_NAME
     echo "[INFO] $(date): Service $SERVICE_NAME redémarré."
+
+    # === Envoi de la requête POST vers l'URL cible ===
+    POST_URL="https://rednode.aekio.dev/endpoint/voeux-jp2/status"  # <-- à adapter
+    COMMIT_HASH=$(git rev-parse --short HEAD)
+    CURRENT_TIME=$(date +"%Y-%m-%d %H:%M:%S")
+    LOCAL_IP=$(hostname -I | awk '{print $1}')
+
+    echo "[INFO] $(date): Envoi d'une requête POST à $POST_URL ..."
+    curl --max-time 5 --silent --show-error --insecure -X POST "$POST_URL" \
+        -H "Content-Type: application/json" \
+        -d '{
+            "status": "updated",
+            "version": "'"$COMMIT_HASH"'",
+            "timestamp": "'"$CURRENT_TIME"'",
+            "ip": "'"$LOCAL_IP"'"
+        }' || echo "[WARN] $(date): Requête POST échouée ou délai dépassé."
+
 else
     echo "[INFO] $(date): Aucune mise à jour détectée, le service n'a pas été redémarré."
 fi
