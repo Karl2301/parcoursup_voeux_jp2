@@ -19,6 +19,7 @@ Parcoursup Voeux JP2 est une application de gestion des élèves et des professe
 - [Contributions](#contributions)
 - [Licence](#licence)
 
+
 ## Fonctionnalités
 
 - **Gestion des élèves et des professeurs**
