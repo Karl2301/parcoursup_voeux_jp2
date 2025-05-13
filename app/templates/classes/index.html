@@ -166,7 +166,9 @@
           </table>
             <center>
             <div>
-              <button class="btn" style="background-color: rgb(172, 16, 16);" id="ValidateBtnAll">Forcer la validation des voeux</button>
+              {% if not is_all_validate %}
+                <button class="btn" style="background-color: rgb(172, 16, 16);" id="ValidateBtnAll">Forcer la validation des voeux</button>
+              {% endif %}
             </div>
             </center>
 

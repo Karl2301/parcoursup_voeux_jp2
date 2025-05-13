@@ -77,10 +77,12 @@ def classes_prof_get(class_name):
 
         # Calculer le nombre d'élèves non validés
         nb_non_valide = len([eleve for eleve in eleves if not eleve.choix_validees])
+        is_all_validate = nb_non_valide == 0
 
         return render_template('classes/index.html',
                                eleves=eleves,
                                class_name=class_name,
                                eleve_online_count=student_connected_for_class,
                                eleve_choix_validees_count=student_validate_for_class,
-                               nb_non_valide=nb_non_valide)
+                               nb_non_valide=nb_non_valide,
+                               is_all_validate=is_all_validate)
