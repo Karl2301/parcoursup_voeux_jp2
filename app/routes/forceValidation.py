@@ -32,7 +32,7 @@ def force_validation():
         
         # Mettre à jour le statut de l'utilisateur
         with Session(engine) as sessionuser:
-            users = sessionuser.exec(select(Users).where(Users.classe == classe)).all()
+            users = sessionuser.exec(select(Users).where(Users.niveau_classe == classe)).all()
             if not user:
                 return jsonify({"error": "Utilisateur non trouvé."}), 404
             
