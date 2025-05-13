@@ -33,13 +33,15 @@ def force_validation():
         # Mettre à jour le statut de l'utilisateur
         with Session(engine) as sessionuser:
             users = sessionuser.exec(select(Users).where(Users.niveau_classe == classe)).all()
-            if not user:
-                return jsonify({"error": "Utilisateur non trouvé."}), 404
+            if not users:
+                return jsonify({"error": "Aucun utilisateur trouvé pour cette classe."}), 404
             
-            for user in users:
-                app.logger.info(f"Utilisateur trouvé : {user.identifiant_unique}")
-
-        sessionuser.add(user)
-        sessionuser.commit()
+            for utilisateur in users:
+                app.logger.info(f"Utilisateur trouvé : {utilisateur.identifiant_unique}")
+                utilisateur.choix_validees = True
+                utilisateur.voeux_validation = datetime.now()
+                sessionuser.add(utilisateur)
+            
+            sessionuser.commit()
         
-        return jsonify({"message": "Statut de l'utilisateur mis à jour avec succès."}), 200
+        return jsonify({"ok": True, "message": "Statut de l'utilisateur mis à jour avec succès."}), 200
