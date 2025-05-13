@@ -164,11 +164,23 @@
               {% endfor %}
             </tbody>
           </table>
-          <center>
+            <center>
             <div>
               <button class="btn" style="background-color: rgb(172, 16, 16);" id="ValidateBtnAll">Forcer la validation des voeux</button>
             </div>
-          </center>
+            </center>
+
+            <!-- Popup de confirmation -->
+            <div id="confirmationPopup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1001;">
+            <p>Êtes-vous sûr de vouloir forcer la validation de tous les vœux des élèves ?</p>
+            <div style="display: flex; justify-content: space-around; margin-top: 20px;">
+              <button class="btn" id="confirmBtn" style="background-color: #28a745;">Oui</button>
+              <button class="btn" id="cancelBtn" style="background-color: #dc3545;">Non</button>
+            </div>
+            </div>
+
+            <!-- Fond grisé -->
+            <div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000;"></div>
         </div>
       </div>
     </div>
