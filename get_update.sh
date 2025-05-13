@@ -4,6 +4,8 @@
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$PROJECT_DIR" || exit 1
 
+git config --global --add safe.directory "$PROJECT_DIR"
+
 # === Dump de la base de données ===
 DB_NAME="jp2_voeux_parcoursup"
 DB_USER="root"
