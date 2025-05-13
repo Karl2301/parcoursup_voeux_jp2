@@ -115,9 +115,6 @@
         <div class="recentOrders" id="recentOrdersContainer">
           <div class="cardHeader">
             <h2>Vœux de la classe {{ class_name }}</h2>
-            <div id="ValidateAll">
-              <button class="btn" style="background-color: rgb(18, 103, 199);" id="ValidateBtnAll">Forcer la validation des voeux</button>
-            </div>
             <div id="downloadMenu">
               <button class="btn" style="display: none;" id="downloadBtn">Télécharger les vœux</button>
               <div id="dropdownMenu" style="display: none;">
@@ -167,6 +164,9 @@
               {% endfor %}
             </tbody>
           </table>
+          <div id="ValidateAll">
+            <button class="btn" style="background-color: rgb(172, 16, 16);" id="ValidateBtnAll">Forcer la validation des voeux</button>
+          </div>
         </div>
       </div>
     </div>
