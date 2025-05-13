@@ -42,4 +42,4 @@ def force_validation():
         sessionuser.add(user)
         sessionuser.commit()
         
-        return jsonify({"message": "Statut de l'utilisateur mis à jour avec succès."}), 200
+        return jsonify({"ok": True, "message": "Statut de l'utilisateur mis à jour avec succès."}), 200

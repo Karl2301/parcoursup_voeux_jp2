@@ -341,7 +341,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 
-  document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
     const validateBtn = document.getElementById("ValidateBtnAll");
     const confirmationPopup = document.getElementById("confirmationPopup");
     const overlay = document.getElementById("overlay");
@@ -350,40 +350,41 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Afficher la popup et le fond grisé
     validateBtn.addEventListener("click", function () {
-    confirmationPopup.style.display = "block";
-    overlay.style.display = "block";
+        confirmationPopup.style.display = "block";
+        overlay.style.display = "block";
     });
 
     // Cacher la popup et le fond grisé
     cancelBtn.addEventListener("click", function () {
-    confirmationPopup.style.display = "none";
-    overlay.style.display = "none";
+        confirmationPopup.style.display = "none";
+        overlay.style.display = "none";
     });
 
     // Action de confirmation
-    confirmBtn.addEventListener("click", function () {
-    confirmationPopup.style.display = "none";
-    overlay.style.display = "none";
-    try {
-        const response = fetch('/force_validate_voeux', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ "force": true , "classe": window.location.pathname.split('/')[2]})
-        });
+    confirmBtn.addEventListener("click", async function () {
+        confirmationPopup.style.display = "none";
+        overlay.style.display = "none";
+        try {
+            const response = await fetch('/force_validate_voeux', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ "force": true, "classe": window.location.pathname.split('/')[2] })
+            });
 
-        if (response.ok) {
-            const result = response.json();
-            console.log('Validation réussie:', result);
-            alert('Validation réussie pour les élèves sélectionnés.');
-        } else {
-            console.error('Erreur lors de la validation:', response.statusText);
-            alert('Erreur lors de la validation.');
+            if (response.ok) {
+                const result = await response.json();
+                console.log('Validation réussie:', result);
+                validateBtn.style.display = 'none'; // Cacher le bouton de validation après la validation
+                window.location.reload();
+            } else {
+                console.error('Erreur lors de la validation:', response.statusText);
+                alert('Erreur lors de la validation.');
+            }
+        } catch (error) {
+            console.error('Erreur réseau:', error);
+            alert('Erreur réseau lors de la validation.');
         }
-    } catch (error) {
-        console.error('Erreur réseau:', error);
-        alert('Erreur réseau lors de la validation.');
-    }
     });
 });
