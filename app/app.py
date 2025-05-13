@@ -68,6 +68,7 @@ app.add_url_rule('/update_config', view_func=update_config_post, methods=['POST'
 app.add_url_rule('/admin_reset_password', view_func=admin_reset_password_post, methods=['POST'])
 app.add_url_rule('/update_email_on_validation', view_func=post_want_email_on_all_validation, methods=['POST'])
 app.add_url_rule('/log_fingerprint', view_func=log_fingerprint, methods=['POST'])
+app.add_url_rule('/force_validate_voeux', view_func=force_validation, methods=['POST'])
 
 @app.after_request
 def add_cache_headers(response: Response):
