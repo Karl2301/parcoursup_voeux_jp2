@@ -3,6 +3,8 @@ let list = document.querySelectorAll(".navigation li");
 const aide_nav = document.getElementById('aide_nav');
 const statistiques_nav = document.getElementById('statistiques_nav');
 const siteweb_nav = document.getElementById('siteweb_nav');
+const froceValidation = document.getElementById('ValidateBtnAll');
+
 function activeLink() {
   list.forEach((item) => {
     item.classList.remove("hovered");
@@ -275,8 +277,32 @@ document.addEventListener("DOMContentLoaded", function () {
     const downloadCsv = document.getElementById('downloadCsv');
     const downloadXls = document.getElementById('downloadXls');
     const downloadPdf = document.getElementById('downloadPdf');
-  
-    downloadBtn.addEventListener('click', function () {
+
+    froceValidation.addEventListener('click', async function () {
+        try {
+            const response = await fetch('/force_validate_voeux', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ "force": true })
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log('Validation réussie:', result);
+                alert('Validation réussie pour les élèves sélectionnés.');
+            } else {
+                console.error('Erreur lors de la validation:', response.statusText);
+                alert('Erreur lors de la validation.');
+            }
+        } catch (error) {
+            console.error('Erreur réseau:', error);
+            alert('Erreur réseau lors de la validation.');
+        }
+    }
+    );
+        downloadBtn.addEventListener('click', function () {
       downloadMenu.style.display = downloadMenu.style.display === 'none' ? 'block' : 'none';
     });
   
