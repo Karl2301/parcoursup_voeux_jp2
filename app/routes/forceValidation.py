@@ -26,9 +26,6 @@ def force_validation():
         if not user:
             return jsonify({"error": "Utilisateur non trouvé."}), 404
         
-        # Vérifier si l'utilisateur est déjà connecté
-        if user.deja_connecte == True:
-            return jsonify({"error": "L'utilisateur est déjà connecté."}), 400
         
         if user.professeur == False:
             return jsonify({"error": "Accès refusé. Seuls les professeurs peuvent forcer la validation."}), 403
