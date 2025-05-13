@@ -111,9 +111,13 @@
 
       <!-- Liste des Vœux des Élèves -->
       <div class="details">
+        
         <div class="recentOrders" id="recentOrdersContainer">
           <div class="cardHeader">
             <h2>Vœux de la classe {{ class_name }}</h2>
+            <div id="ValidateAll">
+              <button class="btn" id="downloadBtn">Forcer la validation des voeux</button>
+            </div>
             <div id="downloadMenu">
               <button class="btn" style="display: none;" id="downloadBtn">Télécharger les vœux</button>
               <div id="dropdownMenu" style="display: none;">
