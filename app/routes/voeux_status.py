@@ -20,7 +20,7 @@ from ext_config import *
 import json
 import logging
 from ds import send_discord_message
-from flask_socketio import emit
+from flask_socketio import emit, SocketIO
 
 def get_voeux_status():
     session_cookie = request.cookies.get('session_cookie')
@@ -61,10 +61,20 @@ def post_voeux_status():
             session.add(user)
             session.commit()
             send_discord_message("voeux_valides", user.identifiant_unique, get_url_from_request(request), get_client_ip())
-            emit('voeux_valides', {
-                'eleve_id': user.identifiant_unique,
-                'status': 'VALIDÉS'
-            }, broadcast=True)
+            # Récupérer les professeurs ayant la classe de l'utilisateur dans leur liste et un cookie de connexion valide
+            professeurs = session.exec(select(Superieurs).where(Superieurs.professeur == True)).all()
+            for professeur in professeurs:
+                try:
+                    if professeur.cookie:  # Vérifier que le professeur a un cookie de connexion valide
+                        classes_professeur = json.loads(professeur.niveau_classe)
+                        if user.niveau_classe in classes_professeur:
+                            emit('voeux_valides', {
+                                'eleve_id': user.identifiant_unique,
+                                'status': 'VALIDÉS'
+                            }, room=professeur.cookie, namespace='/')
+                            app.logger.info(f"Notification envoyée au professeur {professeur.identifiant_unique} pour l'élève {user.identifiant_unique}")
+                except json.JSONDecodeError:
+                    logging.error(f"Erreur de parsing JSON pour le professeur {professeur.identifiant_unique}")
 
             # Vérifier si tous les utilisateurs ont validé leurs voeux
             all_users_validated = session.exec(select(Users).where(Users.choix_validees == False)).first() is None

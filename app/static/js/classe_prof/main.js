@@ -221,9 +221,9 @@ document.addEventListener('DOMContentLoaded', function () {
         // Mettre à jour le statut de l'élève dans le tableau
         const rows = document.querySelectorAll('tbody tr');
         rows.forEach(row => {
-            const eleveIdCell = row.querySelector('td:nth-child(2)');
+            const eleveIdCell = row.querySelector('td:nth-child(2)'); 
             if (eleveIdCell && eleveIdCell.textContent === data.eleve_id) {
-                const statusCell = row.querySelector('td:nth-child(3)');
+                const statusCell = row.querySelector('td:nth-child(4)');
                 if (statusCell) {
                     statusCell.innerHTML = '<span class="status delivered">VALIDÉS</span>';
                 }

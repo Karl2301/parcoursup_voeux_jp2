@@ -156,6 +156,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         updateNoVoeuxMessage();
     }
 
+        let sortableInstance = null; // Variable pour stocker l'instance Sortable
+
     async function handleModifyClick() {
         isEditMode = !isEditMode;
         editModeMessage.style.display = isEditMode ? 'block' : 'none';
@@ -164,12 +166,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         validateBtn.disabled = true;
         validateBtn.style.pointerEvents = "none";
         validateBtn.style.opacity = "0.6";
+    
         // Mettre à jour les lignes pour afficher ou masquer les boutons
         const rows = document.querySelectorAll('#sortable tr, #disabledSortable tr');
         rows.forEach(row => {
             const actionCell = row.querySelector('.action-cell');
             if (isEditMode) {
-
                 // Ajouter le bouton si en mode édition
                 if (!actionCell) {
                     const newActionCell = document.createElement('td');
@@ -192,12 +194,14 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
         });
     
-        // Mettre à jour le bouton Modifier/Enregistrer
+        // Activer ou désactiver le drag-and-drop
         if (isEditMode) {
             modifyBtn.textContent = "Enregistrer";
             modifyBtn.style.backgroundColor = "green";
             recentOrdersContainer.classList.add('edit-mode');
-            Sortable.create(tbody, {
+    
+            // Activer le drag-and-drop
+            sortableInstance = Sortable.create(tbody, {
                 animation: 150,
                 ghostClass: 'blue-background-class',
                 onUpdate: updateRowNumbers
@@ -206,7 +210,15 @@ document.addEventListener("DOMContentLoaded", async function () {
             modifyBtn.textContent = "Modifier";
             modifyBtn.style.backgroundColor = "";
             recentOrdersContainer.classList.remove('edit-mode');
+    
+            // Désactiver le drag-and-drop
+            if (sortableInstance) {
+                sortableInstance.destroy();
+                sortableInstance = null;
+            }
+    
             updateNoVoeuxMessage();
+    
             // Sauvegarder les données mises à jour
             const updatedData = getUpdatedData();
             try {
