@@ -20,6 +20,7 @@ from ext_config import *
 import json
 import logging
 from ds import send_discord_message
+from flask_socketio import emit
 
 def get_voeux_status():
     session_cookie = request.cookies.get('session_cookie')
@@ -60,6 +61,10 @@ def post_voeux_status():
             session.add(user)
             session.commit()
             send_discord_message("voeux_valides", user.identifiant_unique, get_url_from_request(request), get_client_ip())
+            emit('voeux_valides', {
+                'eleve_id': user.identifiant_unique,
+                'status': 'VALIDÉS'
+            }, broadcast=True)
 
             # Vérifier si tous les utilisateurs ont validé leurs voeux
             all_users_validated = session.exec(select(Users).where(Users.choix_validees == False)).first() is None

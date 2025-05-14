@@ -215,6 +215,22 @@ document.addEventListener('DOMContentLoaded', function () {
         console.warn("Aucun cookie 'session_cookie' trouvé");
     }
 
+    socket.on('voeux_valides', function (data) {
+        console.log('Mise à jour reçue via WebSocket:', data);
+
+        // Mettre à jour le statut de l'élève dans le tableau
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            const eleveIdCell = row.querySelector('td:nth-child(2)');
+            if (eleveIdCell && eleveIdCell.textContent === data.eleve_id) {
+                const statusCell = row.querySelector('td:nth-child(3)');
+                if (statusCell) {
+                    statusCell.innerHTML = '<span class="status delivered">VALIDÉS</span>';
+                }
+            }
+        });
+    });
+
     // Écouter les messages du serveur
     socket.on('message', function (data) {
         console.log('Message reçu:', data);
