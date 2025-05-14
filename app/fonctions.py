@@ -137,7 +137,7 @@ def send_email_when_users_confirmed(db_session: Session):
 def send_email_to_prof_when_all_classe_validate(db_session: Session, classe: str):
 
     # Récupérer tous les superieurs avec want_email à True
-    superieurs = db_session.exec(select(Superieurs).where(Superieurs.want_email == True, Superieurs.admin == False)).all()
+    superieurs = db_session.exec(select(Superieurs).where(Superieurs.want_email == True)).all()
 
     # Filtrer les résultats en fonction de niveau_classe
     superieurs_with_email = [s for s in superieurs if classe in s.niveau_classe]
