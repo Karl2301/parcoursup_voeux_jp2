@@ -28,6 +28,21 @@ def update_data():
             user= get_user_by_cookie(session, session_cookie)
             if user:
                 try:
+                    # Retrieve the current data stored in the server
+                    current_data = json.loads(user.voeux_etablissements)
+
+                    # Normalize the data by removing 'row_number' and 'enable' keys
+                    def normalize_data(data):
+                        return [{k: v for k, v in item.items() if k not in ['row_number', 'enable']} for item in data]
+
+                    normalized_current_data = normalize_data(current_data)
+                    normalized_updated_data = normalize_data(request.json)
+
+                    # Check if all elements in the current data exist in the updated data
+                    if not all(item in normalized_updated_data for item in normalized_current_data):
+                        app.logger.warning("Data mismatch detected. Update aborted.")
+                        return jsonify({'success': False, 'message': 'Data mismatch detected. Update aborted.'})
+                    
                     updated_data = request.json
                     user.voeux_etablissements = json.dumps(updated_data)
                     # user.voeux_etablissements = str(updated_data).replace("'", '"')
