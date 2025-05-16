@@ -8,7 +8,7 @@ database.sqlite3
 
 # Ignorer les fichiers de configuration spécifiques à l'IDE
 .vscode/
-db_backups/
+backups/
 # Ignorer les fichiers de log
 *.log
 
