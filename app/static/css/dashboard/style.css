@@ -2229,3 +2229,96 @@ body.dark .popup-content-eleve p {
   text-align: center;
   max-width: 300px;
 }
+
+tr.selected {
+    background-color: #d0e7ff;
+}
+
+.blue-background-class {
+    background-color: rgba(0, 123, 255, 0.3);
+    border: 2px solid #007bff;
+}
+.selected {
+    background-color: rgba(0, 123, 255, 0.2);
+}
+
+
+.hide-checkboxes #selectAllCheckbox,
+.hide-checkboxes #unSelectAllCheckbox,
+.hide-checkboxes .select-checkbox {
+    display: none;
+}
+
+/* Masquer aussi la cellule complète si nécessaire */
+.hide-checkboxes td.checkbox-cell {
+    display: none;
+}
+
+.action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #222;
+  padding: 10px;
+  display: none; /* caché par défaut */
+  justify-content: center;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.3);
+  z-index: 1000;
+  pointer-events: none; /* <-- Ajouté pour ne pas bloquer l'interaction quand invisible */
+}
+
+.action-bar[style*="display: flex"] {
+  pointer-events: auto; /* Réactive les interactions quand visible */
+}
+
+.action-bar button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.action-bar button:disabled {
+  background-color: #888;
+  cursor: not-allowed;
+}
+
+
+#actionBar {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  margin: 0;
+  padding: 0;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  margin: 20px auto; /* espace en bas + centré horizontalement */
+}
+
+#toggleStatusBtn {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  background-color: #007bff; /* exemple de style bouton */
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  color: white;
+  cursor: pointer;
+  margin: 20px auto; /* espace en bas + centré horizontalement */
+}
+
+#toggleStatusBtn.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+tr {
+  user-select: none;
+  cursor: pointer;
+}
