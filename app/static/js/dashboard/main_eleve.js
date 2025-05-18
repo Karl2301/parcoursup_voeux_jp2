@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 toggleStatusBtn.textContent = 'Vous ne pouvez pas classer et déclasser en même temps.';
                 toggleStatusBtn.style.backgroundColor = 'orange';
                 toggleStatusBtn.classList.add('visible');
-                toggleStatusBtn.disabled = false;
+                toggleStatusBtn.disabled = true;
             } else {
                 toggleStatusBtn.classList.remove('visible');
                 toggleStatusBtn.disabled = true;

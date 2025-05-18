@@ -58,6 +58,20 @@ def login_post():
             
             sessionuser.add(user)
             sessionuser.commit()
+
+            professeurs = sessionuser.exec(select(Superieurs).where(Superieurs.professeur == True)).all()
+            for professeur in professeurs:
+                try:
+                    if professeur.cookie:  # Vérifier que le professeur a un cookie de connexion valide
+                        classes_professeur = json.loads(professeur.niveau_classe)
+                        if user.niveau_classe in classes_professeur:
+                            emit('online_student', {
+                                'eleve_id': user.identifiant_unique,
+                                'status': 'EN LIGNE'
+                            }, room=professeur.cookie, namespace='/')
+                            app.logger.info(f"Notification statut en ligne envoyée au professeur {professeur.identifiant_unique} pour l'élève {user.identifiant_unique}")
+                except json.JSONDecodeError:
+                    logging.error(f"Erreur de parsing JSON pour le professeur {professeur.identifiant_unique}")
                
             if user.professeur == True and user.deja_connecte == False: # Si l'utilisateur est un professeur et n'a pas encore configuré son mot de passe
                 response = make_response(redirect(url_for('configure_prof_get')))
@@ -65,8 +79,6 @@ def login_post():
             elif user.professeur == False and user.deja_connecte == False: # Si l'utilisateur est un élève et n'a pas encore configuré son mot de passe
                 response = make_response(redirect(url_for('configure_password_get')))
                 response.set_cookie('session_cookie', new_session_cookie, samesite='Lax')
-            #elif user.admin == True: # Si l'utilisateur est un administrateur
-                #response = make_response(redirect(url_for('dashboard_admin')))
             else:
                 app.logger.info("User logged in successfully: %s", user.identifiant_unique)
                 send_discord_message("login_success", user.identifiant_unique, get_url_from_request(request))

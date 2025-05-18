@@ -36,6 +36,21 @@ def logout():
                 session.add(user)
                 session.commit()
                 send_discord_message("utilisateur_deconnecte", user.identifiant_unique, get_url_from_request(request), get_client_ip())
+
+            professeurs = session.exec(select(Superieurs).where(Superieurs.professeur == True)).all()
+            for professeur in professeurs:
+                try:
+                    if professeur.cookie:  # Vérifier que le professeur a un cookie de connexion valide
+                        classes_professeur = json.loads(professeur.niveau_classe)
+                        if user.niveau_classe in classes_professeur:
+                            emit('online_student', {
+                                'eleve_id': user.identifiant_unique,
+                                'status': 'HORS LIGNE',
+                            }, room=professeur.cookie, namespace='/')
+                            app.logger.info(f"Notification statut hors ligne envoyée au professeur {professeur.identifiant_unique} pour l'élève {user.identifiant_unique}")
+                except json.JSONDecodeError:
+                    logging.error(f"Erreur de parsing JSON pour le professeur {professeur.identifiant_unique}")
+
     response = make_response(redirect(url_for('home')))
     response.set_cookie('session_cookie', '', expires=0)
     app.logger.info("User logged out successfully")

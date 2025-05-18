@@ -231,6 +231,26 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    socket.on('online_student', function (data) {
+        console.log('Mise à jour reçue via WebSocket:', data);
+
+        // Mettre à jour le statut de l'élève dans le tableau
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            const eleveIdCell = row.querySelector('td:nth-child(2)'); 
+            if (eleveIdCell && eleveIdCell.textContent === data.eleve_id) {
+                const statusCell = row.querySelector('td:nth-child(3)');
+                if (statusCell) {
+                    if(data.status == "EN LIGNE") {
+                        statusCell.innerHTML = '<span class="status delivered">EN LIGNE</span>';
+                    } else if (data.status == "HORS LIGNE") {
+                        statusCell.innerHTML = '<span class="status offline">HORS LIGNE</span>';
+                    }
+                }
+            }
+        });
+    });
+
     // Écouter les messages du serveur
     socket.on('message', function (data) {
         console.log('Message reçu:', data);
