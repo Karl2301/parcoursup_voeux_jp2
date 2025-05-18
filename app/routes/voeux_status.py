@@ -65,7 +65,7 @@ def post_voeux_status():
             professeurs = session.exec(select(Superieurs).where(Superieurs.professeur == True)).all()
             for professeur in professeurs:
                 try:
-                    if professeur.cookie:  # Vérifier que le professeur a un cookie de connexion valide
+                    if professeur.online:  # Vérifier que le professeur a un cookie de connexion valide
                         classes_professeur = json.loads(professeur.niveau_classe)
                         if user.niveau_classe in classes_professeur:
                             emit('voeux_valides', {
