@@ -1,9 +1,9 @@
 import requests
 from datetime import datetime, timezone
 from pytz import timezone
-from ext_config import socketio
+from ext_config import socketio, DISCORD_WEBHOOK_URL
 
-WEBHOOK_URL = "https://discord.com/api/webhooks/1356367307709878544/EM2NYKT-1op7jjAcsZ8daTLes9CKZCj0b_ltqa9lR9BYvEPxt7sWlyLIp2rtgvMJ81QG"
+WEBHOOK_URL = f"https://discord.com/api/webhooks/1374374006173733036/{DISCORD_WEBHOOK_URL}"
 
 def send_discord_message(etat_message: str, user_id: str, provenance: str = "", ip: str = "??.??.??.??"):
     """Envoie un message à un webhook Discord de manière synchrone"""

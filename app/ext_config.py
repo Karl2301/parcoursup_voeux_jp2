@@ -18,7 +18,7 @@ import json
 import time
 from dotenv import load_dotenv
 
-VERSION = "3.8.0"
+VERSION = "3.9.0"
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 def update_application_on_server():
@@ -40,6 +40,7 @@ DATABASE_PASSWORD = os.getenv('MYSQL_PASSWORD')
 MARIADB_PORT = os.getenv('MARIADB_PORT')
 MYSQL_DATABASE = os.getenv('MYSQL_DATABASE')
 APP_PORT = os.getenv('APP_PORT')
+DISCORD_WEBHOOK_URL = os.getenv('DISCORD', "")
 if not APP_PORT:
     raise ValueError("La variable d'environnement APP_PORT doit être définie.")
 
