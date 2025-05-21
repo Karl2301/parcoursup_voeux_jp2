@@ -18,7 +18,7 @@ import json
 import time
 from dotenv import load_dotenv
 
-VERSION = "3.9.0"
+VERSION = "3.9.1"
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 def update_application_on_server():
@@ -48,7 +48,6 @@ if not DATABASE_USER or not DATABASE_PASSWORD or not MARIADB_PORT:
     raise ValueError("Les variables d'environnement MYSQL_USER, MYSQL_PASSWORD et MARIADB_PORT doivent être définies.")
 
 DATABASE_URL = f"mysql+pymysql://{DATABASE_USER}:{DATABASE_PASSWORD}@localhost:{MARIADB_PORT}/{MYSQL_DATABASE}"
-# DATABASE_URL = "mysql+pymysql://nsidb:123nsi!bd@localhost/jp2_voeux_parcoursup"
 # DATABASE_URL = "sqlite:///database.sqlite3"
 
 def create_engine_with_retries(database_url, retries=15, delay=5):
