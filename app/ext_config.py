@@ -90,6 +90,22 @@ app.logger.setLevel(logging.INFO)
 app.logger.info('Application startup')
 app.logger.info('Database connection established')
 app.logger.info('Logging system initialized')
+app.logger.info('Verification de l\'existence du fichier de configuration...')
+
+config_path=os.path.join(os.path.dirname(__file__), 'config.json')
+print(config_path)
+print(os.path.exists(config_path))
+if not os.path.exists(config_path):
+    app.logger.info('Fichier de configuration introuvable, création d\'un nouveau fichier.')
+    with open(config_path, 'w') as config_file:
+        config_data = {
+            "disable_student_access": False,
+            "disable_prof_access": False,
+            "disable_prof_reset_voeux": False,
+            "disable_student_validate": False
+        }
+        json.dump(config_data, config_file, indent=4)
+        app.logger.info('Fichier de configuration créé avec succès.')
 update_application_on_server()
 
 

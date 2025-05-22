@@ -9,6 +9,7 @@ database.sqlite3
 # Ignorer les fichiers de configuration spécifiques à l'IDE
 .vscode/
 db_backups/
+
 # Ignorer les fichiers de log
 *.log
 
@@ -26,12 +27,8 @@ env/
 .DS_Store
 
 .env
-app/logs/app.log.1
-app/logs/app.log.2
-app/logs/app.log.3
-app/logs/app.log.4
-app/logs/app.log.5
-app/routes/maj.txt
+
+
 20250426_020001.sql
 mariadb.sql
 dump_local.sql
@@ -39,3 +36,5 @@ dump_local.sql
 db_data/
 
 dicto.py
+logs
+app/config.json
