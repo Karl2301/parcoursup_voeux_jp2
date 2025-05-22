@@ -1,6 +1,6 @@
 # Ignorer les dossiers __pycache__
 __pycache__/
-
+app/config.json
 # Ignorer les dossiers routes/__pycache__
 routes/__pycache__/
 
@@ -37,4 +37,3 @@ db_data/
 
 dicto.py
 logs
-app/config.json

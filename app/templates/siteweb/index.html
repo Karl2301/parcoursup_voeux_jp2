@@ -75,6 +75,24 @@
             <div class="cardBox" style="grid-template-columns: 1fr; gap: 20px;">
                 <div class="card unified-card">
                     <div class="iconBx">
+                        <ion-icon name="construct-outline"></ion-icon>
+                    </div>
+                    {% if is_in_maintenance %}
+                        <div class="cardName" id ="HtmlmaintenanceMessageActive">
+                            <span style="color: green; font-weight: bold;">Activé : </span>
+                            {{ maintenance_message }}
+                        </div>
+                    {% else %}
+                        <div class="cardName" id ="HtmlmaintenanceMessageDisable">Passer le site en maintenance</div>
+                    {% endif %}
+                    <label class="switch">
+                        <input id="is_in_maintenance" type="checkbox" onchange="showPopup('MaintenancePopup', this.checked, this)">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="card unified-card">
+                    <div class="iconBx">
                         <ion-icon name="lock-closed-outline"></ion-icon>
                     </div>
                     <div class="cardName">Empêcher la connexion des élèves au site</div>
@@ -186,17 +204,28 @@
         </div>
     </div>
 
+    <div id="MaintenancePopup" class="popup" style="display: none;">
+        <div class="popup-content">
+            <h2>Maintenance</h2>
+            <p>Message à afficher sur la page de maintenance :</p>
+            <input type="text" id="MaintenanceInput" placeholder="Site en maintenance jusqu'à 13h.">
+            <button class="btn" id="saveMaintenance" onclick="saveMaintenance()">Enregistrer</button>
+            <button class="btn" onclick="closePopup('MaintenancePopup')">Annuler</button>
+        </div>
+    </div>
+
     <script>
         const canStudentAccess = "{{can_student_access}}".toLowerCase();
         const canProfAccess = "{{can_prof_access}}".toLowerCase();
         const canProfResetVoeux = "{{can_prof_reset_voeux}}".toLowerCase();
-        const canStudentValidate = "{{can_student_validate}}".toLowerCase();   
+        const canStudentValidate = "{{can_student_validate}}".toLowerCase(); 
+        const isInMaintenanceVar = "{{is_in_maintenance}}".toLowerCase();  
         const want_email = "{{want_email}}".toLowerCase();
         const email = "{{email}}";
     </script>
 
     <!-- =========== Scripts =========  -->
-    <script src="{{ url_for('static', filename='js/siteweb/main_admin.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='js/siteweb/main_admin.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
     <!-- ====== ionicons ======= -->
     <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>

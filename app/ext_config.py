@@ -35,12 +35,17 @@ socketio = SocketIO(app, async_mode="eventlet")
 
 CORS(app)
 # Configuration de la base de données MariaDBDA
+app_config = get_app_config()
+is_in_maintenance = app_config.get('is_in_maintenance')
+
 DATABASE_USER = os.getenv('MYSQL_USER')
 DATABASE_PASSWORD = os.getenv('MYSQL_PASSWORD')
 MARIADB_PORT = os.getenv('MARIADB_PORT')
 MYSQL_DATABASE = os.getenv('MYSQL_DATABASE')
 APP_PORT = os.getenv('APP_PORT')
 DISCORD_WEBHOOK_URL = os.getenv('DISCORD', "")
+MAINTENANCE_MODE = is_in_maintenance
+
 if not APP_PORT:
     raise ValueError("La variable d'environnement APP_PORT doit être définie.")
 
@@ -102,7 +107,9 @@ if not os.path.exists(config_path):
             "disable_student_access": False,
             "disable_prof_access": False,
             "disable_prof_reset_voeux": False,
-            "disable_student_validate": False
+            "disable_student_validate": False,
+            "is_in_maintenance": False,
+            'maintenance_message': ""
         }
         json.dump(config_data, config_file, indent=4)
         app.logger.info('Fichier de configuration créé avec succès.')

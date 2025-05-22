@@ -126,9 +126,13 @@ function showPopup(popupId, condition = true, inputElement = null) {
 function closePopup(popupId, inputElement = null) {
     const email_input_switch = document.getElementById("input-switch");
     const email = document.getElementById('emailInput').value;
+    const maintenance_input_switch = document.getElementById("is_in_maintenance");
+    const maintenance_message = document.getElementById('MaintenanceInput').value;
     document.getElementById(popupId).style.display = 'none';
     if(popupId === 'emailPopup' && email === "") {
         email_input_switch.checked = false;
+    } else if (popupId === 'MaintenancePopup' && maintenance_message === "") {
+        maintenance_input_switch.checked = false;
     }
     if (inputElement && previousState[popupId] !== undefined) {
         // Réinitialiser l'état du switch
@@ -177,18 +181,34 @@ function sendEmail() {
     }
 }
 
+function saveMaintenance() {
+    const msg = document.getElementById('MaintenanceInput').value;
+    if (msg) {
+        console.log(`Maintenance envoyé au serveur: ${msg}`);
+        closePopup('MaintenancePopup');
+        update_config(msg);
+        window.location.reload();
+    } else {
+        alert("Veuillez renseigner un message valide.");
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function () {                 
     const input_canStudentAccess = document.getElementById("can_student_access");
     const input_canProfAccess = document.getElementById("can_prof_access");
     const input_canProfResetVoeux = document.getElementById("can_prof_reset_voeux");
     const input_canStudentValidate = document.getElementById("can_student_validate");
     const want_email_switch = document.getElementById("want_email_switch");
+    const input_MaintenanceInput = document.getElementById("is_in_maintenance");
+
+    console.log(input_MaintenanceInput)
 
     input_canStudentAccess.checked = canStudentAccess === "true" ? true : false;
     input_canProfAccess.checked = canProfAccess === "true" ? true : false;
     input_canProfResetVoeux.checked = canProfResetVoeux === "true" ? true : false;
     input_canStudentValidate.checked = canStudentValidate === "true" ? true : false;
     want_email_switch.checked = want_email === "true" ? true : false;
+    input_MaintenanceInput.checked = isInMaintenanceVar === "true" ? true : false;
 
     if (want_email === "true") {
         const emailInput = document.getElementById("emailInput");
@@ -251,24 +271,36 @@ function handleCheckboxChange(event) {
                 });
             }
             break;
+        case "is_in_maintenance":
+            console.log("Modification de l'état de maintenance.");
+            if (!isChecked) {
+                update_config("");
+                window.location.reload();
+            }
+            break;
         default:
             console.log("Changement détecté sur une case inconnue.");
     }
 }
 
 // Fonction pour mettre à jour la configuration
-async function update_config() {
+async function update_config(msg = undefined) {
     console.log("Mise à jour de la configuration...");
     const canStudentAccess = document.getElementById("can_student_access").checked;
     const canProfAccess = document.getElementById("can_prof_access").checked;
     const canProfResetVoeux = document.getElementById("can_prof_reset_voeux").checked;
     const canStudentValidate = document.getElementById("can_student_validate").checked;
+    const isInMaintenance_box = document.getElementById("is_in_maintenance").checked;
+    const maintenance_message = msg;
+    console.log("message de maintenance : ", maintenance_message);
 
     const config = {
         can_student_access: canStudentAccess,
         can_prof_access: canProfAccess,
         can_prof_reset_voeux: canProfResetVoeux,
-        can_student_validate: canStudentValidate
+        can_student_validate: canStudentValidate,
+        is_in_maintenance: isInMaintenance_box,
+        maintenance_message: maintenance_message,
     };
     try {
         const response = await fetch('/update_config', {
@@ -297,6 +329,8 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("can_prof_reset_voeux"),
         document.getElementById("can_student_validate"),
         document.getElementById("want_email_switch"),
+        document.getElementById("saveMaintenance"),
+        document.getElementById("is_in_maintenance"),
     ];
 
     checkboxes.forEach(checkbox => {
