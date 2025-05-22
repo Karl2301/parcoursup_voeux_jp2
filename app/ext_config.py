@@ -44,7 +44,7 @@ MARIADB_PORT = os.getenv('MARIADB_PORT')
 MYSQL_DATABASE = os.getenv('MYSQL_DATABASE')
 APP_PORT = os.getenv('APP_PORT')
 DISCORD_WEBHOOK_URL = os.getenv('DISCORD', "")
-MAINTENANCE_MODE = is_in_maintenance
+maintenance_mode = is_in_maintenance
 
 if not APP_PORT:
     raise ValueError("La variable d'environnement APP_PORT doit être définie.")

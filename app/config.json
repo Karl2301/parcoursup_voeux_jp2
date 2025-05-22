@@ -3,6 +3,6 @@
     "disable_prof_access": false,
     "disable_prof_reset_voeux": false,
     "disable_student_validate": false,
-    "is_in_maintenance": false,
-    "maintenance_message": ""
+    "is_in_maintenance": true,
+    "maintenance_message": "Site en mise \u00e0 jour, veuillez patienter..."
 }

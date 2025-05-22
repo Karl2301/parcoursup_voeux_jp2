@@ -54,7 +54,6 @@ def update_config_post():
             updated_config.get('maintenance_message') == maintenance_message
             ):
             flash("Configuration mise à jour et vérifiée avec succès.", "success")
-            MAINTENANCE_MODE = is_in_maintenance
         else:
             flash("Erreur lors de la vérification de la mise à jour de la configuration.", "error")
     return redirect(url_for('siteweb_get'))

@@ -5,6 +5,7 @@ from flask import Flask, render_template, Response
 import sqlmodel
 from routes import *
 from ext_config import *
+from ext_config import maintenance_mode
 from create_classes import create_all_classes
 import requests
 from flask import request, jsonify
@@ -74,14 +75,11 @@ app.add_url_rule('/maintenance', view_func=maintenance_get, methods=['GET'])
 
 @app.before_request
 def check_maintenance_mode():
-    global MAINTENANCE_MODE
-    if MAINTENANCE_MODE is True:
+    excluded_routes = ['maintenance_get', 'static']
+    if request.method == 'GET':
         app_config = get_app_config()
         is_in_maintenance = app_config.get('is_in_maintenance')
-        if not is_in_maintenance:
-            MAINTENANCE_MODE = False
-        excluded_routes = ['maintenance_get', 'static']
-        if is_in_maintenance and request.method == 'GET':
+        if is_in_maintenance:
             endpoint = request.endpoint
             if endpoint not in excluded_routes:
                 return redirect(url_for('maintenance_get'))
