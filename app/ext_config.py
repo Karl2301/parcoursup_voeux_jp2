@@ -18,7 +18,7 @@ import json
 import time
 from dotenv import load_dotenv
 
-VERSION = "3.9.1"
+VERSION = "4.0.0"
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 def update_application_on_server():
