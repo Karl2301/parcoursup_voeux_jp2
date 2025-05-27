@@ -82,14 +82,14 @@ engine = create_engine_with_retries(DATABASE_URL)
 SQLModel.metadata.create_all(engine)
 
 try:
-    with open('../public.pem', 'r') as public_key_file:
+    with open('public.pem', 'r') as public_key_file:
         PUBLIC_KEY = public_key_file.read()
 except FileNotFoundError:
     app.logger.error("Public key file not found.")
     abort(500, description="Public key file is missing.")
 
 try:
-    with open('../private.pem', 'r') as private_key_file:
+    with open('private.pem', 'r') as private_key_file:
         PRIVATE_KEY = private_key_file.read()
 except FileNotFoundError:
     app.logger.error("Private key file not found.")
