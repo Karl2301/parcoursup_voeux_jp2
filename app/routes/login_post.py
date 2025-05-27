@@ -36,6 +36,7 @@ def login_post():
     """
 
     data = request.get_json()  # Récupérer le contenu du POST en JSON
+    app.logger.info("Données reçues pour la connexion: %s", data)
     encrypted_identifiant = data.get('identifiant')
     encrypted_password = data.get('password')
 
