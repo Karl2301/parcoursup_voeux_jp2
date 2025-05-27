@@ -35,5 +35,4 @@ def login_get():
                     app.logger.info("User found")
                     return redirect(url_for('dashboard'))
 
-        
-    return render_template('login/index.html', version=VERSION)
+    return render_template('login/index.html', version=VERSION, PUBLIC_KEY=PUBLIC_KEY)

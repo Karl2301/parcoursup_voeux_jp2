@@ -39,3 +39,9 @@ dump_local.sql
 db_data/
 
 dicto.py
+iris.csv
+KNN.py
+perm.py
+private.pem
+.gitignore
+public.pem

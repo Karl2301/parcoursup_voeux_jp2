@@ -83,21 +83,37 @@
 </body>
 <script async src="https://openfpcdn.io/fingerprintjs/v3/fingerprint.js" onload="initFingerprint()"></script>
 <script>
-  function initFingerprint() {
-    FingerprintJS.load().then(fp => {
-      fp.get().then(result => {
-        const visitorId = result.visitorId;
-        console.log("Fingerprint:", visitorId);
+  const publicKey = "{{ PUBLIC_KEY }}";
 
-        // Envoie au serveur si tu veux
-        fetch("/log-fingerprint", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ fingerprint: visitorId })
-        });
-      });
-    });
-  }
+document.getElementById("login-form").addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const identifiant = document.getElementById("identifiant").value;
+  const password = document.getElementById("password").value;
+
+  // Chiffrer les données
+  const encrypt = new JSEncrypt();
+  encrypt.setPublicKey(publicKey);
+
+  const encryptedIdentifiant = encrypt.encrypt(identifiant);
+  const encryptedPassword = encrypt.encrypt(password);
+
+  // Envoyer les données chiffrées
+  fetch("/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      identifiant: encryptedIdentifiant,
+      password: encryptedPassword
+    })
+  }).then(response => {
+    if (response.ok) {
+      window.location.href = "/dashboard";
+    } else {
+      alert("Erreur de connexion");
+    }
+  });
+});
 </script>
 
 </html>
