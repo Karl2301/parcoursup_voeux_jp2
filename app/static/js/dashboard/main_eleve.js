@@ -1,3 +1,5 @@
+let sortableInstance = null;
+
 document.addEventListener("DOMContentLoaded", async function () {
     const validateBtn = document.getElementById('validateBtn');
     const modifyBtn = document.getElementById('modifyBtn');
@@ -20,6 +22,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     const navigation = document.querySelector('.navigation');
     const main = document.querySelector('.main');
     const body = document.body;
+    const actionBar = document.getElementById('actionBar');
+    const toggleStatusBtn = document.getElementById('toggleStatusBtn');
+    const tbodyEnabled = document.getElementById('sortable');      // tableau classé
+    const tbodyDisabled = document.getElementById('disabledSortable'); // tableau déclassé
 
     let isEditMode = false;
 
@@ -30,6 +36,107 @@ document.addEventListener("DOMContentLoaded", async function () {
         type: true,
         specialty: true
     };
+
+    function cleanEmptyAttributesOnRows() {
+        const allRows = document.querySelectorAll('#sortable tr, #disabledSortable tr');
+        allRows.forEach(row => {
+            const cb = row.querySelector('.select-checkbox');
+            if (cb && cb.checked) {
+                // Si la case est cochée, on force les attributs
+                row.setAttribute('draggable', 'false');
+                row.classList.add('selected');
+            } else {
+                // Si la case n'est pas cochée, on nettoie les attributs vides
+                row.setAttribute('draggable', 'false');
+                if (row.hasAttribute('class') && row.getAttribute('class').trim() === '') {
+                    row.removeAttribute('class');
+                }
+                if (row.hasAttribute('style') && row.getAttribute('style').trim() === '') {
+                    row.removeAttribute('style');
+                }
+            }
+        });
+    }
+
+    function getCheckedRows() {
+        const checkedInEnabled = Array.from(tbodyEnabled.querySelectorAll('input.select-checkbox:checked'));
+        const checkedInDisabled = Array.from(tbodyDisabled.querySelectorAll('input.select-checkbox:checked'));
+        return { checkedInEnabled, checkedInDisabled };
+    }
+
+    // Affiche ou cache la barre d'action, et bloque le multi-cochage entre tableaux
+    function updateActionBar() {
+        const { checkedInEnabled, checkedInDisabled } = getCheckedRows();
+        if(isEditMode)
+            if (checkedInEnabled.length > 0 && checkedInDisabled.length === 0) {
+                toggleStatusBtn.textContent = 'Déclasser les vœux sélectionnés';
+                toggleStatusBtn.style.backgroundColor = '#dc3545';
+                toggleStatusBtn.classList.add('visible');
+                toggleStatusBtn.disabled = false;
+            } else if (checkedInDisabled.length > 0 && checkedInEnabled.length === 0) {
+                toggleStatusBtn.textContent = 'Classer les vœux sélectionnés';
+                toggleStatusBtn.style.backgroundColor = '#007bff';
+                toggleStatusBtn.classList.add('visible');
+                toggleStatusBtn.disabled = false;
+            } else if (checkedInDisabled.length > 0 && checkedInEnabled.length > 0) {
+                toggleStatusBtn.textContent = 'Vous ne pouvez pas classer et déclasser en même temps.';
+                toggleStatusBtn.style.backgroundColor = 'orange';
+                toggleStatusBtn.classList.add('visible');
+                toggleStatusBtn.disabled = true;
+            } else {
+                toggleStatusBtn.classList.remove('visible');
+                toggleStatusBtn.disabled = true;
+            }
+        else {
+            toggleStatusBtn.classList.remove('visible');
+            toggleStatusBtn.disabled = true;
+        }
+    }
+
+    // Fonction pour déplacer les lignes cochées vers l'autre tableau
+    function toggleStatus() {
+        const { checkedInEnabled, checkedInDisabled } = getCheckedRows();
+
+        if (checkedInEnabled.length > 0) {
+            // Déclasser les lignes cochées du tableau classé vers le tableau déclassé
+            checkedInEnabled.forEach(rowCheckbox => {
+            const tr = rowCheckbox.closest('tr');
+
+            // Simule le clic sur le bouton "Désactiver" du bouton d'action pour la ligne
+            const btn = tr.querySelector('.enable-disable-btn');
+            if (btn) btn.click();
+            });
+
+        } else if (checkedInDisabled.length > 0) {
+            // Classer les lignes cochées du tableau déclassé vers le tableau classé
+            checkedInDisabled.forEach(rowCheckbox => {
+            const tr = rowCheckbox.closest('tr');
+
+            // Simule le clic sur le bouton "Activer" du bouton d'action pour la ligne
+            const btn = tr.querySelector('.enable-disable-btn');
+            if (btn) btn.click();
+            });
+        }
+
+        // Après déplacement, vider les sélections et cacher la barre
+        tbodyEnabled.querySelectorAll('input.select-checkbox').forEach(cb => {
+            cb.checked = false;
+            cb.closest('tr').classList.remove('selected');
+        });
+        tbodyDisabled.querySelectorAll('input.select-checkbox').forEach(cb => {
+            cb.checked = false;
+            cb.closest('tr').classList.remove('selected');
+        });
+
+        updateRowNumbers();
+        updateNoVoeuxMessage();
+        updateActionBar();
+    }
+
+
+
+    // Initialisation
+    toggleStatusBtn.addEventListener('click', toggleStatus);
 
     function sortTableByColumn(tbodyId, columnIndex, isNumeric = false, order = true) {
         const tbody = document.getElementById(tbodyId);
@@ -129,32 +236,48 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     function handleEnableDisableClick(event) {
+        event.stopPropagation();
+
         if (!isEditMode) return;
-    
-        const row = event.target.closest('tr');
+
+        const button = event.target.closest('.enable-disable-btn');
+        if (!button) return;
+
+        const row = button.closest('tr');
         const isEnabled = row.closest('tbody').id === 'sortable';
-        const targetTable = isEnabled ? disabledTbody : tbody;
-    
-        // Ajouter ou retirer la cellule contenant le numéro de ligne
-        if (!isEnabled) {
+
+        const sourceTbody = document.getElementById(isEnabled ? 'sortable' : 'disabledSortable');
+        const targetTbody = document.getElementById(isEnabled ? 'disabledSortable' : 'sortable');
+
+        if (isEnabled) {
+            const numberCell = row.querySelector('.row-number');
+            if (numberCell) row.removeChild(numberCell);
+        } else {
             const rowNumberCell = document.createElement('td');
             rowNumberCell.className = 'row-number';
-            rowNumberCell.textContent = tbody.children.length + 1;
-            row.insertBefore(rowNumberCell, row.firstChild);
-        } else {
-            row.removeChild(row.querySelector('.row-number'));
+            rowNumberCell.textContent = targetTbody.children.length + 1;
+
+            const checkboxCell = row.querySelector('td .select-checkbox')?.parentElement || row.children[0];
+            row.insertBefore(rowNumberCell, checkboxCell.nextSibling);
         }
-    
-        targetTable.appendChild(row);
+
+        const checkbox = row.querySelector('.select-checkbox');
+        if (checkbox) checkbox.checked = false;
+        row.classList.remove('selected');
+        updateActionBar();
+
+        targetTbody.appendChild(row);
+
         updateRowNumbers();
-    
-        // Mettre à jour le texte et le style du bouton
-        event.target.textContent = isEnabled ? 'Activer' : 'Désactiver';
-        event.target.style.backgroundColor = isEnabled ? '#007bff' : '#dc3545';
-    
-        // Appeler la fonction pour mettre à jour le message
+
+        button.textContent = isEnabled ? 'Activer' : 'Désactiver';
+        button.style.backgroundColor = isEnabled ? '#007bff' : '#dc3545';
+
         updateNoVoeuxMessage();
     }
+
+
+        let sortableInstance = null;
 
     async function handleModifyClick() {
         isEditMode = !isEditMode;
@@ -164,14 +287,74 @@ document.addEventListener("DOMContentLoaded", async function () {
         validateBtn.disabled = true;
         validateBtn.style.pointerEvents = "none";
         validateBtn.style.opacity = "0.6";
-        // Mettre à jour les lignes pour afficher ou masquer les boutons
+    
         const rows = document.querySelectorAll('#sortable tr, #disabledSortable tr');
         rows.forEach(row => {
-            const actionCell = row.querySelector('.action-cell');
             if (isEditMode) {
+                if (!row.querySelector('.select-checkbox')) {
+                    const td = document.createElement('td');
+                    const cb = document.createElement('input');
+                    cb.type = 'checkbox';
+                    cb.classList.add('select-checkbox');
+                    td.appendChild(cb);
+                    row.insertBefore(td, row.firstChild);
+                }
 
-                // Ajouter le bouton si en mode édition
-                if (!actionCell) {
+                const cb = row.querySelector('.select-checkbox');
+                if (cb && !cb.hasAttribute('data-listener')) {
+                    cb.setAttribute('data-listener', '1');
+                    cb.addEventListener('change', function() {
+                        row.classList.toggle('selected', cb.checked);
+                        updateActionBar();
+                    });
+                }
+
+                if (!tbody.hasAttribute('data-click-delegation')) {
+                    tbody.setAttribute('data-click-delegation', '1');
+
+                    tbody.addEventListener('click', (e) => {
+                        if (e.target.tagName.toLowerCase() === 'input') return;
+
+                        const tr = e.target.closest('tr');
+                        if (!tr || !tr.querySelector('.select-checkbox')) return;
+
+                        const cb = tr.querySelector('.select-checkbox');
+                        cb.checked = !cb.checked;
+
+                        if (cb.checked) {
+                            tr.classList.add('selected');
+                        } else {
+                            tr.classList.remove('selected');
+                        }
+
+                        updateActionBar();
+                    });
+                }
+
+                if (!disabledTbody.hasAttribute('data-click-delegation')) {
+                    disabledTbody.setAttribute('data-click-delegation', 'true');
+
+                    disabledTbody.addEventListener('click', (e) => {
+                        if (e.target.tagName.toLowerCase() === 'input') return;
+
+                        const tr = e.target.closest('tr');
+                        if (!tr || !tr.querySelector('.select-checkbox')) return;
+
+                        const cb = tr.querySelector('.select-checkbox');
+                        cb.checked = !cb.checked;
+
+                        if (cb.checked) {
+                            tr.classList.add('selected');
+                        } else {
+                            tr.classList.remove('selected');
+                        }
+
+                        updateActionBar();
+                    });
+                }
+
+
+                if (!row.querySelector('.action-cell')) {
                     const newActionCell = document.createElement('td');
                     newActionCell.classList.add('action-cell');
                     newActionCell.innerHTML = `
@@ -180,34 +363,96 @@ document.addEventListener("DOMContentLoaded", async function () {
                         </button>
                     `;
                     row.appendChild(newActionCell);
-    
-                    // Ajouter l'événement au bouton
                     newActionCell.querySelector('.enable-disable-btn').addEventListener('click', handleEnableDisableClick);
                 }
             } else {
-                // Supprimer le bouton si hors mode édition
-                if (actionCell) {
-                    actionCell.remove();
-                }
+                const checkboxCell = row.querySelector('td .select-checkbox')?.parentElement;
+                if (checkboxCell) checkboxCell.remove();
+
+                const actionCell = row.querySelector('.action-cell');
+                if (actionCell) actionCell.remove();
+
+                const newRow = row.cloneNode(true);
+                row.parentNode.replaceChild(newRow, row);
             }
         });
-    
-        // Mettre à jour le bouton Modifier/Enregistrer
+
         if (isEditMode) {
+            checkboxCell = document.getElementById('checkbox-cell');
+            unCheckboxCell = document.getElementById('unCheckbox-cell');
+            checkboxCell.style.display = 'inline-block';
+            unCheckboxCell.style.display = 'inline-block';
             modifyBtn.textContent = "Enregistrer";
             modifyBtn.style.backgroundColor = "green";
             recentOrdersContainer.classList.add('edit-mode');
-            Sortable.create(tbody, {
+
+
+            
+    
+            sortableInstance = Sortable.create(tbody, {
                 animation: 150,
                 ghostClass: 'blue-background-class',
-                onUpdate: updateRowNumbers
+                multiDrag: true,
+                selectedClass: 'selected',
+                fallbackTolerance: 5,
+                onStart: function (evt) {
+                    const el = evt.item;
+                    const checkbox = el.querySelector('input[type="checkbox"]');
+                    if (!checkbox.checked) {
+                        return false;
+                    }
+                },
+                onChoose: function (evt) {
+                    tbody.querySelectorAll('input.select-checkbox').forEach(cb => {
+                        const tr = cb.closest('tr');
+                        if (cb.checked) {
+                            tr.classList.add('selected');
+                        }
+                    });
+                },
+                onUpdate: function (evt) {
+                    const draggedRow = evt.item;
+                    const selectedRows = Array.from(tbody.querySelectorAll('tr.selected'));
+                    if (selectedRows.length <= 1) {
+                        updateRowNumbers();
+                        return;
+                    }
+                    const referenceRow = draggedRow.nextSibling;
+                    selectedRows.forEach(row => {
+                        if (row !== draggedRow) {
+                            tbody.insertBefore(row, referenceRow);
+                        }
+                    });
+                    updateRowNumbers();
+                },
+                onEnd: function (evt) {
+                    cleanEmptyAttributesOnRows();
+                }
+
             });
+
         } else {
+            checkboxCell = document.getElementById('checkbox-cell');
+            unCheckboxCell = document.getElementById('unCheckbox-cell');
+            checkboxCell.style.display = 'none';
+            unCheckboxCell.style.display = 'none';
             modifyBtn.textContent = "Modifier";
             modifyBtn.style.backgroundColor = "";
             recentOrdersContainer.classList.remove('edit-mode');
+            updateActionBar();
+    
+            if (sortableInstance) {
+                sortableInstance.destroy();
+                sortableInstance = null;
+            }
+            tbody.querySelectorAll('tr.selected').forEach(row => row.classList.remove('selected'));
+            tbody.querySelectorAll('input.select-checkbox').forEach(cb => {
+                cb.checked = false;
+                cb.closest('td').remove();
+            });
+    
             updateNoVoeuxMessage();
-            // Sauvegarder les données mises à jour
+    
             const updatedData = getUpdatedData();
             try {
                 const response = await fetch('/update_data', {
@@ -243,8 +488,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     function handleBeforeUnload(event) {
         if (isEditMode) {
             const message = "Vous avez des modifications non sauvegardées. Si vous quittez la page, elles seront perdues.";
-            event.returnValue = message; // Standard pour la plupart des navigateurs
-            return message; // Pour certains navigateurs
+            event.returnValue = message;
+            return message;
         }
     }
 
@@ -281,7 +526,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 modifyBtn.style.display = "none";
                 confirmationMessage.style.display = "block";
                 downloadMenu.style.display = "block";
-                popup.style.display = "none"; // Fermer la popup
+                popup.style.display = "none";
             } else {
                 console.error('Erreur lors de la validation des vœux:', data.message);
             }
@@ -349,7 +594,6 @@ document.addEventListener("DOMContentLoaded", async function () {
                         <td style="text-align: left;">${item.specialization}</td>
                     `;
             
-                    // Ajouter le bouton "Désactiver" uniquement si isEditMode est activé
                     if (isEditMode && item.enable) {
                         const actionCell = document.createElement('td');
                         actionCell.innerHTML = `
@@ -361,8 +605,16 @@ document.addEventListener("DOMContentLoaded", async function () {
                     }
             
                     if (item.enable) {
+                        row.classList.remove('selected');
+                        const checkbox = row.querySelector('.select-checkbox');
+                        if (checkbox) checkbox.checked = false;
+                        updateActionBar();
                         tbody.appendChild(row);
                     } else {
+                        row.classList.remove('selected');
+                        const checkbox = row.querySelector('.select-checkbox');
+                        if (checkbox) checkbox.checked = false;
+                        updateActionBar();
                         disabledTbody.appendChild(row);
                     }
                 });
@@ -393,7 +645,6 @@ document.addEventListener("DOMContentLoaded", async function () {
                 console.error("Erreur lors de la récupération du statut des vœux :", error);
             }
 
-            // Appeler la fonction pour mettre à jour le message
             updateNoVoeuxMessage();
         }
         didacticielStart();
@@ -431,7 +682,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     validateBtn.addEventListener("click", handleValidateClick);
     cancelBtn.addEventListener("click", handleCancelClick);
     window.addEventListener('beforeunload', handleBeforeUnload);
-    // Toggle navigation
     toggle.addEventListener('click', () => {
         navigation.classList.toggle('active');
         main.classList.toggle('active');
@@ -456,8 +706,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         sortOrder.specialty = !sortOrder.specialty;
         sortTableByColumn('disabledSortable', 3, false, sortOrder.specialty);
     });
+    
 });
-
 
 
 
@@ -470,13 +720,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 document.addEventListener('DOMContentLoaded', function () {
     const socket = io({
-        reconnection: true,              // ✅ autorise la reconnexion automatique
-        reconnectionAttempts: 5,         // ✅ nombre de tentatives
-        reconnectionDelay: 1000,         // ✅ délai entre chaque tentative
-        autoConnect: true,               // se connecte automatiquement
+        reconnection: true,              
+        reconnectionAttempts: 5,         
+        reconnectionDelay: 1000,         
+        autoConnect: true,               
     });
 
-    // Récupérer le cookie session_cookie
     const sessionCookie = document.cookie
         .split('; ')
         .find(row => row.startsWith('session_cookie='))
@@ -485,7 +734,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (sessionCookie) {
         console.log('Envoi du cookie session_cookie au serveur WebSocket');
 
-        // Lorsque la connexion WebSocket est prête
         socket.on('connect', () => {
             socket.emit('join', { session_cookie: sessionCookie });
         });
@@ -494,7 +742,6 @@ document.addEventListener('DOMContentLoaded', function () {
         console.warn("Aucun cookie 'session_cookie' trouvé");
     }
 
-    // Détecter la déconnexion
     socket.on('disconnect', function () {
         console.log('Déconnecté du serveur WebSocket');
     });

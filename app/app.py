@@ -5,11 +5,13 @@ from flask import Flask, render_template, Response
 import sqlmodel
 from routes import *
 from ext_config import *
+from ext_config import maintenance_mode
 from create_classes import create_all_classes
 import requests
 from flask import request, jsonify
 from collections import defaultdict
 import time
+from flask import redirect, url_for
 # from admin import admin test
 
 create_all_classes()
@@ -69,6 +71,18 @@ app.add_url_rule('/admin_reset_password', view_func=admin_reset_password_post, m
 app.add_url_rule('/update_email_on_validation', view_func=post_want_email_on_all_validation, methods=['POST'])
 app.add_url_rule('/log_fingerprint', view_func=log_fingerprint, methods=['POST'])
 app.add_url_rule('/force_validate_voeux', view_func=force_validation, methods=['POST'])
+app.add_url_rule('/maintenance', view_func=maintenance_get, methods=['GET'])
+
+@app.before_request
+def check_maintenance_mode():
+    excluded_routes = ['maintenance_get', 'static']
+    if request.method == 'GET':
+        app_config = get_app_config()
+        is_in_maintenance = app_config.get('is_in_maintenance')
+        if is_in_maintenance:
+            endpoint = request.endpoint
+            if endpoint not in excluded_routes:
+                return redirect(url_for('maintenance_get'))
 
 @app.after_request
 def add_cache_headers(response: Response):

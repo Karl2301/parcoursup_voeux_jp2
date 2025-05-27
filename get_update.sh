@@ -10,7 +10,7 @@ git config --global --add safe.directory "$PROJECT_DIR"
 DB_NAME="jp2_voeux_parcoursup"
 DB_USER="root"
 DB_PASS="root"  # à adapter selon votre environnement
-BACKUP_DIR="$PROJECT_DIR/backup"
+BACKUP_DIR="$PROJECT_DIR/db_backups"
 TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
 DUMP_FILE="$BACKUP_DIR/${DB_NAME}_${TIMESTAMP}.sql"
 

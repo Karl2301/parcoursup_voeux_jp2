@@ -112,6 +112,20 @@ def handle_join(data):
                                 emit('message', {'msg': f'L\'utilisateur {user.identifiant_unique} a rejoint', 'total_online_students': total_online_students}, room=sid)
 
     print(f"Utilisateur connecté : {connected_users} (SID: {request.sid})")
+    with Session(engine) as session:
+            professeurs = session.exec(select(Superieurs).where(Superieurs.professeur == True)).all()
+            for professeur in professeurs:
+                try:
+                    if professeur.online:  # Vérifier que le professeur a un cookie de connexion valide
+                        classes_professeur = json.loads(professeur.niveau_classe)
+                        if user.niveau_classe in classes_professeur:
+                            socketio.emit('online_student', {
+                                'eleve_id': user.identifiant_unique,
+                                'status': 'EN LIGNE',
+                            }, room=professeur.cookie, namespace='/')
+                            app.logger.info(f"Notification statut en ligne envoyée au professeur {professeur.identifiant_unique} pour l'élève {user.identifiant_unique}")
+                except json.JSONDecodeError:
+                    logging.error(f"Erreur de parsing JSON pour le professeur {professeur.identifiant_unique}")
 
     # Envoyer une confirmation au client
     emit('message', {'msg': f'Connecté à la room {session_cookie}'}, room=session_cookie)
@@ -173,6 +187,20 @@ def on_disconnect():
                                         'total_online_students': total_online_students
                                     }, room=other_sid)
         print(f"Utilisateur déconnecté (final) avec session_cookie: {original_cookie} (SID: {original_sid})")
+        with Session(engine) as session:
+            professeurs = session.exec(select(Superieurs).where(Superieurs.professeur == True)).all()
+            for professeur in professeurs:
+                try:
+                    if professeur.online:  # Vérifier que le professeur a un cookie de connexion valide
+                        classes_professeur = json.loads(professeur.niveau_classe)
+                        if user.niveau_classe in classes_professeur:
+                            socketio.emit('online_student', {
+                                'eleve_id': user.identifiant_unique,
+                                'status': 'HORS LIGNE',
+                            }, room=professeur.cookie, namespace='/')
+                            app.logger.info(f"Notification statut hors ligne envoyée au professeur {professeur.identifiant_unique} pour l'élève {user.identifiant_unique}")
+                except json.JSONDecodeError:
+                    logging.error(f"Erreur de parsing JSON pour le professeur {professeur.identifiant_unique}")
 
     # Appel avec les valeurs du moment
     socketio.start_background_task(delayed_disconnect, sid, session_cookie)

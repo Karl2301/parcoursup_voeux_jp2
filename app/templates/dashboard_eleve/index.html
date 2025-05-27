@@ -71,6 +71,9 @@
                     <table>
                         <thead>
                             <tr>
+                                <td id="checkbox-cell" style="display: none;">
+                                    <span> </span>
+                                </td>
                                 <td>#</td>
                                 <td>Nom de l'établissement</td>
                                 <td>Ville</td>
@@ -96,6 +99,9 @@
                     <table>
                         <thead>
                             <tr>
+                                <td id="unCheckbox-cell" style="display: none;">
+                                    <span> </span>
+                                </td>
                                 <td id="sortByName">Nom de l'établissement <i class="ri-arrow-up-down-line"></i></td>
                                 <td id="sortByCity">Ville <i class="ri-arrow-up-down-line"></i></td>
                                 <td id="sortByType">Type de Voie <i class="ri-arrow-up-down-line"></i></td>
@@ -132,6 +138,9 @@
                     <button class="understand-btn">J'ai compris</button>
                 </div>
             </div>
+            <div id="actionBar" class="action-bar">
+                <button id="toggleStatusBtn" disabled>Action</button>
+            </div>
         </div>
     </div>
 
@@ -142,6 +151,10 @@
             <button id="tutorial-next-btn" class="btn tutorial-next-btn">Suivant</button>
         </div>
     </div>
+
+    <!-- Bouton fixe en bas de l'écran, caché par défaut -->
+    
+
     
     <!-- =========== Scripts =========  -->
     <script defer src="{{ url_for('static', filename='js/dashboard/didacticiel.js') }}"></script>

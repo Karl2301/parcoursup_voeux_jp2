@@ -1,6 +1,6 @@
 # Ignorer les dossiers __pycache__
 __pycache__/
-
+app/config.json
 # Ignorer les dossiers routes/__pycache__
 routes/__pycache__/
 
@@ -8,7 +8,12 @@ database.sqlite3
 
 # Ignorer les fichiers de configuration spécifiques à l'IDE
 .vscode/
+<<<<<<< HEAD
 backups/
+=======
+db_backups/
+
+>>>>>>> 5dfcc25d7848ad5c936c48bfc8afa23546d5750b
 # Ignorer les fichiers de log
 *.log
 
@@ -26,12 +31,8 @@ env/
 .DS_Store
 
 .env
-app/logs/app.log.1
-app/logs/app.log.2
-app/logs/app.log.3
-app/logs/app.log.4
-app/logs/app.log.5
-app/routes/maj.txt
+
+
 20250426_020001.sql
 mariadb.sql
 dump_local.sql
@@ -39,9 +40,13 @@ dump_local.sql
 db_data/
 
 dicto.py
+<<<<<<< HEAD
 iris.csv
 KNN.py
 perm.py
 private.pem
 .gitignore
 public.pem
+=======
+logs
+>>>>>>> 5dfcc25d7848ad5c936c48bfc8afa23546d5750b

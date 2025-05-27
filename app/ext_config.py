@@ -18,7 +18,7 @@ import json
 import time
 from dotenv import load_dotenv
 
-VERSION = "3.6.5"
+VERSION = "4.0.0"
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 def update_application_on_server():
@@ -35,11 +35,17 @@ socketio = SocketIO(app, async_mode="eventlet")
 
 CORS(app)
 # Configuration de la base de données MariaDBDA
+app_config = get_app_config()
+is_in_maintenance = app_config.get('is_in_maintenance')
+
 DATABASE_USER = os.getenv('MYSQL_USER')
 DATABASE_PASSWORD = os.getenv('MYSQL_PASSWORD')
 MARIADB_PORT = os.getenv('MARIADB_PORT')
 MYSQL_DATABASE = os.getenv('MYSQL_DATABASE')
 APP_PORT = os.getenv('APP_PORT')
+DISCORD_WEBHOOK_URL = os.getenv('DISCORD', "")
+maintenance_mode = is_in_maintenance
+
 if not APP_PORT:
     raise ValueError("La variable d'environnement APP_PORT doit être définie.")
 
@@ -47,7 +53,6 @@ if not DATABASE_USER or not DATABASE_PASSWORD or not MARIADB_PORT:
     raise ValueError("Les variables d'environnement MYSQL_USER, MYSQL_PASSWORD et MARIADB_PORT doivent être définies.")
 
 DATABASE_URL = f"mysql+pymysql://{DATABASE_USER}:{DATABASE_PASSWORD}@localhost:{MARIADB_PORT}/{MYSQL_DATABASE}"
-# DATABASE_URL = "mysql+pymysql://nsidb:123nsi!bd@localhost/jp2_voeux_parcoursup"
 # DATABASE_URL = "sqlite:///database.sqlite3"
 
 def create_engine_with_retries(database_url, retries=15, delay=5):
@@ -104,6 +109,24 @@ app.logger.setLevel(logging.INFO)
 app.logger.info('Application startup')
 app.logger.info('Database connection established')
 app.logger.info('Logging system initialized')
+app.logger.info('Verification de l\'existence du fichier de configuration...')
+
+config_path=os.path.join(os.path.dirname(__file__), 'config.json')
+print(config_path)
+print(os.path.exists(config_path))
+if not os.path.exists(config_path):
+    app.logger.info('Fichier de configuration introuvable, création d\'un nouveau fichier.')
+    with open(config_path, 'w') as config_file:
+        config_data = {
+            "disable_student_access": False,
+            "disable_prof_access": False,
+            "disable_prof_reset_voeux": False,
+            "disable_student_validate": False,
+            "is_in_maintenance": False,
+            'maintenance_message': ""
+        }
+        json.dump(config_data, config_file, indent=4)
+        app.logger.info('Fichier de configuration créé avec succès.')
 update_application_on_server()
 
 

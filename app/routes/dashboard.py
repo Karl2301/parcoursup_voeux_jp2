@@ -26,7 +26,7 @@ def dashboard():
                 config = session.exec(select(Config)).first()
                 deadline = config.deadline if config else None
 
-                user_role = "Administrateur" if user.professeur == True and user.admin == True else "Professeur" if user.professeur == True else "Élève"
+                user_role = user.identifiant_unique
                 if user.professeur == True and user.deja_connecte == False:  # Professeur qui n'a pas configuré son mot de passe
                     return redirect(url_for('configure_prof_get'))
                 elif user.professeur == False and user.deja_connecte == False:  # Élève qui n'a pas configuré son mot de passe

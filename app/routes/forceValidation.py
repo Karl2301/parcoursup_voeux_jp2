@@ -37,11 +37,23 @@ def force_validation():
                 return jsonify({"error": "Aucun utilisateur trouvé pour cette classe."}), 404
             
             for utilisateur in users:
-                app.logger.info(f"Utilisateur trouvé : {utilisateur.identifiant_unique}")
-                utilisateur.choix_validees = True
-                utilisateur.voeux_validation = datetime.now()
-                sessionuser.add(utilisateur)
+                if not utilisateur.choix_validees:
+                    app.logger.info(f"Utilisateur trouvé : {utilisateur.identifiant_unique}")
+                    utilisateur.choix_validees = True
+                    utilisateur.voeux_validation = datetime.now()
+                    sessionuser.add(utilisateur)
             
             sessionuser.commit()
+
+            # Vérifier si tous les utilisateurs ont validé leurs voeux
+            all_users_validated = sessionuser.exec(select(Users).where(Users.choix_validees == False)).first() is None
+            if all_users_validated:
+                send_email_when_users_confirmed(sessionuser)
+                send_discord_message("all_voeux_valides", "Tous les utilisateurs ont validé leurs voeux.", 'Serveur', "0.0.0.0")
+
+            # Vérifier si tous les élèves de la classe de l'utilisateur ont validé leurs voeux
+            all_class_users_validated = sessionuser.exec(select(Users).where(Users.niveau_classe == classe, Users.choix_validees == False)).first() is None
+            if all_class_users_validated:
+                send_email_to_prof_when_all_classe_validate(sessionuser, classe)
         
         return jsonify({"ok": True, "message": "Statut de l'utilisateur mis à jour avec succès."}), 200

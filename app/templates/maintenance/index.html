@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<!-- TEST -->
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="Site de pré-classement des vœux pour les élèves de Jean-Paul II.">
+  <meta name="author" content="Karl RAHUEL">
+  <meta name="keywords" content="Voeux, Parcoursup, Pré-classement, Jean-Paul II, Lycée">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/login/main.css') }}">
+  <link rel="icon" href="{{ url_for('static', filename='img/whiteBgColor.webp') }}">
+  <title>VoeuxSup - Maintenance</title>
+</head>
+
+<body>
+  <div class="container">
+    <div class="nav">
+      <ul>
+        <li>
+          <div style="display: flex; align-items: center;">
+            <img width="50px" height="50px" id="imagelogo" src="{{ url_for('static', filename='img/logo_login.webp') }}" alt="Image" style="margin-right: 10px;">
+            <h3 style="color: black;">Jean-Paul II</h3>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="hero">
+      <div class="text">
+        <p class="gray">Site tiers, ne communiquant pas avec le site Parcoursup</p>
+        <h1>Site actuellement en maintenance<span class="blue">.</span></h1>
+        <p class="gray">
+          <span class="blue">L'application sera disponible bientôt</span></a>
+        </p>
+      </div>
+      <div class="text">
+        <p class="gray">
+          {{ maintenance_message }}
+        </p>
+      </div>  
+    </div>
+    <div class="version">
+      v{{ version }}
+    </div>
+    <div class="footer">
+      JP2
+    </div>
+  </div>
+</body>
+</html>
