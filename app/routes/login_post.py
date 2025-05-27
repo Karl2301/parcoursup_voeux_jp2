@@ -16,37 +16,19 @@ from flask_socketio import SocketIO, emit, join_room, leave_room
 from ds import send_discord_message
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
-from Crypto.PublicKey import RSA
-from Crypto.Cipher import PKCS1_OAEP
-import base64
 
-def decrypt_rsa(encrypted_data):
-    """
-    Déchiffre les données chiffrées avec la clé privée RSA.
-    """
-    private_key = RSA.import_key(PRIVATE_KEY)
-    cipher = PKCS1_OAEP.new(private_key)
-    return cipher.decrypt(base64.b64decode(encrypted_data)).decode("utf-8")
-
-    
 def login_post():
     """
     data = request.get_json()  # Récupérer le contenu du POST en JSON
     identifiant = data.get('identifiant')
     """
 
-    data = request.get_json()  # Récupérer le contenu du POST en JSON
-    app.logger.info("Données reçues pour la connexion: %s", data)
-    encrypted_identifiant = data.get('identifiant')
-    encrypted_password = data.get('password')
+    identifiant = request.form['identifiant']
+    password = request.form['password']
+    ip_address = get_client_ip()
 
-    try:
-        # Déchiffrer les données
-        identifiant = decrypt_rsa(encrypted_identifiant)
-        password = decrypt_rsa(encrypted_password)
-    except Exception as e:
-        app.logger.error("Erreur de déchiffrement: %s", str(e))
-        return jsonify({"error": "Erreur de déchiffrement"}), 400
+
+
 
 
     
