@@ -16,6 +16,10 @@ from flask_socketio import SocketIO, emit, join_room, leave_room
 from ds import send_discord_message
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
+from Crypto.Cipher import PKCS1_v1_5
+from Crypto.Random import get_random_bytes
+from Crypto import Random
+
 
 def login_post():
     """
@@ -23,15 +27,23 @@ def login_post():
     identifiant = data.get('identifiant')
     """
 
-    identifiant = request.form['identifiant']
-    password = request.form['password']
-    ip_address = get_client_ip()
+    data = request.get_json()
+    encrypted_username = data['username']
+    encrypted_password = data['password']
 
+    # Déchiffrement
+    private_key = RSA.import_key(PRIVATE_KEY)  # PRIVATE_KEY est une chaîne de caractères contenant la clé privée au format PEM
+    cipher = PKCS1_v1_5.new(private_key)
 
+    # Déchiffrement
+    sentinel = Random.new().read(15)  # Valeur de secours pour le déchiffrement
+    try:
+        identifiant = cipher.decrypt(base64.b64decode(encrypted_username), sentinel).decode()
+        password = cipher.decrypt(base64.b64decode(encrypted_password), sentinel).decode()
+    except ValueError:
+        app.logger.error("Erreur de déchiffrement pour l'identifiant ou le mot de passe.")
+        return jsonify({"error": "Nom d'utilisateur ou mot de passe incorrect."})
 
-
-
-    
     app.logger.info("Client IP: %s", get_client_ip())
     app.logger.info("Login attempt for user: %s", identifiant)
 
@@ -39,30 +51,27 @@ def login_post():
         user = get_user_by_identifiant(sessionuser, identifiant)
         
         if not user:
-            return render_template("login/index.html", error="Nom d'utilisateur ou mot de passe incorrect.")
+            return jsonify({"error": "Nom d'utilisateur ou mot de passe incorrect."})
         
         config = get_specific_config("disable_student_access")
-        if config and user.professeur == False and user.admin == False: # Si l'accès élève est désactivé
-            return render_template("login/index.html", error="Espace bloqué pour les élèves.")
+        if config and user.professeur == False and user.admin == False:
+            return jsonify({"error": "Espace bloqué pour les élèves."})
         
         config = get_specific_config("disable_prof_access")
-        if config and user.professeur == True and user.admin == False: # Si l'accès professeur est désactivé
-            return render_template("login/index.html", error="Espace bloqué pour les professeurs.")
+        if config and user.professeur == True and user.admin == False:
+            return jsonify({"error": "Espace bloqué pour les professeurs."})
             
         if check_password_hash(user.password, password):
-            # Générer un nouveau cookie de session
             new_session_cookie = str(uuid.uuid4())
-
             user.cookie = new_session_cookie
-            user.online = True  # Mettre l'utilisateur en ligne
-            
+            user.online = True
             sessionuser.add(user)
             sessionuser.commit()
 
             professeurs = sessionuser.exec(select(Superieurs).where(Superieurs.professeur == True)).all()
             for professeur in professeurs:
                 try:
-                    if professeur.online:  # Vérifier que le professeur a un cookie de connexion valide
+                    if professeur.online:
                         classes_professeur = json.loads(professeur.niveau_classe)
                         if user.niveau_classe in classes_professeur:
                             emit('online_student', {
@@ -72,19 +81,24 @@ def login_post():
                             app.logger.info(f"Notification statut en ligne envoyée au professeur {professeur.identifiant_unique} pour l'élève {user.identifiant_unique}")
                 except json.JSONDecodeError:
                     logging.error(f"Erreur de parsing JSON pour le professeur {professeur.identifiant_unique}")
-               
-            if user.professeur == True and user.deja_connecte == False: # Si l'utilisateur est un professeur et n'a pas encore configuré son mot de passe
-                response = make_response(redirect(url_for('configure_prof_get')))
-                response.set_cookie('session_cookie', new_session_cookie, samesite='Lax')
-            elif user.professeur == False and user.deja_connecte == False: # Si l'utilisateur est un élève et n'a pas encore configuré son mot de passe
-                response = make_response(redirect(url_for('configure_password_get')))
-                response.set_cookie('session_cookie', new_session_cookie, samesite='Lax')
+            
+            # Redirections côté client
+            if user.professeur == True and user.deja_connecte == False:
+                return jsonify({
+                    "redirect": url_for('configure_prof_get'),
+                    "set_cookie": new_session_cookie
+                })
+            elif user.professeur == False and user.deja_connecte == False:
+                return jsonify({
+                    "redirect": url_for('configure_password_get'),
+                    "set_cookie": new_session_cookie
+                })
             else:
                 app.logger.info("User logged in successfully: %s", user.identifiant_unique)
                 send_discord_message("login_success", user.identifiant_unique, get_url_from_request(request))
-                response = make_response(redirect(url_for('dashboard')))
-                response.set_cookie('session_cookie', new_session_cookie, samesite='Lax')
-            return response
+                return jsonify({
+                    "redirect": url_for('dashboard'),
+                    "set_cookie": new_session_cookie
+                })
         else:
-            error_message = "Nom d'utilisateur ou mot de passe incorrect."
-            return render_template('login/index.html', error=error_message)
+            return jsonify({"error": "Nom d'utilisateur ou mot de passe incorrect."})

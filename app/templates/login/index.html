@@ -83,21 +83,8 @@
 </body>
 <script async src="https://openfpcdn.io/fingerprintjs/v3/fingerprint.js" onload="initFingerprint()"></script>
 <script>
-  function initFingerprint() {
-    FingerprintJS.load().then(fp => {
-      fp.get().then(result => {
-        const visitorId = result.visitorId;
-        console.log("Fingerprint:", visitorId);
-
-        // Envoie au serveur si tu veux
-        fetch("/log-fingerprint", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ fingerprint: visitorId })
-        });
-      });
-    });
-  }
+  const PUBLIC_KEY = `{{ public_key | safe }}`;
 </script>
-
+<script src="https://cdn.jsdelivr.net/npm/jsencrypt@3.0.0-rc.1/bin/jsencrypt.min.js"></script>
+<script src="{{ url_for('static', filename='js/login/encrypt.js') }}"></script>
 </html>
