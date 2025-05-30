@@ -1,8 +1,0 @@
-{
-    "disable_student_access": false,
-    "disable_prof_access": false,
-    "disable_prof_reset_voeux": false,
-    "disable_student_validate": false,
-    "is_in_maintenance": false,
-    "maintenance_message": ""
-}
