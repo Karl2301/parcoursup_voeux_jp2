@@ -8,12 +8,8 @@ database.sqlite3
 
 # Ignorer les fichiers de configuration spécifiques à l'IDE
 .vscode/
-<<<<<<< HEAD
-backups/
-=======
 db_backups/
 
->>>>>>> 5dfcc25d7848ad5c936c48bfc8afa23546d5750b
 # Ignorer les fichiers de log
 *.log
 
@@ -40,13 +36,12 @@ dump_local.sql
 db_data/
 
 dicto.py
-<<<<<<< HEAD
 iris.csv
 KNN.py
 perm.py
 private.pem
-.gitignore
 public.pem
-=======
+# Ignorer les fichiers de configuration de l'application
 logs
->>>>>>> 5dfcc25d7848ad5c936c48bfc8afa23546d5750b
+/app/config.json
+app/config.json

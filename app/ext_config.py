@@ -100,10 +100,54 @@ app.logger.info('Database connection established')
 app.logger.info('Logging system initialized')
 app.logger.info('Verification de l\'existence du fichier de configuration...')
 
+config_path=os.path.join(os.path.dirname(__file__), 'config.json')
+print(config_path)
+print(os.path.exists(config_path))
+if not os.path.exists(config_path):
+    app.logger.info('Fichier de configuration introuvable, création d\'un nouveau fichier.')
+    with open(config_path, 'w') as config_file:
+        config_data = {
+            "disable_student_access": False,
+            "disable_prof_access": False,
+            "disable_prof_reset_voeux": False,
+            "disable_student_validate": False,
+            "is_in_maintenance": False,
+            'maintenance_message': ""
+        }
+        json.dump(config_data, config_file, indent=4)
+        app.logger.info('Fichier de configuration créé avec succès.')
+update_application_on_server()
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 with open(os.path.join(BASE_DIR, "public.pem"), "r") as f:
+    app.logger.info('Chargement de la clé publique...')
     PUBLIC_KEY = f.read()
+    if not PUBLIC_KEY:
+        app.logger.error('La clé publique est vide. Veuillez vérifier le fichier public.pem.')
+        raise ValueError('La clé publique est vide. Veuillez vérifier le fichier public.pem.')
 
 with open(os.path.join(BASE_DIR, "private.pem"), "r") as f:
+    app.logger.info('Chargement de la clé privée...')
     PRIVATE_KEY = f.read()
+    if not PRIVATE_KEY:
+        app.logger.error('La clé privée est vide. Veuillez vérifier le fichier private.pem.')
+        raise ValueError('La clé privée est vide. Veuillez vérifier le fichier private.pem.')
+
+app.logger.info('Clés chargées avec succès.')
+
+app.logger.info('Mise à jour des status des utilisateurs sur False...')
+with Session(engine) as session:
+    users = session.exec(select(Users)).all()
+    for user in users:
+        user.online = False
+        session.add(user)
+    session.commit()
+
+app.logger.info('Mise à jour des status des supérieurs sur False...')
+with Session(engine) as session:
+    users = session.exec(select(Superieurs)).all()
+    for user in users:
+        user.online = False
+        session.add(user)
+    session.commit()

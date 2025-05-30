@@ -24,4 +24,4 @@ def maintenance_get():
     if maintenance_message == {}:
         maintenance_message = ""
 
-    return render_template('maintenance/index.html', maintenance_message=maintenance_message)
+    return render_template('maintenance/index.html', maintenance_message=maintenance_message, version=VERSION)

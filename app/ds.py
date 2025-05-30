@@ -1,7 +1,11 @@
 import requests
+import urllib3
 from datetime import datetime, timezone
 from pytz import timezone
 from ext_config import socketio, DISCORD_WEBHOOK_URL
+
+# Masquer les avertissements InsecureRequestWarning
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 WEBHOOK_URL = f"https://discord.com/api/webhooks/1374374006173733036/{DISCORD_WEBHOOK_URL}"
 
