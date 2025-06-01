@@ -112,7 +112,8 @@ if not os.path.exists(config_path):
             "disable_prof_reset_voeux": False,
             "disable_student_validate": False,
             "is_in_maintenance": False,
-            'maintenance_message': ""
+            "maintenance_message": "",
+            "maintenance_level": "none"
         }
         json.dump(config_data, config_file, indent=4)
         app.logger.info('Fichier de configuration créé avec succès.')

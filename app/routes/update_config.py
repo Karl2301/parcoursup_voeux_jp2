@@ -23,11 +23,11 @@ def update_config_post():
     can_student_validate = data.get('can_student_validate')
     is_in_maintenance = data.get('is_in_maintenance')
     maintenance_message = data.get('maintenance_message')
+    maintenance_level = data.get('maintenance_level')
+        
     if maintenance_message == {}:
         maintenance_message = ""
         
-    print("is_in_maintenance", is_in_maintenance)
-    print("maintenance_message", maintenance_message)
     # Mettre à jour le fichier de configuration JSON
 
     # Construire le chemin absolu vers le fichier config.json
@@ -41,6 +41,7 @@ def update_config_post():
             'disable_student_validate': can_student_validate,
             'is_in_maintenance': is_in_maintenance,
             'maintenance_message': maintenance_message,
+            'maintenance_level': maintenance_level
         }, config_file, indent=4)
     
     # Vérifier que les informations ont été écrites correctement
@@ -51,6 +52,7 @@ def update_config_post():
             updated_config.get('disable_prof_reset_voeux') == can_prof_reset_voeux and
             updated_config.get('disable_student_validate') == can_student_validate and
             updated_config.get('is_in_maintenance') == is_in_maintenance and
+            updated_config.get('maintenance_level') == maintenance_level and
             updated_config.get('maintenance_message') == maintenance_message
             ):
             flash("Configuration mise à jour et vérifiée avec succès.", "success")

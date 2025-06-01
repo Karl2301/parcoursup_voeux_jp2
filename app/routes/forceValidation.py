@@ -20,6 +20,9 @@ def force_validation():
     session_cookie = request.cookies.get('session_cookie')
     classe = data.get('classe')
 
+    if get_specific_config("maintenance_level") in ["hard", "read_only", "extreme"]:
+        return jsonify({'error': 'Maintenance en cours, validation des voeux des élèves impossible.'}), 503
+
     with Session(engine) as sessionuser:
         user = get_user_by_cookie(sessionuser, session_cookie)
         

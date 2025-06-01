@@ -183,10 +183,11 @@ function sendEmail() {
 
 function saveMaintenance() {
     const msg = document.getElementById('MaintenanceInput').value;
+    const level = document.getElementById('maintenanceLevel').value;
     if (msg) {
-        console.log(`Maintenance envoyé au serveur: ${msg}`);
+        console.log(`Maintenance envoyé au serveur: ${msg}, niveau: ${level}`);
         closePopup('MaintenancePopup');
-        update_config(msg);
+        update_config(msg, level);
         window.location.reload();
     } else {
         alert("Veuillez renseigner un message valide.");
@@ -294,6 +295,11 @@ async function update_config(msg = undefined) {
     const maintenance_message = msg;
     console.log("message de maintenance : ", maintenance_message);
 
+    var maintenance_level = document.getElementById('maintenanceLevel').value;
+    console.log("Niveau de maintenance : ", maintenance_level);
+    if (!isInMaintenance_box) {
+        maintenance_level = "none";
+    }
     const config = {
         can_student_access: canStudentAccess,
         can_prof_access: canProfAccess,
@@ -301,6 +307,7 @@ async function update_config(msg = undefined) {
         can_student_validate: canStudentValidate,
         is_in_maintenance: isInMaintenance_box,
         maintenance_message: maintenance_message,
+        maintenance_level: maintenance_level,
     };
     try {
         const response = await fetch('/update_config', {

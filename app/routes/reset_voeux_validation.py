@@ -23,6 +23,9 @@ from flask_socketio import SocketIO, emit, join_room, leave_room
 
 def reset_voeux_validation_post():
     session_cookie = request.cookies.get('session_cookie')
+
+    if get_specific_config("maintenance_level") in ["medium", "read_only", "extreme"]:
+        return jsonify({'error': 'Maintenance en cours, réinitialisation des voeux impossible.'}), 503
     
     with Session(engine) as sessionuser:
         user = get_user_by_cookie(sessionuser, session_cookie)

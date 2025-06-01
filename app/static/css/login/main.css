@@ -304,3 +304,30 @@ legend {
   font-size: 1rem;
   font-weight: bold;
 }
+
+
+.warning-messages {
+  display: flex;
+  align-items: center;
+  background-color: #fff4e5; /* Fond orange clair */
+  color: #b26a00; /* Texte orange foncé */
+  padding: 1em;
+  border: 1px solid #ff9800;
+  border-radius: 5px;
+  margin: 1em 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-size: 1rem;
+  max-width: 500px;    /* Largeur maximale de la box */
+  width: 100%;         /* Prend toute la largeur disponible jusqu'à max-width */
+}
+
+.warning-messages .icon {
+  margin-right: 0.5em;
+  font-size: 1.5rem; /* Taille de l'icône */
+}
+
+.warning-messages p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: bold;
+}

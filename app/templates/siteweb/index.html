@@ -79,7 +79,21 @@
                     </div>
                     {% if is_in_maintenance %}
                         <div class="cardName" id ="HtmlmaintenanceMessageActive">
-                            <span style="color: green; font-weight: bold;">Activé : </span>
+                            <span style="color: red; font-weight: bold;">Site en maintenance : </span>
+                            {% if maintenance_level == "extreme" %}
+                                Site bloqué, connexion impossible<br>
+                            {% elif maintenance_level == "hard" %}
+                                Accès indisponible pour les élèves et les professeurs<br>
+                            {% elif maintenance_level == "medium" %}
+                                Accès indisponible pour les élèves<br>
+                            {% elif maintenance_level == "read_only" %}
+                                Accès limité, lecture seule<br>
+                            {% elif maintenance_level == "soft" %}
+                                Simple avertissement, site accessible<br>
+                            {% else %}
+                                Aucun niveau de maintenance sélectionné<br>
+                            {% endif %}
+                            <span style="color: green; font-weight: bold;">Message affiché : </span>
                             {{ maintenance_message }}
                         </div>
                     {% else %}
@@ -204,15 +218,26 @@
         </div>
     </div>
 
+    <!-- ...existing code... -->
     <div id="MaintenancePopup" class="popup" style="display: none;">
         <div class="popup-content">
             <h2>Maintenance</h2>
             <p>Message à afficher sur la page de maintenance :</p>
             <input type="text" id="MaintenanceInput" placeholder="Site en maintenance jusqu'à 13h.">
+            <label for="maintenanceLevel">Niveau de maintenance :</label>
+            <select id="maintenanceLevel">
+                <option value="none" disabled selected hidden>Veuillez choisir un niveau de maintenance</option>
+                <option value="soft">Légère (simple avertissement, site accessible)</option>
+                <option value="read_only">Lecture seul (accès limité, lecture seule)</option>
+                <option value="medium">Moyenne (accès indisponible pour les élèves)</option>
+                <option value="hard">Forte (accès indisponible pour les élèves et professeurs)</option>
+                <option value="extreme">Extrême (site bloqué, connexion impossible)</option>
+            </select>
             <button class="btn" id="saveMaintenance" onclick="saveMaintenance()">Enregistrer</button>
             <button class="btn" onclick="closePopup('MaintenancePopup')">Annuler</button>
         </div>
     </div>
+<!-- ...existing code... -->
 
     <script>
         const canStudentAccess = "{{can_student_access}}".toLowerCase();

@@ -27,8 +27,9 @@ def siteweb_get():
         can_student_validate = app_config.get('disable_student_validate')
         is_in_maintenance = app_config.get('is_in_maintenance')
         maintenance_message = app_config.get('maintenance_message')
+        maintenance_level = app_config.get('maintenance_level')
         if maintenance_message == {}:
             maintenance_message = ""
 
-        return render_template('siteweb/index.html', can_student_access=can_student_access, can_prof_access=can_prof_access, can_prof_reset_voeux=can_prof_reset_voeux, can_student_validate=can_student_validate, is_in_maintenance=is_in_maintenance, maintenance_message=maintenance_message, want_email=user.want_email, email=user.email)
+        return render_template('siteweb/index.html', can_student_access=can_student_access, can_prof_access=can_prof_access, can_prof_reset_voeux=can_prof_reset_voeux, can_student_validate=can_student_validate, is_in_maintenance=is_in_maintenance, maintenance_message=maintenance_message, maintenance_level=maintenance_level, want_email=user.want_email, email=user.email)
     # return render_template('siteweb/index.html')

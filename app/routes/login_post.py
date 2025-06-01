@@ -54,11 +54,13 @@ def login_post():
             return jsonify({"error": "Nom d'utilisateur ou mot de passe incorrect."})
         
         config = get_specific_config("disable_student_access")
-        if config and user.professeur == False and user.admin == False:
+        is_in_maintenance = get_specific_config("is_in_maintenance")
+        maintenance_level = get_specific_config("maintenance_level")
+        if ((config and not user.professeur and not user.admin) or (is_in_maintenance and maintenance_level in ("medium", "hard") and not user.professeur and not user.admin)):
             return jsonify({"error": "Espace bloqué pour les élèves."})
-        
+            
         config = get_specific_config("disable_prof_access")
-        if config and user.professeur == True and user.admin == False:
+        if ((config and user.professeur and not user.admin) or (is_in_maintenance and maintenance_level in ("hard") and user.professeur and not user.admin)):
             return jsonify({"error": "Espace bloqué pour les professeurs."})
             
         if check_password_hash(user.password, password):

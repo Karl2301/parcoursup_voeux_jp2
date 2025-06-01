@@ -42,6 +42,9 @@ def post_voeux_status():
     data = request.get_json()
     choix_validees = data.get('validate')
 
+    if get_specific_config("maintenance_level") in ["medium", "hard", "read_only", "extreme"]:
+        return jsonify({'error': 'Maintenance en cours, validation des voeux impossible.'}), 503
+
     with Session(engine) as session:
         user = get_user_by_cookie(session, session_cookie)
         if user and not user.choix_validees:

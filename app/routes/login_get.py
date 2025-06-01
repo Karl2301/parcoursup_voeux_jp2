@@ -34,5 +34,10 @@ def login_get():
                 else:
                     app.logger.info("User found")
                     return redirect(url_for('dashboard'))
+    
+    app_config = get_app_config()
+    is_in_maintenance = app_config.get('is_in_maintenance')
+    maintenance_message = app_config.get('maintenance_message')
+    maintenance_level = app_config.get('maintenance_level')
 
-    return render_template('login/index.html', version=VERSION, public_key=PUBLIC_KEY)
+    return render_template('login/index.html', version=VERSION, public_key=PUBLIC_KEY, is_in_maintenance=is_in_maintenance, maintenance_message=maintenance_message, maintenance_level=maintenance_level)

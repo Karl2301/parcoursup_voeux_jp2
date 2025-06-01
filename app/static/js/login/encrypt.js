@@ -33,7 +33,28 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
     .then(data => {
         console.log("Réponse du serveur:", data);
         if (data.error) {
-            alert(data.error);
+            // Supprime les anciens messages d'erreur
+            const errorContainer = document.getElementById('error-container');
+            if (errorContainer) {
+                errorContainer.innerHTML = ''; // Vide le conteneur
+            }
+            // Affiche les messages d'erreur
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'error-messages';
+    
+            // Ajoute une icône d'erreur
+            const errorIcon = document.createElement('span');
+            errorIcon.className = 'icon';
+            errorIcon.textContent = '⚠️'; // Icône d'avertissement
+            errorMessage.appendChild(errorIcon);
+    
+            // Ajoute le texte du message d'erreur
+            const errorText = document.createElement('p');
+            errorText.textContent = data.error;
+            errorMessage.appendChild(errorText);
+    
+            // Insère le message d'erreur dans le conteneur
+            errorContainer.appendChild(errorMessage);
             return;
         }
         if (data.set_cookie) {

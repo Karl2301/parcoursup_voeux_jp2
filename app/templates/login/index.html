@@ -15,7 +15,7 @@
 
 <body>
   <div class="container">
-    <div class="nav">
+    <div class="nav" style="position: absolute; top: 15px; left: 0; width: 100%; z-index: 10;">
       <ul>
         <li>
           <div style="display: flex; align-items: center;">
@@ -32,8 +32,31 @@
         <p class="gray">
           Identifiant oublié ? <a class="blue" href="/lost_id"><span class="blue">Faire une demande</span></a>
         </p>
+        <div id="error-container"></div>
+        {% if is_in_maintenance %}
+          <div class="warning-messages">
+            <span class="icon">⚠️</span>
+            <p><u>
+              {% if maintenance_level == "extreme" %}
+                  Site bloqué, connexion impossible:<br>
+              {% elif maintenance_level == "hard" %}
+                  Accès indisponible pour les élèves et les professeurs:<br>
+              {% elif maintenance_level == "medium" %}
+                  Accès indisponible pour les élèves:<br>
+              {% elif maintenance_level == "read_only" %}
+                  Accès limité, lecture seule:<br>
+              {% elif maintenance_level == "soft" %}
+                  Simple avertissement, site accessible:<br>
+              {% else %}
+                  Aucun niveau de maintenance sélectionné:<br>
+              {% endif %}
+              </u>
+            {{ maintenance_message }}</p>
+          </div>
+        {% endif %}
       </div>
       <div class="form">
+
         <form id="login-form" class="centered-flex" action="/login" method="POST">
           <!-- Zone du champ identifiant -->
           <div id="identifiant-container" class="id">

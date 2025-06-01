@@ -112,7 +112,8 @@ def handle_join(data):
                                 emit('message', {'msg': f'L\'utilisateur {user.identifiant_unique} a rejoint', 'total_online_students': total_online_students}, room=sid)
 
     print(f"Utilisateur connecté : {connected_users} (SID: {request.sid})")
-    with Session(engine) as session:
+    if user:
+        with Session(engine) as session:
             professeurs = session.exec(select(Superieurs).where(Superieurs.professeur == True)).all()
             for professeur in professeurs:
                 try:

@@ -79,7 +79,8 @@ def check_maintenance_mode():
     if request.method == 'GET':
         app_config = get_app_config()
         is_in_maintenance = app_config.get('is_in_maintenance')
-        if is_in_maintenance:
+        maintenance_level = app_config.get('maintenance_level', 'none')
+        if is_in_maintenance and maintenance_level == 'extreme':
             endpoint = request.endpoint
             if endpoint not in excluded_routes:
                 return redirect(url_for('maintenance_get'))
@@ -94,7 +95,6 @@ def add_cache_headers(response: Response):
 
 def main():
     app.logger.info("Starting application...")
-    app.logger.info(APP_PORT)
     app_port = int(APP_PORT)
     app.logger.info(f"App port: {app_port}")
     app.logger.info(f"version: {VERSION}")
