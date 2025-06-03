@@ -76,7 +76,7 @@ app.add_url_rule('/maintenance', view_func=maintenance_get, methods=['GET'])
 
 @app.before_request
 def check_maintenance_mode():
-    if request.scheme == 'http':
+    if request.headers.get('X-Forwarded-Proto', 'http') == 'http':
         url = urlparse(request.url)
         # Reconstruit l'URL avec https et sans port
         netloc = url.hostname  # sans port
