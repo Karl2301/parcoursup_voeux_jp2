@@ -85,6 +85,11 @@ def check_maintenance_mode():
             if endpoint not in excluded_routes:
                 return redirect(url_for('maintenance_get'))
 
+@app.before_request
+def redirect_to_https():
+    if request.headers.get('X-Forwarded-Proto', 'http') == 'http':
+        return redirect(request.url.replace('http://', 'https://'), code=301)
+
 @app.after_request
 def add_cache_headers(response: Response):
     """Ajoute des headers Cache-Control aux fichiers statiques (30 jours)."""
