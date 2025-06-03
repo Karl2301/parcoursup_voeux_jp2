@@ -28,6 +28,28 @@
                 <div class="toggle">
                     <ion-icon name="menu-outline"></ion-icon>
                 </div>
+
+                {% if is_in_maintenance %}
+                <div class="warning-messages">
+                    <span class="icon">⚠️</span>
+                    <p><u>
+                    {% if maintenance_level == "extreme" %}
+                        Site bloqué, connexion impossible:<br>
+                    {% elif maintenance_level == "hard" %}
+                        Accès indisponible pour les élèves et les professeurs:<br>
+                    {% elif maintenance_level == "medium" %}
+                        Accès indisponible pour les élèves:<br>
+                    {% elif maintenance_level == "read_only" %}
+                        Accès limité, lecture seule:<br>
+                    {% elif maintenance_level == "soft" %}
+                        Simple avertissement, site accessible:<br>
+                    {% else %}
+                        Aucun niveau de maintenance sélectionné:<br>
+                    {% endif %}
+                    </u>
+                    {{ maintenance_message }}</p>
+                </div>
+                {% endif %}
                 
                 <div class="user">
                     <span>{{ user_role }}</span>

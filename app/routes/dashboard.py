@@ -26,6 +26,11 @@ def dashboard():
                 config = session.exec(select(Config)).first()
                 deadline = config.deadline if config else None
 
+                app_config = get_app_config()
+                is_in_maintenance = app_config.get('is_in_maintenance')
+                maintenance_message = app_config.get('maintenance_message')
+                maintenance_level = app_config.get('maintenance_level')
+
                 user_role = user.identifiant_unique
                 if user.professeur == True and user.deja_connecte == False:  # Professeur qui n'a pas configuré son mot de passe
                     return redirect(url_for('configure_prof_get'))
@@ -34,9 +39,9 @@ def dashboard():
                 else:
                     if user.professeur == True:
                         if user.admin == True:
-                            return render_template('dashboard_super_administrateur/index.html', user_role=user_role, deadline=deadline)
+                            return render_template('dashboard_super_administrateur/index.html', user_role=user_role, deadline=deadline, is_in_maintenance=is_in_maintenance, maintenance_message=maintenance_message, maintenance_level=maintenance_level)
                         
-                        return render_template('dashboard_prof/index.html', user_role=user_role, deadline=deadline)
+                        return render_template('dashboard_prof/index.html', user_role=user_role, deadline=deadline, is_in_maintenance=is_in_maintenance, maintenance_message=maintenance_message, maintenance_level=maintenance_level)
                     else:
-                        return render_template('dashboard_eleve/index.html', user_role=user_role, deadline=deadline)
+                        return render_template('dashboard_eleve/index.html', user_role=user_role, deadline=deadline, is_in_maintenance=is_in_maintenance, maintenance_message=maintenance_message, maintenance_level=maintenance_level)
     return redirect(url_for('login_get'))
