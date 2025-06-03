@@ -101,7 +101,7 @@ def main():
     app_port = int(APP_PORT)
     app.logger.info(f"App port: {app_port}")
     app.logger.info(f"version: {VERSION}")
-    socketio.run(app, host="127.0.0.1", port=app_port, debug=True, use_reloader=True)
+    socketio.run(app, host="0.0.0.0", port=app_port, debug=True, use_reloader=True)
 
 if __name__ == '__main__':
     main()
