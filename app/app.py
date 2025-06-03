@@ -75,6 +75,9 @@ app.add_url_rule('/maintenance', view_func=maintenance_get, methods=['GET'])
 
 @app.before_request
 def check_maintenance_mode():
+    if request.headers.get('X-Forwarded-Proto', 'http') == 'http':
+        return redirect(request.url.replace('http://', 'https://'), code=301)
+        
     excluded_routes = ['maintenance_get', 'static']
     if request.method == 'GET':
         app_config = get_app_config()
@@ -84,11 +87,6 @@ def check_maintenance_mode():
             endpoint = request.endpoint
             if endpoint not in excluded_routes:
                 return redirect(url_for('maintenance_get'))
-
-@app.before_request
-def redirect_to_https():
-    if request.headers.get('X-Forwarded-Proto', 'http') == 'http':
-        return redirect(request.url.replace('http://', 'https://'), code=301)
 
 @app.after_request
 def add_cache_headers(response: Response):
