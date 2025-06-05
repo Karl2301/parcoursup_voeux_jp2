@@ -31,6 +31,10 @@ def login_post():
     encrypted_username = data['username']
     encrypted_password = data['password']
 
+    if not encrypted_username or not encrypted_password:
+        app.logger.error("Identifiant ou mot de passe manquant dans la requête.")
+        return jsonify({"error": "Identifiant ou mot de passe manquant."}), 400
+
     # Déchiffrement
     private_key = RSA.import_key(PRIVATE_KEY)  # PRIVATE_KEY est une chaîne de caractères contenant la clé privée au format PEM
     cipher = PKCS1_v1_5.new(private_key)
