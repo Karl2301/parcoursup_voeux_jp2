@@ -1,31 +1,40 @@
 let sortableInstance = null;
+let iaChatHistory = []; // {role: 'user'|'ia', content: '...'}
+const iaFab = document.getElementById('ia-fab');
+const iaPopup = document.getElementById('ia-chat-popup');
+const iaClose = document.getElementById('ia-chat-close');
+const iaMessages = document.getElementById('ia-chat-messages');
+const iaInput = document.getElementById('ia-chat-input');
+const iaSend = document.getElementById('ia-chat-send');
+const iaSuggestions = document.getElementById('ia-chat-suggestions');
+const validateBtn = document.getElementById('validateBtn');
+const modifyBtn = document.getElementById('modifyBtn');
+const downloadMenu = document.getElementById('downloadMenu');
+const downloadBtn = document.getElementById('downloadBtn');
+const dropdownMenu = document.getElementById('dropdownMenu');
+const downloadXls = document.getElementById('downloadXls');
+const downloadPdf = document.getElementById('downloadPdf');
+const confirmationMessage = document.getElementById('confirmationMessage');
+const popup = document.getElementById('popup');
+const cancelBtn = document.getElementById('cancelBtn');
+const confirmBtn = document.getElementById('confirmBtn');
+const recentOrdersContainer = document.getElementById('recentOrdersContainer');
+const editModeMessage = document.getElementById('editModeMessage');
+const tbody = document.getElementById('sortable');
+const disabledTbody = document.getElementById('disabledSortable');
+const editModeMessageUnclassed = document.getElementById('editModeMessageUnclassed');
+const noVoeuxMessage = document.getElementById('noVoeuxMessage');
+const toggle = document.querySelector('.toggle');
+const navigation = document.querySelector('.navigation');
+const main = document.querySelector('.main');
+const body = document.body;
+const actionBar = document.getElementById('actionBar');
+const toggleStatusBtn = document.getElementById('toggleStatusBtn');
+const tbodyEnabled = document.getElementById('sortable');      // tableau classé
+const tbodyDisabled = document.getElementById('disabledSortable'); // tableau déclassé
+
 
 document.addEventListener("DOMContentLoaded", async function () {
-    const validateBtn = document.getElementById('validateBtn');
-    const modifyBtn = document.getElementById('modifyBtn');
-    const downloadMenu = document.getElementById('downloadMenu');
-    const downloadBtn = document.getElementById('downloadBtn');
-    const dropdownMenu = document.getElementById('dropdownMenu');
-    const downloadXls = document.getElementById('downloadXls');
-    const downloadPdf = document.getElementById('downloadPdf');
-    const confirmationMessage = document.getElementById('confirmationMessage');
-    const popup = document.getElementById('popup');
-    const cancelBtn = document.getElementById('cancelBtn');
-    const confirmBtn = document.getElementById('confirmBtn');
-    const recentOrdersContainer = document.getElementById('recentOrdersContainer');
-    const editModeMessage = document.getElementById('editModeMessage');
-    const tbody = document.getElementById('sortable');
-    const disabledTbody = document.getElementById('disabledSortable');
-    const editModeMessageUnclassed = document.getElementById('editModeMessageUnclassed');
-    const noVoeuxMessage = document.getElementById('noVoeuxMessage');
-    const toggle = document.querySelector('.toggle');
-    const navigation = document.querySelector('.navigation');
-    const main = document.querySelector('.main');
-    const body = document.body;
-    const actionBar = document.getElementById('actionBar');
-    const toggleStatusBtn = document.getElementById('toggleStatusBtn');
-    const tbodyEnabled = document.getElementById('sortable');      // tableau classé
-    const tbodyDisabled = document.getElementById('disabledSortable'); // tableau déclassé
 
     let isEditMode = false;
 
@@ -287,6 +296,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         validateBtn.disabled = true;
         validateBtn.style.pointerEvents = "none";
         validateBtn.style.opacity = "0.6";
+
+        document.querySelectorAll('.info-btn').forEach(btn => {
+            btn.style.display = isEditMode ? 'none' : '';
+        });
     
         const rows = document.querySelectorAll('#sortable tr, #disabledSortable tr');
         rows.forEach(row => {
@@ -592,6 +605,9 @@ document.addEventListener("DOMContentLoaded", async function () {
                         <td>${item.city}</td>
                         <td>${item.degree}</td>
                         <td style="text-align: left;">${item.specialization}</td>
+                        <td>
+                            <button class="info-btn" style="background:#1976d2;color:#fff;border:none;padding:5px 10px;border-radius:3px;cursor:pointer;" title="Obtenir des infos IA" onclick="openIaPopup(this)">Info</button>
+                        </td>
                     `;
             
                     if (isEditMode && item.enable) {
@@ -711,8 +727,179 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
 
+// Ajout dynamique du bouton info sur chaque ligne de voeux
+function addInfoButtons() {
+    document.querySelectorAll('#sortable tr').forEach(row => {
+        if (!row.querySelector('.info-btn')) {
+            const infoCell = document.createElement('td');
+            infoCell.innerHTML = `<button class="info-btn" style="background:#1976d2;color:#fff;border:none;padding:5px 10px;border-radius:3px;cursor:pointer;" title="Obtenir des infos IA" onclick="openIaPopup(this)">Info</button>`;
+            row.appendChild(infoCell);
+        }
+    });
+}
+document.addEventListener('DOMContentLoaded', addInfoButtons);
+
+// Gestion de la popup IA
+let currentVoeu = '';
+function openIaPopup(btn) {
+   const row = btn.closest('tr');
+    // Récupère tous les td sauf ceux qui contiennent une checkbox ou le bouton Info
+    const tds = Array.from(row.querySelectorAll('td')).filter(td => {
+        // Ignore les td qui contiennent une checkbox
+        if (td.querySelector('input.select-checkbox')) return false;
+        // Ignore la cellule qui contient le bouton Info (celle du bouton cliqué)
+        if (td.contains(btn)) return false;
+        // Ignore la cellule numéro si présente (optionnel, voir ci-dessous)
+        if (td.classList.contains('row-number')) return false;
+        return true;
+    });
+
+    // On prend les 4 derniers td filtrés (pour gérer les deux structures)
+    const lastTds = tds.slice(-4);
+
+    const voeuVille = lastTds[1]?.innerText || '';
+    const voeuNom = lastTds[3]?.innerText || '';
+    const voeuNomComplet = `${voeuNom} - ${voeuVille}`;
+    currentVoeu = voeuNomComplet;
+    document.getElementById('ia-popup').style.display = 'flex';
+    document.getElementById('ia-popup-title').innerText = "Question sur : " + currentVoeu;
+    document.getElementById('ia-messages').innerHTML = '';
+    document.getElementById('ia-popup-content').classList.remove('expanded');
+    setTimeout(() => document.getElementById('ia-question').focus(), 100);
+}
+function closeIaPopup() {
+    document.getElementById('ia-popup').style.display = 'none';
+}
+async function sendIaQuestion() {
+    const input = document.getElementById('ia-question');
+    const question = input.value.trim();
+    if (!question) return;
+    input.value = '';
+    const messagesDiv = document.getElementById('ia-messages');
+    // Ajoute la question de l'utilisateur
+    const userDiv = document.createElement('div');
+    userDiv.className = 'ia-message user';
+    userDiv.textContent = question;
+    messagesDiv.appendChild(userDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    // Agrandit la popup si ce n'est pas déjà fait
+    document.getElementById('ia-popup-content').classList.add('expanded');
+    // Ajoute un div pour la réponse IA
+    const iaDiv = document.createElement('div');
+    iaDiv.className = 'ia-message ia';
+    messagesDiv.appendChild(iaDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    // Appel API backend
+    try {
+        const res = await fetch('/api/ia_voeux', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({question, voeu: currentVoeu})
+        });
+        const data = await res.json();
+        // Affichage mot à mot
+        await displayAnimatedIaResponse(iaDiv, data.response || "Aucune réponse IA.");
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    } catch (e) {
+        iaDiv.textContent = "Erreur lors de la récupération de la réponse IA.";
+    }
+}
+async function displayAnimatedIaResponse(div, text) {
+    // Découpe le texte en caractères pour l'effet "mot à mot"
+    let current = '';
+    for (let i = 0; i < text.length; i++) {
+        current += text[i];
+        // Utilise marked pour convertir le markdown en HTML
+        div.innerHTML = marked.parse(current);
+        div.scrollIntoView({behavior: "smooth", block: "end"});
+        await new Promise(r => setTimeout(r, 1));
+    }
+}
 
 
+// Ouvre la popup
+iaFab.onclick = () => {
+  iaPopup.style.display = 'flex';
+  iaFab.style.display = 'none';
+  if (iaMessages.childElementCount === 0) {
+    iaAddIaMessage("Bonjour ! Je suis l'assistant Parcoursup. Pose-moi une question ou choisis une suggestion ci-dessous.");
+  }
+  iaInput.focus();
+};
+// Ferme la popup
+iaClose.onclick = () => {
+  iaPopup.style.display = 'none';
+  iaFab.style.display = 'block';
+};
+// Suggestions
+Array.from(iaSuggestions.querySelectorAll('button')).forEach(btn => {
+  btn.onclick = () => {
+    iaInput.value = btn.textContent;
+    iaInput.focus();
+  };
+});
+// Envoi par bouton ou entrée
+iaSend.onclick = iaSendQuestion;
+iaInput.onkeydown = e => { if (e.key === 'Enter') iaSendQuestion(); };
+
+function iaAddUserMessage(text) {
+  const div = document.createElement('div');
+  div.className = 'ia-chat-message user';
+  div.textContent = text;
+  iaMessages.appendChild(div);
+  iaMessages.scrollTop = iaMessages.scrollHeight;
+}
+function iaAddIaMessage(text) {
+  const div = document.createElement('div');
+  div.className = 'ia-chat-message ia';
+  div.textContent = text;
+  iaMessages.appendChild(div);
+  iaMessages.scrollTop = iaMessages.scrollHeight;
+  return div;
+}
+async function iaSendQuestion() {
+  const question = iaInput.value.trim();
+  if (!question) return;
+  iaInput.value = '';
+  iaChatHistory.push({role: 'user', content: question});
+  iaAddUserMessage(question);
+  const iaDiv = iaAddIaMessage('');
+  iaMessages.scrollTop = iaMessages.scrollHeight;
+  // Appel backend avec historique
+  try {
+    const res = await fetch('/api/ia_voeux/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        question,
+        voeu: '', // tu peux ajouter le voeu courant si besoin
+        history: iaChatHistory
+      })
+    });
+    const data = await res.json();
+    await iaDisplayAnimatedIaResponse(iaDiv, data.response || "Aucune réponse IA.");
+    iaChatHistory.push({role: 'ia', content: data.response || ""});
+    iaMessages.scrollTop = iaMessages.scrollHeight;
+  } catch (e) {
+    iaDiv.textContent = "Erreur lors de la récupération de la réponse IA.";
+  }
+}
+
+async function iaDisplayAnimatedIaResponse(div, text) {
+  // Découpe le markdown en tokens pour garder la fluidité
+  let html = marked.parse(text);
+  div.innerHTML = ""; // Vide la div
+  let i = 0;
+  function typeNextChar() {
+    if (i <= html.length) {
+      div.innerHTML = html.slice(0, i);
+      div.scrollIntoView({behavior: "smooth", block: "end"});
+      i++;
+      setTimeout(typeNextChar, 1);
+    }
+  }
+  typeNextChar();
+}
 
 
 // WEBSOCKETS - SOCKET.IO

@@ -73,6 +73,8 @@ app.add_url_rule('/update_email_on_validation', view_func=post_want_email_on_all
 app.add_url_rule('/log_fingerprint', view_func=log_fingerprint, methods=['POST'])
 app.add_url_rule('/force_validate_voeux', view_func=force_validation, methods=['POST'])
 app.add_url_rule('/maintenance', view_func=maintenance_get, methods=['GET'])
+app.add_url_rule('/api/ia_voeux', view_func=ia_voeux, methods=['POST'])
+app.add_url_rule('/api/ia_voeux/chat', view_func=ia_voeux_chat, methods=['POST'])
 
 @app.before_request
 def check_maintenance_mode():

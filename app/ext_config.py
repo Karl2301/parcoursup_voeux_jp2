@@ -47,6 +47,7 @@ MARIADB_PORT = os.getenv('MARIADB_PORT')
 MYSQL_DATABASE = os.getenv('MYSQL_DATABASE')
 APP_PORT = os.getenv('APP_PORT')
 DISCORD_WEBHOOK_URL = os.getenv('DISCORD', "")
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', "")
 maintenance_mode = is_in_maintenance
 
 if not APP_PORT:

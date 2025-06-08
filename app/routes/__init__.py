@@ -60,3 +60,4 @@ from .active_email import post_want_email_on_all_validation
 from .log_fingerprint import log_fingerprint
 from .forceValidation import force_validation
 from .maintenance import maintenance_get
+from .ia_info import ia_voeux, ia_voeux_chat

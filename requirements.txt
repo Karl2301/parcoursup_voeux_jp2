@@ -45,3 +45,4 @@ WTForms==3.2.1
 XlsxWriter==3.2.3
 python-dotenv
 pycryptodome
+openai
