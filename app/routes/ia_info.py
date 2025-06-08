@@ -43,7 +43,8 @@ def ia_voeux():
         )
         answer = response.choices[0].message.content.strip()
     except Exception as e:
-        answer = f"Erreur lors de l'appel à l'IA : {e}"
+        answer = f"Erreur lors de l'appel à l'IA : Cette fonctionnalité n'est pas encore totalement disponible pour cette année 2024-2025. Cependant elle sera disponible à la rentrée de septembre 2025 !"
+        # answer = f"Erreur lors de l'appel à l'IA : {e}"
 
     return jsonify({'response': answer})
 
@@ -107,6 +108,7 @@ def ia_voeux_chat():
         )
         answer = response.choices[0].message.content.strip()
     except Exception as e:
-        answer = f"Erreur lors de l'appel à l'IA : {e}"
+        answer = f"Erreur lors de l'appel à l'IA : Cette fonctionnalité n'est pas encore totalement disponible pour cette année 2024-2025. Cependant elle sera disponible à la rentrée de septembre 2025 !"
+        # answer = f"Erreur lors de l'appel à l'IA : {e}"
 
     return jsonify({'response': answer})
