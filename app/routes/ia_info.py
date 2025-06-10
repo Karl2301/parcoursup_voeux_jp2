@@ -52,6 +52,7 @@ def ia_voeux():
         "Si vous n'avez pas reçu de proposition en phase principale, la phase complémentaire permet de formuler jusqu'à 10 nouveaux vœux pour des formations avec places disponibles. "
         "L'application n'a aucune influence et n'est pas liée au site Parcoursup, c'est seulement un outils pour le lycée."
         "Utilise le Markdown pour embellire tes réponses"
+       f"Le vœu de l'élève: '{voeu}'."
     )
 
     # Construction des messages
@@ -64,7 +65,6 @@ def ia_voeux():
             messages.append({"role": "assistant", "content": msg.get('content', '')})
 
     prompt = f"""
-Le vœu de l'élève qui sert a répondre a la question: '{voeu}'.
 Question: {question_text}
 """
     
@@ -75,7 +75,7 @@ Question: {question_text}
     try:
         client = openai.OpenAI(api_key=openai.api_key)
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo-0125",
+            model="gpt-4.1-nano",
             messages=messages,
             max_tokens=800,
             temperature=0.9
