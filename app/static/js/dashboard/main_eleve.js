@@ -867,7 +867,7 @@ async function iaSendQuestion() {
   iaMessages.scrollTop = iaMessages.scrollHeight;
   // Appel backend avec historique
   try {
-    const res = await fetch('/api/ia_voeux/chat', {
+    const res = await fetch('/api/ia_voeux', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({

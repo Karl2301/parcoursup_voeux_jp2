@@ -14,45 +14,8 @@ from Crypto.Cipher import PKCS1_v1_5
 from Crypto.Random import get_random_bytes
 from Crypto import Random
 
+
 def ia_voeux():
-    data = request.get_json()
-    question = data.get('question', '')
-    voeu = data.get('voeu', '')
-
-    prompt = (
-        f"Tu es un assistant expert Parcoursup. "
-        f"Voici le vœu de l'élève : '{voeu}'. "
-        f"Question de l'élève : '{question}'. "
-        f"Réponds de façon concrète, claire, concise et utile pour un lycéen. Les élèves sont en terminale et ont besoin d'aide pour leurs vœux Parcoursup. Les réponses doivent être adaptées à leur niveau de compréhension et aux enjeux de Parcoursup. Les élèves sont à Rennes, donc propose une réponse localisé ou délocalisé selon le besoin. Tuoies l'utilisateur "
-    )
-
-    print(voeu)
-
-    try:
-        client = openai.OpenAI(api_key=openai.api_key)
-        print(f"Clé API actuelle : {openai.api_key}")
-
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "Tu es un assistant Parcoursup expert, très concret et clair. Si la question n'est pas liée à Parcoursup, réponds que tu ne peux pas aider."},
-                {"role": "user", "content": prompt}
-            ],
-            max_tokens=400,
-            temperature=0.4
-        )
-        answer = response.choices[0].message.content.strip()
-    except Exception as e:
-        answer = f"Erreur lors de l'appel à l'IA : Cette fonctionnalité n'est pas encore totalement disponible pour cette année 2024-2025. Cependant elle sera disponible à la rentrée de septembre 2025 !"
-        # answer = f"Erreur lors de l'appel à l'IA : {e}"
-
-    return jsonify({'response': answer})
-
-
-
-
-
-def ia_voeux_chat():
     """
     Endpoint pour le chatbot IA avec historique de conversation.
     Attend : {
@@ -65,50 +28,68 @@ def ia_voeux_chat():
     }
     """
     data = request.get_json()
-    question = data.get('question', '')
-    voeu = data.get('voeu', '')
+    question_text = data.get('question', '').strip()
+    voeu = data.get('voeu', '').strip()
+    print(voeu)
     history = data.get('history', [])
 
-    # Construction de l'historique pour OpenAI
-    messages = [
-        {"role": "system", "content": (
-            "Tu es un assistant Parcoursup expert, très concret et clair. "
-            "Si la question n'est pas liée à l'éducation, réponds que tu ne peux pas aider. "
-            "Sois concis, utile, adapte-toi à un lycéen de terminale à Rennes. "
-            "Tu est une IA d'une application Parcoursup, pour le Lycée Jean-Paul II a Saint-grégoire."
-            "Tu est l'IA de l'application Voeux-JP2"
-            "Si un utilisateur te demande quels sont les créateur de l'application, réponds que l'ensemble de l'application a été développé par 4 élèves du Lycée Jean-Paul II"
-            "Les élèves ont deux tableaux sur leur page: un tableau pour les voeux que l'élèves veux vraiment, et l'autre tableau sert de corbeille pour les voeux que l'élèves ne souhaite pas vraiment ou moins que ceux dans le tableau principale. "
-            "L'élèves n'a qu'a passer en mode édition pour pouvoir déplacer les voeux situé dans le tableau principale. Si il veux, il peut séléctionner des voeux d'un des tableaux et les déplacer dans l'autre tableau."
-            "Pour chaques question, tu dois faire le discernement si la qustion porte sur l'application Voeux-JP2 ou sur Parcoursup."
-            "Vœux multiples : Pour certaines formations, comme les BTS, BUT, CPGE, DCG, DN MADE, DNA, EFTS, vous pouvez formuler un vœu principal et ajouter jusqu'à 10 sous-vœux par établissement ou spécialité."
-            "Sous-vœux limités : Le nombre total de sous-vœux est limité à 20."
-            "Formations sans sous-vœux : Pour les IFSI, orthophonie, orthoptie, audioprothèse, écoles d'ingénieurs, écoles de commerce, Sciences Po, PASS en Île-de-France, et écoles vétérinaires, le nombre de sous-vœux n'est pas limité. "
-            "Vous pouvez également formuler jusqu'à 10 vœux supplémentaires spécifiquement pour des formations en apprentissage, distincts des vœux principaux."
-            "Si vous n'avez pas reçu de proposition en phase principale, la phase complémentaire vous permet de formuler jusqu'à 10 nouveaux vœux pour des formations ayant encore des places disponibles."
-            f"Le vœu de l'élève : '{voeu}'."
-        )}
-    ]
+    # Construction du prompt système (avec espaces entre phrases)
+    system_prompt = (
+        "Tu es un assistant Parcoursup expert, très concret et clair. "
+        "Si la question n'est pas liée au vaste domaine éducatif ou orientation professionel, réponds que tu ne peux pas aider. "
+        "Si un utilisateur te demande une question ou fait un lien avec une question de l'historique de la conversation, reponds lui en prenant en compte l'historique"
+        "Sois concis, utile, adapte-toi à un lycéen de terminale à Rennes. "
+        "Tu es une IA d'une application Parcoursup, pour le Lycée Jean-Paul II à Saint-Grégoire. "
+        "Tu es l'IA de l'application Voeux-JP2. "
+        "Si un utilisateur te demande quels sont les créateurs de l'application, réponds que l'ensemble de l'application a été développé par 4 élèves du Lycée Jean-Paul II. "
+        "Les élèves ont deux tableaux sur leur page : un tableau pour les vœux que l'élève souhaite absolument, et l'autre tableau sert de corbeille pour les vœux moins souhaités. "
+        "L'élève peut passer en mode édition pour déplacer les vœux entre ces tableaux. "
+        "Pour chaque question, fais le discernement si elle porte sur l'application Voeux-JP2 ou sur Parcoursup. "
+        "Vœux multiples : certaines formations comme BTS, BUT, CPGE, DCG, DN MADE, DNA, EFTS permettent un vœu principal et jusqu'à 10 sous-vœux par établissement ou spécialité. "
+        "Le nombre total de sous-vœux est limité à 20. "
+        "Pour les formations sans sous-vœux (IFSI, orthophonie, écoles d'ingénieurs, etc.), il n'y a pas de limite. "
+        "Vous pouvez formuler jusqu'à 10 vœux supplémentaires pour des formations en apprentissage distincts des vœux principaux. "
+        "Si vous n'avez pas reçu de proposition en phase principale, la phase complémentaire permet de formuler jusqu'à 10 nouveaux vœux pour des formations avec places disponibles. "
+        "L'application n'a aucune influence et n'est pas liée au site Parcoursup, c'est seulement un outils pour le lycée."
+        "Utilise le Markdown pour embellire tes réponses"
+    )
+
+    # Construction des messages
+    messages = [{"role": "system", "content": system_prompt}]
     for msg in history:
-        if msg.get('role') == 'user':
+        role = msg.get('role')
+        if role == 'user':
             messages.append({"role": "user", "content": msg.get('content', '')})
-        elif msg.get('role') == 'ia':
+        elif role == 'ia':
             messages.append({"role": "assistant", "content": msg.get('content', '')})
-    # Ajoute la question courante
-    if question:
-        messages.append({"role": "user", "content": question})
+
+    prompt = f"""
+Le vœu de l'élève qui sert a répondre a la question: '{voeu}'.
+Question: {question_text}
+"""
+    
+    # Ajout de la question courante
+    messages.append({"role": "user", "content": prompt})
+
 
     try:
         client = openai.OpenAI(api_key=openai.api_key)
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-3.5-turbo-0125",
             messages=messages,
-            max_tokens=600,
-            temperature=0.4
+            max_tokens=800,
+            temperature=0.9
         )
-        answer = response.choices[0].message.content.strip()
-    except Exception as e:
-        answer = f"Erreur lors de l'appel à l'IA : Cette fonctionnalité n'est pas encore totalement disponible pour cette année 2024-2025. Cependant elle sera disponible à la rentrée de septembre 2025 !"
-        # answer = f"Erreur lors de l'appel à l'IA : {e}"
+        answer_raw = response.choices[0].message.content.strip()
 
-    return jsonify({'response': answer})
+        # Retourne la réponse complète avec info booléenne séparée
+        return jsonify({
+            'response': answer_raw
+        })
+
+    except Exception as e:
+        return jsonify({
+            'response': ("Erreur lors de l'appel à l'IA : Cette fonctionnalité n'est pas encore totalement disponible "
+                         "pour cette année 2024-2025. Cependant elle sera disponible à la rentrée de septembre 2025 !"),
+            'needs_context': None
+        })

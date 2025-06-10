@@ -81,3 +81,14 @@ class Config(SQLModel, table=True):
     __tablename__ = "config"
     id: Optional[int] = Field(default=None, primary_key=True)
     deadline: Optional[datetime] = Field(default=None)
+
+
+class IaInfo(SQLModel, table=True):
+    __tablename__ = "ia_info"
+    id: Optional[int] = Field(default=None, sa_column=Column(Integer, primary_key=True))
+    is_chat: Optional[bool] = Field(default=False, sa_column=Column(TEXT))  # Indique si c'est un chat
+    question: Optional[str] = Field(default=None, sa_column=Column(TEXT))
+    userid: Optional[str] = Field(default=None, sa_column=Column(TEXT))
+    voeu: Optional[str] = Field(default=None, sa_column=Column(TEXT))
+    answer: Optional[str] = Field(default=None, sa_column=Column(TEXT))
+    created_at: Optional[datetime] = Field(default=None, sa_column=Column(TEXT))  # Utiliser datetime pour la date de création
